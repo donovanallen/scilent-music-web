@@ -6,18 +6,32 @@ const nextConfig = {
 
   reactStrictMode: true,
   swcMinify: true,
-
-  // Uncoment to add domain whitelist
-  // images: {
-  //   domains: [
-  //     'res.cloudinary.com',
-  //   ],
-  // },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.fbcdn.net',
+        port: '',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.scdn.co',
+        port: '',
+      },
+      {
+        protocol: 'http',
+        hostname: 'coverartarchive.org',
+        port: '',
+      },
+    ],
+    // Uncoment to add domain whitelist
+    domains: ['coverartarchive.org'],
+  },
 
   webpack(config) {
     // Grab the existing rule that handles SVG imports
     const fileLoaderRule = config.module.rules.find((rule) =>
-      rule.test?.test?.('.svg')
+      rule.test?.test?.('.svg'),
     );
 
     config.module.rules.push(
@@ -37,7 +51,7 @@ const nextConfig = {
           dimensions: false,
           titleProp: true,
         },
-      }
+      },
     );
 
     // Modify the file loader rule to ignore *.svg, since we have it handled now.
