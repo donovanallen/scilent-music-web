@@ -12,11 +12,7 @@ import Header from '@/components/Header';
 import ProfileInfo from './components/ProfileInfo';
 import TopItems from '../../components/TopItems';
 
-interface ProfileProps {
-  onClick?: (id: string) => void;
-}
-
-const Profile: React.FC<ProfileProps> = () => {
+const Profile: React.FC = () => {
   const { status } = useSession();
 
   // const [recents, setRecents] = useState<PlayHistory[]>();

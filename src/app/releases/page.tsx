@@ -5,11 +5,7 @@ import React from 'react';
 import Box from '@/components/Box';
 import Header from '@/components/Header';
 
-interface ReleasesProps {
-  onClick?: (id: string) => void;
-}
-
-const Releases: React.FC<ReleasesProps> = () => {
+const Releases: React.FC = () => {
   // const { data: session, status } = useSession();
 
   // const [followedArtists, setFollowedArtists] = useState<FollowedArtists>();

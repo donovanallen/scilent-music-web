@@ -26,8 +26,6 @@ import {
   ScilentExternalLink,
 } from '@/constant/types';
 
-// type Props = {}
-
 // TODO: style header and metadata
 // TODO: add MB fetch for credits, etc
 
