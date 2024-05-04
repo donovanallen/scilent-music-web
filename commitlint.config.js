@@ -1,7 +1,7 @@
 module.exports = {
   extends: ['@commitlint/config-conventional'],
   rules: {
-    'scope-enum': [2, 'always', ['general']], // * Add new Scope Enums Here
+    'scope-enum': [2, 'always', ['general', 'components']], // * Add new Scope Enums Here
     'type-enum': [
       2,
       'always',
