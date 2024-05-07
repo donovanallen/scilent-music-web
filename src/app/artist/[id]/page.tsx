@@ -101,7 +101,9 @@ const Artist = ({ params }: { params: { id: string } }) => {
               <Image
                 src={metadata.images[0].url || ''}
                 alt='artist image'
-                fill
+                width={metadata.images[0].width}
+                height={metadata.images[0].height}
+                priority
                 className='aspect-square object-cover'
               />
             ) : (

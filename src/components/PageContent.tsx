@@ -88,6 +88,8 @@ const PageContent: React.FC<PageContentProps> = ({
       </div>
     );
   }
+
+  return null;
 };
 
 export default PageContent;

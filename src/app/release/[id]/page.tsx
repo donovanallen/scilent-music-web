@@ -93,7 +93,9 @@ const Release = ({ params }: { params: { id: string } }) => {
                 <Image
                   src={albumDetails?.images[0].url || ''}
                   alt='release image'
-                  fill
+                  width={albumDetails.images[0].width}
+                  height={albumDetails.images[0].height}
+                  priority
                   className='aspect-square object-cover'
                 />
               ) : (
