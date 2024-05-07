@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
+import Link from 'next/link';
 import * as React from 'react';
 
 import Button from '@/components/Button';
-import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Not Found',

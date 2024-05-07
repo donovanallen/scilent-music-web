@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
 import * as React from 'react';
-import localFont from 'next/font/local';
 
 import '@/styles/globals.css';
 
