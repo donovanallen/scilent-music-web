@@ -1,8 +1,8 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import { BiAlbum } from 'react-icons/bi';
 
+import NextImage from '@/components/NextImage';
 import Pill from '@/components/Pill';
 
 interface AlbumItemProps {
@@ -28,11 +28,12 @@ const AlbumItem: React.FC<AlbumItemProps> = ({
         {/* IMAGE */}
         <div className='relative aspect-square rounded-md w-full bg-neutral-700 animated-underline'>
           {imagePath ? (
-            <Image
+            <NextImage
               src={imagePath}
               alt={`Image of album: ${name}`}
-              fill
+              layout='fill'
               className='aspect-square object-cover hover:pb-1 transition'
+              useSkeleton
             />
           ) : (
             <BiAlbum size={64} className='m-auto h-full text-dark' />

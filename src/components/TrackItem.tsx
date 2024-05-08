@@ -1,9 +1,10 @@
 import { SimplifiedTrack, Track } from '@spotify/web-api-ts-sdk';
-import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import { FaMusic } from 'react-icons/fa6';
 import { GiBackwardTime } from 'react-icons/gi';
+
+import NextImage from '@/components/NextImage';
 
 import {
   cn,
@@ -53,10 +54,11 @@ const TrackItem: React.FC<TrackItemProps> = ({
         ) : (
           <div className='relative min-h-[64px] min-w-[64px] rounded-md overflow-hidden bg-neutral-700'>
             {'album' in track ? (
-              <Image
+              <NextImage
                 src={track.album.images[0].url}
                 alt={track.album.name + ' image'}
-                fill
+                layout='fill'
+                useSkeleton
                 className='object-cover aspect-square'
               />
             ) : (
