@@ -21,6 +21,23 @@ interface PageContentProps {
   tracks?: Track[] | SimplifiedTrack[];
 }
 
+// const renderGrid = (
+//   items: Album[] | SimplifiedAlbum[] | ScilentAlbum[] | Artist[],
+//   Component: typeof AlbumItem | typeof ArtistItem,
+//   noItemsText: string,
+// ) =>
+//   items.length ? (
+//     <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-8 gap-4 my-4 overflow-y-scroll no-scrollbar'>
+//       {items.map((item, index) => (
+//         <Component key={item.id || index} {...item} />
+//       ))}
+//     </div>
+//   ) : (
+//     <div className='mt-4 text-neutral-400'>
+//       {noItemsText || 'Nothing to show'}
+//     </div>
+//   );
+
 const PageContent: React.FC<PageContentProps> = ({
   artists,
   history,
@@ -44,6 +61,24 @@ const PageContent: React.FC<PageContentProps> = ({
       </div>
     ) : (
       <div className='mt-4 text-neutral-400'>No albums found</div>
+    );
+  }
+
+  if (artists) {
+    return artists.length ? (
+      <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-8 gap-4 my-4 overflow-y-scroll no-scrollbar'>
+        {artists.map((artist) => (
+          <ArtistItem
+            key={artist.id}
+            id={artist.id}
+            name={artist.name}
+            image={artist.images[0]?.url}
+            type={artist.type}
+          />
+        ))}
+      </div>
+    ) : (
+      <div className='mt-4 text-neutral-400'>No artists available</div>
     );
   }
 
@@ -74,25 +109,6 @@ const PageContent: React.FC<PageContentProps> = ({
       </div>
     ) : (
       <div className='mt-4 text-neutral-400'>No recent listens</div>
-    );
-  }
-
-  if (artists) {
-    return artists.length === 0 ? (
-      <div className='mt-4 text-neutral-400'>No artists available</div>
-    ) : (
-      <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-8 gap-4 my-4 overflow-y-scroll no-scrollbar'>
-        {artists &&
-          artists.map((artist) => (
-            <ArtistItem
-              key={artist.id}
-              id={artist.id}
-              name={artist.name}
-              image={artist.images[0]?.url}
-              type={artist.type}
-            />
-          ))}
-      </div>
     );
   }
 

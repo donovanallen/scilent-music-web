@@ -160,7 +160,6 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
                   name={topArtists[0].name}
                   icon={TbUserHeart}
                   image={topArtists[0].images[0].url}
-                  href={`/artist/${topArtists[0].id}`}
                   onClick={() => router.push(`/artist/${topArtists[0].id}`)}
                   className='flex-1'
                 />
@@ -182,7 +181,6 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
                   name={topTracks[0].name}
                   icon={TbMusicHeart}
                   image={topTracks[0].album.images[0].url}
-                  href={`/release/${topTracks[0].album.id}`}
                   onClick={() =>
                     router.push(`/release/${topTracks[0].album.id}`)
                   }
