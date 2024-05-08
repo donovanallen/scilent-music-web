@@ -10,7 +10,6 @@ import TopItems from '@/components/TopItems';
 
 import Logo from '~/svg/Logo_Full_Gray.svg';
 
-// export const revalidate = 0;
 export default function HomePage() {
   const { data: session, status } = useSession();
 

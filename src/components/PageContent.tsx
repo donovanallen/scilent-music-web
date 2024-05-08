@@ -35,7 +35,6 @@ const PageContent: React.FC<PageContentProps> = ({
             <AlbumItem
               key={album.id}
               name={album.title || album.name}
-              // artist={album.artist || album.artists[0]}
               image={album.images ? album.images[0]?.url : album.artwork?.url}
               timestamp={album.releaseDate || album.release_date}
               type={album.album_type || album.type}
@@ -84,7 +83,15 @@ const PageContent: React.FC<PageContentProps> = ({
     ) : (
       <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-8 gap-4 my-4 overflow-y-scroll no-scrollbar'>
         {artists &&
-          artists.map((artist) => <ArtistItem key={artist.id} data={artist} />)}
+          artists.map((artist) => (
+            <ArtistItem
+              key={artist.id}
+              id={artist.id}
+              name={artist.name}
+              image={artist.images[0]?.url}
+              type={artist.type}
+            />
+          ))}
       </div>
     );
   }
