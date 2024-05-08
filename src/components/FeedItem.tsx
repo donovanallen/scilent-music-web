@@ -1,25 +1,26 @@
 'use client';
 
 import { Track } from '@spotify/web-api-ts-sdk';
-import Image from 'next/image';
 import React from 'react';
 import { BiAlbum } from 'react-icons/bi';
 import { GiBackwardTime } from 'react-icons/gi';
 
 import { cn, formatArtists, getTimestampText } from '@/lib/utils';
 
+import NextImage from '@/components/NextImage';
+
 interface FeedItemProps {
   data: Track;
+  timestamp?: Date;
   onClick?: (id: string) => void;
   className?: string;
-  timestamp?: Date;
 }
 
 const FeedItem: React.FC<FeedItemProps> = ({
   data,
+  timestamp,
   onClick,
   className,
-  timestamp,
 }) => {
   const handleClick = () => {
     if (onClick) {
@@ -37,11 +38,12 @@ const FeedItem: React.FC<FeedItemProps> = ({
     >
       <div className='relative rounded-md min-h-[48px] min-w-[48px] overflow-hidden aspect-square m-1 bg-neutral-700'>
         {data.album?.images ? (
-          <Image
+          <NextImage
             src={data.album?.images[0].url}
-            alt={data.name + ' image'}
-            fill
+            alt={`Album image: ${data.name}`}
+            layout='fill'
             className='aspect-square object-cover'
+            useSkeleton
           />
         ) : (
           <BiAlbum size={24} className='m-auto h-full text-dark' />
@@ -49,15 +51,17 @@ const FeedItem: React.FC<FeedItemProps> = ({
       </div>
       <div className='flex flex-col overflow-hidden'>
         <p className='text-light truncate'>{data.name}</p>
+
         {data.artists && (
           <p className='text-neutral-400 subtitle truncate'>
             {formatArtists(data.artists)}
           </p>
         )}
+
         {timestamp && (
-          <div className='flex gap-x-1 items-center text-neutral-500  truncate'>
-            <GiBackwardTime />
-            <span className='subtitle'>
+          <div className='inline-flex gap-x-1 items-center text-neutral-500 truncate'>
+            <GiBackwardTime fontSize='small' />
+            <span className='subtitle text-xs'>
               {getTimestampText(timestamp.toString())}
             </span>
           </div>
