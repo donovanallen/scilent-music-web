@@ -7,7 +7,7 @@ import { useSession } from 'next-auth/react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { BiSearch } from 'react-icons/bi';
 import { HiHome } from 'react-icons/hi';
-import { TbMusicStar, TbUserHeart } from 'react-icons/tb';
+import { TbUserHeart } from 'react-icons/tb';
 
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 import useAuthModal from '@/hooks/useAuthModal';
@@ -50,12 +50,13 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         active: pathname === '/artists',
         href: '/artists',
       },
-      {
-        icon: TbMusicStar,
-        label: 'Releases',
-        active: pathname === '/releases',
-        href: '/releases',
-      },
+      // {
+      //   icon: TbMusicStar,
+      //   label: 'Releases',
+      //   active: pathname === '/releases',
+      //   href: '/releases',
+      //   disabled: true,
+      // },
     ],
     [pathname],
   );
