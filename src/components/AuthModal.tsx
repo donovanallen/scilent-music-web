@@ -7,7 +7,7 @@ import { FaSpotify } from 'react-icons/fa';
 
 import useAuthModal from '@/hooks/useAuthModal';
 
-import Button from '@/components/Button';
+import Button from '@/components/buttons/Button';
 import Modal from '@/components/Modal';
 
 import Logo from '~/svg/Logo_White.svg';
@@ -15,14 +15,14 @@ import Logo from '~/svg/Logo_White.svg';
 const AuthModal = () => {
   const router = useRouter();
   const { onClose, isOpen } = useAuthModal();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
 
   useEffect(() => {
-    if (session) {
+    if (status === 'authenticated') {
       router.refresh();
       onClose();
     }
-  }, [session, status, router, onClose]);
+  }, [status, router, onClose]);
 
   const onChange = (open: boolean) => {
     if (!open) {
@@ -32,23 +32,24 @@ const AuthModal = () => {
 
   return (
     <Modal
-      title=''
-      description=''
+      title='Get Started'
+      description='Connect your Spotify account to continue'
       isOpen={isOpen}
       onChange={onChange}
-      className='py-6'
     >
-      <div className='flex flex-col items-center gap-y-12 text-center mt-6'>
-        <Logo className='px-36' />
-        <h3>Log in to continue</h3>
+      <div className='flex flex-col items-center text-center gap-y-12 my-6'>
+        <Logo className='w-1/3' />
+
         <Button
           onClick={() => signIn('spotify')}
-          className='bg-spotify-primary text-white flex items-center gap-x-2 w-fit rounded-lg px-6'
+          rightIcon={FaSpotify}
+          variant='ghost'
+          aria-label='Log in with Spotify'
+          className='bg-spotify-primary gap-x-2 rounded-lg'
+          size='lg'
+          isLoading={status === 'loading'}
         >
-          <>
-            <h4 className='subtitle'>Log in with Spotify</h4>
-            <FaSpotify />
-          </>
+          Log in with Spotify
         </Button>
       </div>
     </Modal>
