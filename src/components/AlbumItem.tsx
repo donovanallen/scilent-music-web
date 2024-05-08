@@ -1,4 +1,3 @@
-// import { Album } from '@spotify/web-api-ts-sdk';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
@@ -9,12 +8,9 @@ import Pill from '@/components/Pill';
 interface AlbumItemProps {
   id?: string;
   name?: string;
-  image?: string | any;
+  image?: string;
   timestamp?: string | Date;
   type?: string;
-  // album?: Album | any;
-  // artist?: string | any;
-  // className?: string;
 }
 
 const AlbumItem: React.FC<AlbumItemProps> = ({
@@ -23,20 +19,18 @@ const AlbumItem: React.FC<AlbumItemProps> = ({
   image,
   type,
   timestamp,
-  // album,
-  // artist,
-  // className,
 }) => {
   const imagePath = image;
 
   return (
-    <Link href={`/release/${id}`}>
-      <div className='rounded-md overflow-hidden bg-neutral-900 cursor-pointer hover:opacity-75 hover:text-brand-light transition'>
+    <Link href={`/release/${id}`} aria-label={`Go to album ${name}`}>
+      <div className='rounded-md overflow-hidden bg-neutral-900 hover:text-brand-light hover:border-brand-light hover:border transition'>
+        {/* IMAGE */}
         <div className='relative aspect-square rounded-md w-full bg-neutral-700 animated-underline'>
           {imagePath ? (
             <Image
               src={imagePath}
-              alt={name + ' image'}
+              alt={`Image of album: ${name}`}
               fill
               className='aspect-square object-cover hover:pb-1 transition'
             />
@@ -46,14 +40,16 @@ const AlbumItem: React.FC<AlbumItemProps> = ({
           {type && (
             <Pill
               text={type}
-              className='absolute bottom-2 right-2 bg-neutral-800/90'
+              className='absolute bottom-2 right-2 bg-neutral-800/90 rounded-md'
             />
           )}
         </div>
+
+        {/* TITLE/SUBTITLE */}
         <div className='relative p-3 w-full overflow-clip'>
-          <h4 className='subtitle font-normal truncate'>{name}</h4>
+          <p className='subtitle font-normal truncate'>{name}</p>
           <p className='subtitle font-normal text-neutral-500 truncate'>
-            {new Date(timestamp as Date).getFullYear()}
+            {timestamp ? new Date(timestamp)?.getFullYear() : ''}
           </p>
         </div>
       </div>
