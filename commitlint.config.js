@@ -4,7 +4,7 @@ module.exports = {
     'scope-enum': [
       2,
       'always',
-      ['general', 'components', 'routing', 'analytics'],
+      ['general', 'components', 'routing', 'analytics', 'logging'],
     ], // * Add new Scope Enums Here
     'type-enum': [
       2,

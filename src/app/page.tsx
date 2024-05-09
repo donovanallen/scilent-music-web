@@ -2,6 +2,7 @@
 
 import { useSession } from 'next-auth/react';
 
+import logger from '@/lib/logger';
 import { firstName } from '@/lib/utils';
 
 import Box from '@/components/Box';
@@ -12,6 +13,7 @@ import Logo from '~/svg/Logo_Full_Gray.svg';
 
 export default function HomePage() {
   const { data: session, status } = useSession();
+  logger({ data: session, status }, 'page.tsx line 16');
 
   return (
     <Box className='flex flex-col min-h-full px-6'>

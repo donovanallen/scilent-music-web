@@ -3,6 +3,8 @@
 import * as React from 'react';
 import toast from 'react-hot-toast';
 
+import logger from '@/lib/logger';
+
 import Button from '@/components/Button';
 
 export default function Error({
@@ -14,6 +16,7 @@ export default function Error({
 }) {
   React.useEffect(() => {
     toast.error(`${error.name}: ${error.message} - ${error.cause}`);
+    logger({ error }, 'error.tsx line 17');
   }, [error]);
 
   return (

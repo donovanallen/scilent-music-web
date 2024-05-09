@@ -1,3 +1,5 @@
+import logger from '@/lib/logger';
+
 const BASE_URL = 'http://localhost:5001/mb'; // ! TODO: add env's
 
 const getAPIStatus = async (): Promise<boolean> => {
@@ -5,6 +7,7 @@ const getAPIStatus = async (): Promise<boolean> => {
   if (!response) {
     return false;
   }
+  logger({ response }, 'getAPIStatus.ts line 8');
   return response.ok;
 };
 

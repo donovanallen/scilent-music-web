@@ -6,6 +6,8 @@ import * as React from 'react';
 
 import '@/styles/globals.css';
 
+import logger from '@/lib/logger';
+
 import Sidebar from '@/components/Sidebar';
 
 import authOptions from '@/app/api/auth/[...nextauth]/authOptions';
@@ -35,6 +37,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession(authOptions);
+  logger({ session }, 'layout.tsx line 38');
 
   return (
     <html>

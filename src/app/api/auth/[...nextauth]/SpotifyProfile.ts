@@ -1,6 +1,8 @@
 import { JWT } from 'next-auth/jwt';
 import SpotifyProvider from 'next-auth/providers/spotify';
 
+import logger from '@/lib/logger';
+
 // if (!process.env.SPOTIFY_CLIENT_ID) {
 //   throw new Error('Missing SPOTIFY_CLIENT_ID');
 // }
@@ -66,7 +68,14 @@ export async function refreshAccessToken(token: JWT) {
       scope: refreshedTokens.scope,
     };
   } catch (error) {
-    console.error(error);
+    logger(
+      {
+        ...token,
+        error,
+      },
+      'SpotifyProfile.ts line 70',
+    );
+
     return {
       ...token,
       error: 'RefreshAccessTokenError',

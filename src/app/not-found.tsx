@@ -1,14 +1,21 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { getServerSession } from 'next-auth';
 import * as React from 'react';
 
+import logger from '@/lib/logger';
+
 import Button from '@/components/Button';
+
+import authOptions from '@/app/api/auth/[...nextauth]/authOptions';
 
 export const metadata: Metadata = {
   title: 'Not Found',
 };
 
-export default function NotFound() {
+export default async function NotFound() {
+  const session = await getServerSession(authOptions);
+  logger({ session }, 'not-found.tsx line 15');
   return (
     <main>
       <section>

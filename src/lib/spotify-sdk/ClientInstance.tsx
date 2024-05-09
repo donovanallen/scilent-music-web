@@ -9,6 +9,8 @@ import {
 } from '@spotify/web-api-ts-sdk';
 import { getSession, signIn } from 'next-auth/react';
 
+import logger from '@/lib/logger';
+
 import { AuthUser } from '@/constant/types';
 
 /**
@@ -21,12 +23,13 @@ class NextAuthStrategy implements IAuthStrategy {
   }
 
   public async getAccessToken(): Promise<AccessToken> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const session: any = await getSession();
     if (!session) {
       return {} as AccessToken;
     }
 
-    if (session?.error === 'RefreshAccessTokenError') {
+    if (session && session?.error === 'RefreshAccessTokenError') {
       await signIn();
       return this.getAccessToken();
     }
@@ -43,11 +46,18 @@ class NextAuthStrategy implements IAuthStrategy {
   }
 
   public removeAccessToken(): void {
-    console.warn('[Spotify-SDK][WARN]\nremoveAccessToken not implemented');
+    logger(
+      { WARNING: '[Spotify-SDK][WARN]\nremoveAccessToken not implemented' },
+      'WARNING - ClientInstance.tsx line 47',
+    );
   }
 
+  // eslint-disable-next-line unused-imports/no-unused-vars
   public setConfiguration(configuration: SdkConfiguration): void {
-    console.warn('[Spotify-SDK][WARN]\nsetConfiguration not implemented');
+    logger(
+      { WARNING: '[Spotify-SDK][WARN]\nsetConfiguration not implemented' },
+      'WARNING - ClientInstance.tsx line 56',
+    );
   }
 }
 
