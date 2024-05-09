@@ -1,5 +1,7 @@
 import clsx, { ClassValue } from 'clsx';
 import { format, formatDistanceToNow } from 'date-fns';
+import { IconType } from 'react-icons';
+import { FaMusic, FaSpotify } from 'react-icons/fa6';
 import { twMerge } from 'tailwind-merge';
 
 import {
@@ -91,11 +93,13 @@ export const TOP_ITEMS_FILTER_OPTIONS: {
 
 export const getSupportedLink = (
   link: ScilentExternalLink,
-): SupportedExternalLink | undefined => {
+): SupportedExternalLink | null => {
   const baseUrl = new URL(link.url.resource).hostname;
   const foundLink = SUPPORTED_EXTERNAL_LINKS.find((l) => l.baseUrl === baseUrl);
   if (foundLink) {
     return { ...foundLink, url: link.url.resource };
+  } else {
+    return null;
   }
 };
 
@@ -114,4 +118,14 @@ export const getPrimaryLinks = (
     links &&
     links.filter((link: SupportedExternalLink) => link && link.type === type)
   );
+};
+
+export const getSourceIcon = (source: string): IconType => {
+  // TODO Add more source options
+  switch (source.toLowerCase()) {
+    case 'spotify':
+      return FaSpotify;
+    default:
+      return FaMusic;
+  }
 };
