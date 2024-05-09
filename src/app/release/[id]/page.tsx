@@ -7,7 +7,6 @@ import {
   millisecondsToMinutes,
   millisecondsToSeconds,
 } from 'date-fns';
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { BiAlbum } from 'react-icons/bi';
 
@@ -16,6 +15,7 @@ import { cn, formatArtists, getReleaseDate } from '@/lib/utils';
 
 import Box from '@/components/Box';
 import Header from '@/components/Header';
+import NextImage from '@/components/NextImage';
 import PageContent from '@/components/PageContent';
 import Pill from '@/components/Pill';
 
@@ -44,7 +44,7 @@ const Release = ({ params }: { params: { id: string } }) => {
       const result = await sdk.albums.get(params.id);
       setAlbumDetails(() => result);
     })();
-  }, []);
+  }, [params.id]);
 
   const image = albumDetails?.images[0].url;
 
@@ -89,13 +89,13 @@ const Release = ({ params }: { params: { id: string } }) => {
             </div>
             {/* RELEASE IMAGE */}
             <div className='relative aspect-square h-full min-w-28 rounded-md overflow-hidden bg-neutral-700 m-1 ring-1 ring-black/5'>
-              {albumDetails?.images ? (
-                <Image
-                  src={albumDetails?.images[0].url || ''}
+              {image ? (
+                <NextImage
+                  src={image || ''}
                   alt='release image'
-                  width={albumDetails.images[0].width}
-                  height={albumDetails.images[0].height}
+                  layout='fill'
                   priority
+                  useSkeleton
                   className='aspect-square object-cover'
                 />
               ) : (

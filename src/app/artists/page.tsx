@@ -43,11 +43,9 @@ const Artists = () => {
 
   const {
     data: artists,
-    error,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    status,
   } = useInfiniteQuery({
     queryKey: ['followedArtists'],
     queryFn: getFollowedArtists,
@@ -63,9 +61,7 @@ const Artists = () => {
 
   return (
     <Box className='h-full overflow-hidden overflow-y-auto px-6'>
-      <Header title='Artists' className=''>
-        {/* add top artist(s)? top 3?  */}
-      </Header>
+      <Header title='Artists'>{/* add top artist(s)? top 3?  */}</Header>
 
       <div className='mt-2 mb-7'>
         <div className='flex justify-between items-center'>

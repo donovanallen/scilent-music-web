@@ -1,11 +1,12 @@
 'use client';
 
 import { Artist, Track } from '@spotify/web-api-ts-sdk';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import numbro from 'numbro';
 import React, { useEffect, useState } from 'react';
 import { FaCheck, FaUser } from 'react-icons/fa6';
+import { TbMusicHeart } from 'react-icons/tb';
 
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { cn } from '@/lib/utils';
@@ -14,6 +15,7 @@ import Box from '@/components/Box';
 import Button from '@/components/Button';
 import ExternalLinks from '@/components/ExternalLinks';
 import Header from '@/components/Header';
+import HeaderImage from '@/components/HeaderImage';
 import HeaderItem from '@/components/HeaderItem';
 import PageContent from '@/components/PageContent';
 import Pill from '@/components/Pill';
@@ -50,7 +52,8 @@ const Artist = ({ params }: { params: { id: string } }) => {
         setMetadata(() => artist);
       })();
     }
-  }, [session]);
+  }, [session, params.id]);
+
   useEffect(() => {
     if (session) {
       (async () => {
@@ -58,7 +61,7 @@ const Artist = ({ params }: { params: { id: string } }) => {
         setTopItems(() => tracks);
       })();
     }
-  }, [session]);
+  }, [session, params.id]);
 
   useEffect(() => {
     if (session.status === 'authenticated') {
@@ -70,7 +73,7 @@ const Artist = ({ params }: { params: { id: string } }) => {
         setUserFollows(() => follows[0]);
       })();
     }
-  }, [session]);
+  }, [session, params.id]);
 
   useEffect(() => {
     if (metadata) {
@@ -89,31 +92,37 @@ const Artist = ({ params }: { params: { id: string } }) => {
       <Header className='flex flex-col gap-y-6 w-full overflow-hidden'>
         {/* ARTIST METADATA */}
         <div className='flex w-full items-center justify-between'>
-          <h4 className='text-neutral-500'>{metadata?.type}</h4>
-          {/* on hover, slide out more supported music links, everything else in modal */}
-          <ExternalLinks links={links}>
+          <div className='flex items-center gap-x-2 text-neutral-500'>
+            <h4>{metadata?.type}</h4>
             {userFollows && <FaCheck />}
-          </ExternalLinks>
-        </div>
-        <div className='flex gap-x-4 w-full items-start'>
-          <div className='relative aspect-square w-28 rounded-md overflow-hidden bg-neutral-700'>
-            {metadata?.images ? (
-              <Image
-                src={metadata.images[0].url || ''}
-                alt='artist image'
-                width={metadata.images[0].width}
-                height={metadata.images[0].height}
-                priority
-                className='aspect-square object-cover'
-              />
-            ) : (
-              <FaUser size={36} className='m-auto h-full text-dark' />
-            )}
           </div>
+          <ExternalLinks links={links} />
+        </div>
+
+        <div className='flex gap-x-4 w-full items-start'>
+          <HeaderImage
+            imageUrl={metadata?.images[0].url}
+            alt={`Artist image ${metadata?.name}`}
+            fallbackIcon={FaUser}
+          />
 
           <div className='flex-1'>
             <h1 className='text-brand-primary truncate'>{metadata?.name}</h1>
-            {/* other metadata/bio data here */}
+            {metadata?.followers.total && (
+              <p className='subtitle text-neutral-500'>
+                {numbro(metadata?.followers.total).format({
+                  spaceSeparated: false,
+                  average: true,
+                  optionalMantissa: true,
+                })}{' '}
+                followers
+              </p>
+            )}
+            {metadata?.popularity && (
+              <p className='subtitle text-neutral-500'>
+                Popularity Score: {metadata?.popularity}
+              </p>
+            )}
           </div>
         </div>
 
@@ -134,11 +143,10 @@ const Artist = ({ params }: { params: { id: string } }) => {
           <HeaderItem
             title='Top Track'
             name={topItems[0].name}
-            // icon={TbUserHeart}
+            icon={TbMusicHeart}
             image={topItems[0].album.images[0].url}
-            href={`/release/${topItems[0].album.id}`}
             onClick={() => router.push(`/release/${topItems[0].album.id}`)}
-            className='self-center px-48'
+            className='self-center'
           />
         </div>
       )}
