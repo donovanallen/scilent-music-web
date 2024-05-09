@@ -1,3 +1,5 @@
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
 import * as React from 'react';
@@ -36,6 +38,8 @@ export default async function RootLayout({
 
   return (
     <html>
+      <SpeedInsights />
+      <Analytics />
       <AuthSessionProvider session={session}>
         <body>
           <ToastProvider />
