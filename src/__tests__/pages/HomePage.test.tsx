@@ -7,3 +7,5 @@ describe('Homepage', () => {
     expect(true).toBeTruthy();
   });
 });
+
+export {};
