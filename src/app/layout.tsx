@@ -38,13 +38,13 @@ export default async function RootLayout({
 
   return (
     <html>
-      <SpeedInsights />
-      <Analytics />
       <AuthSessionProvider session={session}>
         <body>
           <ToastProvider />
           <ModalProvider />
           <Sidebar>{children}</Sidebar>
+          <SpeedInsights />
+          <Analytics />
         </body>
       </AuthSessionProvider>
     </html>
