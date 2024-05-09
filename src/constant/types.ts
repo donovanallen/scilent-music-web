@@ -1,21 +1,39 @@
 import { IconType } from 'react-icons';
 import { FaApple, FaMusic, FaSoundcloud, FaSpotify } from 'react-icons/fa6';
 
-export interface Example {
+export interface ArtistQueryResult {
+  id: string;
+  name: string;
+  sourceId: string;
+  type: string;
+  country: string;
+  desc: string;
+  genres: { name: string }[];
+  rels: any[];
+  releaseGroups: MBReleaseGroup[];
+}
+
+export interface MBReleaseGroup {
+  'first-release-date': string;
+  'primary-type': string;
+  'secondary-types': any[];
   title: string;
+  id: string;
+  genres: { name: string }[];
+  artwork: { url: string };
 }
 
 // SCILENT API TYPES
 export interface ScilentAlbum {
   id: string;
   title: string;
-  artist: any;
-  artwork: any;
-  genres: any[];
-  releaseDate: Date;
-  subTypes: any[] | string[];
-  timestamp: Date | string;
+  artwork: { url: string };
+  genres: string[];
   type: string;
+  subTypes: any[] | string[];
+  artist?: ArtistQueryResult;
+  releaseDate: Date | string;
+  timestamp?: Date | string;
 }
 
 export interface ScilentExternalLink {
@@ -25,10 +43,17 @@ export interface ScilentExternalLink {
   };
 }
 
-// TODO: Update shape
-export interface Artist {
+export interface ScilentArtist {
   id: string;
   name: string;
+  type: string;
+  country: string;
+  desc: string;
+  sourceId: string;
+  genres: string[];
+  externalLinks: ScilentExternalLink[];
+  relationTypes: Set<ScilentStreamingLinkType>;
+  releases: ScilentAlbum[];
 }
 
 export type AuthUser = {
