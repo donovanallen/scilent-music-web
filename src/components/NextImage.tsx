@@ -13,6 +13,7 @@ type NextImageProps = {
 } & (
   | { width: string | number; height: string | number }
   | { layout: 'fill'; width?: string | number; height?: string | number }
+  | { fill: boolean }
 ) &
   ImageProps;
 
@@ -26,6 +27,7 @@ export default function NextImage({
   src,
   width,
   height,
+  fill,
   alt,
   className,
   classNames,
@@ -37,22 +39,25 @@ export default function NextImage({
   const widthIsSet = className?.includes('w-') ?? false;
 
   return (
-    <figure
+    <div
       style={!widthIsSet ? { width: `${width}px` } : undefined}
       className={className}
     >
       <Image
         className={cn(
+          'aspect-square object-cover',
           classNames?.image,
           status === 'loading' && cn('animate-pulse', classNames?.blur),
         )}
         src={src}
         width={width}
         height={height}
+        fill={fill}
         alt={alt}
-        onLoadingComplete={() => setStatus('complete')}
+        onLoad={() => setStatus('complete')}
+        sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
         {...rest}
       />
-    </figure>
+    </div>
   );
 }

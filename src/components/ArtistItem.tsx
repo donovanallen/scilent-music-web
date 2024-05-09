@@ -24,7 +24,7 @@ const ArtistItem: React.FC<ArtistItemProps> = ({ id, name, image, type }) => {
             <NextImage
               src={imagePath}
               alt={`Image of artist: ${name}`}
-              layout='fill'
+              fill
               className='aspect-square object-cover hover:pb-1 transition'
               useSkeleton
             />
@@ -34,7 +34,7 @@ const ArtistItem: React.FC<ArtistItemProps> = ({ id, name, image, type }) => {
           {type && (
             <Pill
               text={type}
-              className='absolute bottom-2 right-2 bg-neutral-800/90 rounded-md'
+              className='absolute bottom-2 right-2 bg-neutral-800/90'
             />
           )}
         </div>

@@ -23,7 +23,7 @@ const HeaderImage: React.FC<HeaderImageProps> = ({
       <NextImage
         src={imageUrl}
         alt={alt || 'Header image'}
-        layout='fill'
+        fill
         className='aspect-square object-cover'
         useSkeleton
         priority
