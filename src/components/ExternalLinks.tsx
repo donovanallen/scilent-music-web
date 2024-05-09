@@ -88,7 +88,6 @@ const ExternalLinks: React.FC<LinksProps> = ({
               size={20}
             />
           )}
-
           {modalOpen && validLinks && openExternalLinksModal(validLinks)}
         </div>
       </div>

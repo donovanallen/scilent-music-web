@@ -1,6 +1,7 @@
 'use client';
 
 import { Artist, SimplifiedAlbum, Track } from '@spotify/web-api-ts-sdk';
+
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import numbro from 'numbro';
