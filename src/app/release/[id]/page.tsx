@@ -100,7 +100,7 @@ const Release = ({ params }: { params: { id: string } }) => {
                 <NextImage
                   src={image || ''}
                   alt='release image'
-                  layout='fill'
+                  fill
                   priority
                   useSkeleton
                   className='aspect-square object-cover'

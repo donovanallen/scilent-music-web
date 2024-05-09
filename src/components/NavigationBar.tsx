@@ -77,12 +77,7 @@ const NavigationBar: React.FC = () => {
             <div className='relative aspect-square w-10 rounded-full overflow-hidden bg-neutral-700  border border-light hover:border-brand-primary hover:border-2 transition'>
               <Link href='/profile'>
                 {session.user?.image ? (
-                  <NextImage
-                    src={session.user?.image}
-                    alt='User Image'
-                    layout='fill'
-                    className='aspect-square object-cover'
-                  />
+                  <NextImage src={session.user?.image} alt='User Image' fill />
                 ) : (
                   <FaUserAlt size={24} className='text-light' />
                 )}
@@ -96,7 +91,7 @@ const NavigationBar: React.FC = () => {
         <div className='flex items-center flex-1 justify-end gap-x-4'>
           <Button
             onClick={authModal.onOpen}
-            className='flex items-center gap-x-2'
+            className='flex items-center gap-x-2 text-sm xl:text-base'
             rightIcon={FaSpotify}
             variant='light'
           >

@@ -25,7 +25,7 @@ const nextConfig = {
         port: '',
       },
       {
-        protocol: 'http',
+        protocol: 'https',
         hostname: 'coverartarchive.org',
         port: '',
       },

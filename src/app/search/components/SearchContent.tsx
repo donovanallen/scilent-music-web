@@ -1,19 +1,12 @@
 'use client';
 
-import {
-  Album,
-  Artist,
-  ItemTypes,
-  SearchResults,
-  Track,
-} from '@spotify/web-api-ts-sdk';
+import { ItemTypes, SearchResults } from '@spotify/web-api-ts-sdk';
 import { useDebounce } from '@uidotdev/usehooks';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 
 import PageContent from '@/components/PageContent';
-
 interface SearchContentProps {
   searchInput?: string;
   searchType?: ItemTypes | string | undefined;
@@ -23,8 +16,11 @@ const SearchContent: React.FC<SearchContentProps> = ({
   searchInput,
   searchType,
 }) => {
-  const [results, setResults] = useState<SearchResults<any>>(
-    {} as SearchResults<any>,
+  // const [results, setResults] = useState<SearchResults<any>>(
+  //   {} as SearchResults<any>,
+  // );
+  const [results, setResults] = useState<SearchResults<ItemTypes[]>>(
+    {} as SearchResults<ItemTypes[]>,
   );
   const debouncedSearchInput = useDebounce(searchInput, 300);
   const memoizedSearchType: ItemTypes[] = useMemo(
@@ -74,9 +70,7 @@ const SearchContent: React.FC<SearchContentProps> = ({
                     <h4 className='text-neutral-500'>
                       Artists ({results?.artists?.total})
                     </h4>
-                    <PageContent
-                      artists={results?.artists?.items as Artist[]}
-                    />
+                    <PageContent artists={results?.artists?.items} />
                   </>
                 )}
 
@@ -87,7 +81,7 @@ const SearchContent: React.FC<SearchContentProps> = ({
                     <h4 className='text-neutral-500'>
                       Albums ({results?.albums?.total})
                     </h4>
-                    <PageContent albums={results?.albums?.items as Album[]} />
+                    <PageContent albums={results?.albums?.items} />
                   </>
                 )}
 
@@ -98,7 +92,7 @@ const SearchContent: React.FC<SearchContentProps> = ({
                     <h4 className='text-neutral-500'>
                       Tracks ({results?.tracks?.total})
                     </h4>
-                    <PageContent tracks={results?.tracks?.items as Track[]} />
+                    <PageContent tracks={results?.tracks?.items} />
                   </>
                 )}
             </>

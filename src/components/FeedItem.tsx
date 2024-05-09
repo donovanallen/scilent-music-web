@@ -41,7 +41,7 @@ const FeedItem: React.FC<FeedItemProps> = ({
           <NextImage
             src={data.album?.images[0].url}
             alt={`Album image: ${data.name}`}
-            layout='fill'
+            fill
             className='aspect-square object-cover'
             useSkeleton
           />

@@ -10,8 +10,6 @@ import useAuthModal from '@/hooks/useAuthModal';
 import Button from '@/components/buttons/Button';
 import Modal from '@/components/Modal';
 
-import Logo from '~/svg/Logo_White.svg';
-
 const AuthModal = () => {
   const router = useRouter();
   const { onClose, isOpen } = useAuthModal();
@@ -33,25 +31,23 @@ const AuthModal = () => {
   return (
     <Modal
       title='Get Started'
-      description='Connect your Spotify account to continue'
+      description='Connect your Spotify account to continue.'
       isOpen={isOpen}
       onChange={onChange}
     >
-      <div className='flex flex-col items-center text-center gap-y-12 my-6'>
-        <Logo className='w-1/3' />
-
-        <Button
-          onClick={() => signIn('spotify')}
-          rightIcon={FaSpotify}
-          variant='ghost'
-          aria-label='Log in with Spotify'
-          className='bg-spotify-primary gap-x-2 rounded-lg'
-          size='lg'
-          isLoading={status === 'loading'}
-        >
-          Log in with Spotify
-        </Button>
-      </div>
+      {/* <Logo className='self-center w-1/3 my-20' /> */}
+      <Button
+        onClick={() => signIn('spotify')}
+        rightIcon={FaSpotify}
+        variant='ghost'
+        size='lg'
+        aria-label='Log in with Spotify'
+        className='bg-spotify-primary gap-x-2 rounded-lg w-fit self-center text-sm md:text-base items-center justify-center mt-6'
+        isLoading={status === 'loading'}
+        name='Log in'
+      >
+        Log in
+      </Button>
     </Modal>
   );
 };

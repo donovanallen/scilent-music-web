@@ -57,7 +57,7 @@ const TrackItem: React.FC<TrackItemProps> = ({
               <NextImage
                 src={track.album.images[0].url}
                 alt={track.album.name + ' image'}
-                layout='fill'
+                fill
                 useSkeleton
                 className='object-cover aspect-square'
               />

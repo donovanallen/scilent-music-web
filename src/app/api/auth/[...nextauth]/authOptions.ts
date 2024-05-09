@@ -34,6 +34,7 @@ const authOptions: AuthOptions = {
 
       return updatedToken;
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async session({ session, token }: { session: any; token: any }) {
       // pass access token info from JWT to session to be used in Spotify SDK
       const user: AuthUser = {
