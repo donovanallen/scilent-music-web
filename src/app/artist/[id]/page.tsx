@@ -1,6 +1,6 @@
 'use client';
 
-import { Artist, Track } from '@spotify/web-api-ts-sdk';
+import { Artist, SimplifiedAlbum, Track } from '@spotify/web-api-ts-sdk';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import numbro from 'numbro';
@@ -20,7 +20,6 @@ import HeaderItem from '@/components/HeaderItem';
 import PageContent from '@/components/PageContent';
 import Pill from '@/components/Pill';
 
-import getArtistData from '@/actions/getArtistData';
 import {
   ReleaseFilters,
   ReleaseTypes,
@@ -33,9 +32,11 @@ import {
 
 const Artist = ({ params }: { params: { id: string } }) => {
   const [metadata, setMetadata] = useState<Artist>();
-  const [releases, setReleases] = useState<ScilentAlbum[]>();
+  const [releases, setReleases] = useState<
+    ScilentAlbum[] | SimplifiedAlbum[]
+  >();
   const [topItems, setTopItems] = useState<Track[]>();
-  const [links, setLinks] = useState<ScilentExternalLink[]>();
+  const [links, setLinks] = useState<ScilentExternalLink[] | undefined>();
   const [selectedReleaseFilter, setSelectedReleaseFilter] =
     useState<ReleaseTypes>();
   // const [credits, setCredits] = useState();
@@ -77,12 +78,28 @@ const Artist = ({ params }: { params: { id: string } }) => {
 
   useEffect(() => {
     if (metadata) {
+      const link: ScilentExternalLink = {
+        type: Object.keys(metadata.external_urls)[0],
+        url: {
+          resource: metadata.external_urls.spotify,
+        },
+      };
+      setLinks(() => [link]);
+
       (async () => {
-        const results = await getArtistData(metadata.name);
+        const results = await sdk.artists.albums(metadata.id);
         if (results) {
-          setLinks(() => results.externalLinks);
-          setReleases(() => results.releases);
+          setReleases(() => results.items);
         }
+
+        // const apiEnabled = await getAPIStatus();
+        // if (apiEnabled) {
+        //   const results = await getArtistData(metadata.name);
+        //   if (results) {
+        //     setLinks(() => results.externalLinks);
+        //     setReleases(() => results.releases);
+        //   }
+        // }
       })();
     }
   }, [metadata]);
@@ -118,7 +135,7 @@ const Artist = ({ params }: { params: { id: string } }) => {
                 followers
               </p>
             )}
-            {metadata?.popularity && (
+            {metadata?.popularity && metadata.popularity > 0 && (
               <p className='subtitle text-neutral-500'>
                 Popularity Score: {metadata?.popularity}
               </p>
