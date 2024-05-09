@@ -91,7 +91,7 @@ const NavigationBar: React.FC = () => {
         <div className='flex items-center flex-1 justify-end gap-x-4'>
           <Button
             onClick={authModal.onOpen}
-            className='flex items-center gap-x-2'
+            className='flex items-center gap-x-2 text-sm xl:text-base'
             rightIcon={FaSpotify}
             variant='light'
           >

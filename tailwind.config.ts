@@ -5,6 +5,11 @@ export default {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
+      fontSize: {
+        '2xs': ['0.7rem', '1rem'],
+        // font-size: 0.75rem/* 12px */;
+        // line-height: 1rem/* 16px */;
+      },
       fontFamily: {
         primary: ['TT-Hoves', ...defaultTheme.fontFamily.sans],
         secondary: ['Inter', ...defaultTheme.fontFamily.sans],

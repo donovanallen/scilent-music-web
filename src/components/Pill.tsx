@@ -12,11 +12,13 @@ const Pill: React.FC<PillProps> = ({ text, className, children }) => {
   return (
     <div
       className={cn(
-        'border border-light rounded-sm px-2 py-1 w-fit overflow-clip',
+        'border border-light rounded-md px-2 py-1 w-fit overflow-clip',
         className,
       )}
     >
-      <p className='subtitle text-light text-xs truncate'>{text}</p>
+      <p className='font-thin subtitle text-2xs lg:text-xs md:truncate'>
+        {text}
+      </p>
       {children}
     </div>
   );
