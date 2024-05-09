@@ -21,7 +21,6 @@ export default function HomePage() {
             ? `Welcome ${session?.user ? firstName(session.user.name || '') : ''}`
             : ''
         }
-        className=''
       ></Header>
 
       {status === 'authenticated' ? (
