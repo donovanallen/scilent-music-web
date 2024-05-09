@@ -1,5 +1,6 @@
 'use client'; // Error components must be Client Components
 
+import { signOut } from 'next-auth/react';
 import * as React from 'react';
 import toast from 'react-hot-toast';
 
@@ -15,9 +16,19 @@ export default function Error({
   reset: () => void;
 }) {
   React.useEffect(() => {
-    toast.error(`${error.name}: ${error.message} - ${error.cause}`);
-    logger({ error }, 'error.tsx line 17');
-  }, [error]);
+    if (error.message.includes('401')) {
+      // Handle NextAuth 401 errors
+      logger({ error }, '401 AUTH ERROR - error.tsx - line 19');
+      toast.error('Session expired. Please log in again.');
+      signOut();
+      // Optionally, redirect to login or refresh the token
+      reset();
+    } else {
+      // Handle other errors
+      toast.error(`${error.name}: ${error.message} - ${error.cause}`);
+    }
+    logger({ error }, 'error.tsx line 30');
+  }, [error, reset]);
 
   return (
     <main>

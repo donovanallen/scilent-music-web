@@ -84,12 +84,12 @@ const ExpandedTopItem: React.FC<ExpandedTopItemProps> = ({
                   <h4 className='subtitle text-brand-primary text-xl md:text-base lg:text-xl'>
                     {index + 1}
                   </h4>
-                  <div className=''>
-                    <h4 className='font-normal text-2xl md:text-xl lg:text-2xl xl:text-3xl'>
+                  <div>
+                    <h4 className='font-normal text-2xl md:text-xl lg:text-2xl xl:text-3xl line-clamp-1'>
                       {item.name}
                     </h4>
                     {'artists' in item && (
-                      <p className='subtitle text-neutral-400 text-xs lg:text-sm'>
+                      <p className='subtitle text-neutral-400 text-xs lg:text-sm line-clamp-1'>
                         {formatArtists(item.artists)}
                       </p>
                     )}
@@ -107,7 +107,7 @@ const ExpandedTopItem: React.FC<ExpandedTopItemProps> = ({
                   <Link href={`/artist/${item.id}`}>
                     <div className='flex items-start gap-x-2'>
                       <h4 className='text-brand-dark subtitle'>{index + 1}</h4>
-                      <h4 className='font-normal text-base md:text-sm lg:text-lg'>
+                      <h4 className='font-normal text-base md:text-sm lg:text-lg line-clamp-1'>
                         {item.name}
                       </h4>
                     </div>
@@ -116,12 +116,12 @@ const ExpandedTopItem: React.FC<ExpandedTopItemProps> = ({
                   <Link href={`/release/${item.album?.id}`}>
                     <div className='flex items-start gap-x-2'>
                       <h4 className='text-brand-dark subtitle'>{index + 1}</h4>
-                      <div className=''>
-                        <h4 className='subtitle font-normal text-base md:text-sm lg:text-lg'>
+                      <div>
+                        <h4 className='subtitle font-normal text-base md:text-sm lg:text-lg line-clamp-1'>
                           {item.name}
                         </h4>
                         {'artists' in item && (
-                          <p className='text-neutral-400 subtitle text-xs lg:text-sm'>
+                          <p className='text-neutral-400 subtitle text-xs lg:text-sm line-clamp-1'>
                             {formatArtists(item.artists)}
                           </p>
                         )}
@@ -135,7 +135,7 @@ const ExpandedTopItem: React.FC<ExpandedTopItemProps> = ({
                       <h4 className='font-normal'>{item.name} </h4>
                     </div>
                     {'artists' in item && (
-                      <p className='text-neutral-400 subtitle pl-6'>
+                      <p className='text-neutral-400 subtitle pl-6 line-clamp-1'>
                         {item.artists && formatArtists(item.artists)}
                       </p>
                     )}
@@ -169,16 +169,16 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
     <div className={cn('w-full h-full p-6')}>
       {/* TITLE */}
       <div
-        className='flex items-center gap-x-2 text-light mb-4 cursor-pointer'
+        className='flex items-center justify-between text-light mb-4 cursor-pointer'
         onClick={() => setExpanded(!expanded)}
       >
-        <h3>Top Music</h3>
+        <h3 className='w-fit text-xl md:text-2xl'>Top Music</h3>
         {/* TOP ITEMS FILTER OPTIONS */}
         {expanded && (
           <>
             {filterOptions && (topArtists || topAlbums || topTracks) && (
               // TODO: Refactor to FilterOptions component
-              <div className='flex w-fit items-center sm:gap-x-2 md:justify-evenly self-center my-1'>
+              <div className='flex items-center'>
                 {filterOptions.map((option) => (
                   <Button
                     key={option.value}
@@ -193,11 +193,12 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
                     {option.label}
                   </Button>
                 ))}
+                {expanded ? <FaMinus /> : <FaPlus />}
               </div>
             )}
           </>
         )}
-        {expanded ? <FaMinus /> : <FaPlus />}
+        {!expanded && <FaPlus />}
       </div>
 
       {/* CONTAINER */}
@@ -205,7 +206,7 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
         {/* TOP ITEMS */}
         <div className={cn('flex w-full flex-col md:flex-row gap-4')}>
           {/* TOP ARTISTS */}
-          <div className='w-full'>
+          <div className='w-full flex-1'>
             {topArtists &&
               (!expanded ? (
                 <HeaderItem
@@ -214,7 +215,6 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
                   icon={TbUserHeart}
                   image={topArtists[0].images[0].url}
                   onClick={() => router.push(`/artist/${topArtists[0].id}`)}
-                  className='flex-1'
                 />
               ) : (
                 <ExpandedTopItem
@@ -226,7 +226,7 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
           </div>
 
           {/* TOP TRACKS */}
-          <div className='w-full'>
+          <div className='w-full flex-1'>
             {topTracks &&
               (!expanded ? (
                 <HeaderItem
@@ -237,7 +237,6 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
                   onClick={() =>
                     router.push(`/release/${topTracks[0].album.id}`)
                   }
-                  className='flex-1'
                 />
               ) : (
                 <ExpandedTopItem
@@ -249,7 +248,7 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
           </div>
 
           {/* TOP ALBUMS */}
-          <div className='w-full'>
+          <div className='w-full flex-1'>
             {topAlbums &&
               (!expanded ? (
                 <HeaderItem
@@ -257,7 +256,6 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
                   name='Coming Soon'
                   icon={BiAlbum}
                   disabled
-                  className='flex-1'
                 />
               ) : (
                 <ExpandedTopItem

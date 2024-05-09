@@ -38,7 +38,7 @@ const Profile: React.FC = () => {
   }, [status]);
 
   return (
-    <Box className='bg-dark rounded-md h-full flex flex-col overflow-y-auto px-6'>
+    <Box className='bg-dark rounded-md h-full flex flex-col overflow-y-auto overflow-x-hidden px-6'>
       <Header>
         <div className='flex w-full items-center justify-between'>
           <h4 className='text-neutral-500'>Profile</h4>
