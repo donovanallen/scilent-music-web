@@ -3,7 +3,7 @@
 import React from 'react';
 import { IconType } from 'react-icons';
 
-import Button from '@/components/Button';
+import ButtonLink from '@/components/links/ButtonLink';
 import Modal from '@/components/Modal';
 
 import { SupportedExternalLink } from '@/constant/types';
@@ -19,40 +19,22 @@ const ExternalLinksModal: React.FC<{
     }
   };
 
-  const openExternalLink = (url: string | undefined) => {
-    if (!url) {
-      return null;
-    }
-    window.open(url, '_blank', 'noopener,noreferrer');
-  };
-
-  const getIcon = (icon: IconType) => {
-    const Icon = icon;
-    return <Icon />;
-  };
-
   return (
-    <Modal
-      title='Links'
-      description=''
-      isOpen={isOpen}
-      onChange={onChange}
-      className='py-6'
-    >
+    <Modal title='Links' isOpen={isOpen} onChange={onChange}>
       <div className='flex flex-col items-center gap-y-4 text-center my-4'>
         {links.map(
           (link, i) =>
             link && (
-              <Button
+              <ButtonLink
                 key={i}
-                onClick={() => openExternalLink(link.url)}
-                className='flex items-center gap-x-2 w-full rounded-lg px-6'
+                className='flex items-center w-full justify-between animated-underline'
+                rightIcon={link.icon as IconType}
+                variant='primary'
+                href={link.url || ''}
+                size='lg'
               >
-                <>
-                  {link.icon && getIcon(link.icon)}
-                  {link.label && <h4 className='subtitle'>{link.label}</h4>}
-                </>
-              </Button>
+                {link.label && <h4 className='subtitle'>{link.label}</h4>}
+              </ButtonLink>
             ),
         )}
       </div>
