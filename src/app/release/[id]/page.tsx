@@ -11,10 +11,11 @@ import { useEffect, useState } from 'react';
 import { BiAlbum } from 'react-icons/bi';
 
 import sdk from '@/lib/spotify-sdk/ClientInstance';
-import { cn, formatArtists, getReleaseDate } from '@/lib/utils';
+import { cn, formatArtists, getReleaseDate, getSourceIcon } from '@/lib/utils';
 
 import Box from '@/components/Box';
 import Header from '@/components/Header';
+import IconLink from '@/components/links/IconLink';
 import NextImage from '@/components/NextImage';
 import PageContent from '@/components/PageContent';
 import Pill from '@/components/Pill';
@@ -71,7 +72,13 @@ const Release = ({ params }: { params: { id: string } }) => {
           {/* RELEASE TYPE */}
           <div className='flex w-full items-center justify-between'>
             <h4 className='text-brand-light'>{albumDetails?.album_type}</h4>
-            {/* link to source if available */}
+            <IconLink
+              href={albumDetails?.external_urls.spotify || ''}
+              target='_blank'
+              rel='noopener noreferrer'
+              icon={getSourceIcon('spotify')}
+              variant='ghost'
+            />
           </div>
 
           {/* RELEASE METADATA */}

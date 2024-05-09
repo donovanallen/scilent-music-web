@@ -81,12 +81,13 @@ const ExternalLinks: React.FC<LinksProps> = ({
                   link && <ExternalLink key={i} {...link} />,
               )}
 
-          <FaPlus
-            onClick={() => setModalOpen(true)}
-            className='cursor-pointer text-neutral-500 hover:text-brand-dark transition ml-2'
-            size={20}
-          />
-
+          {validLinks && validLinks.length > 1 && (
+            <FaPlus
+              onClick={() => setModalOpen(true)}
+              className='cursor-pointer text-neutral-500 hover:text-brand-dark transition ml-2'
+              size={20}
+            />
+          )}
           {modalOpen && validLinks && openExternalLinksModal(validLinks)}
         </div>
       </div>
