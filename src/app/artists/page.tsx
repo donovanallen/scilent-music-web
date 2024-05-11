@@ -60,17 +60,16 @@ const Artists = () => {
   }, [entry, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
-    <Box className='h-full overflow-hidden overflow-y-auto px-6'>
-      <Header title='Artists'>{/* add top artist(s)? top 3?  */}</Header>
+    <Box className='bg-dark rounded-md h-full flex flex-col overflow-y-auto overflow-x-hidden'>
+      <Header title='Followed Artists'>
+        <h4 className='self-end font-thin'>
+          {artists?.pages.flatMap((page) => page.items).length} of{' '}
+          {followedArtists?.artists?.total} total
+        </h4>
+        {/* add top artist(s)? top 3?  */}
+      </Header>
 
-      <div className='mt-2 mb-7'>
-        <div className='flex justify-between items-center'>
-          <h2 className='text-white'>
-            Followed Artists ( showing{' '}
-            {artists?.pages.flatMap((page) => page.items).length} of{' '}
-            {followedArtists?.artists?.total})
-          </h2>
-        </div>
+      <div className='overflow-y-auto overflow-x-hidden px-6'>
         <PageContent
           artists={
             artists?.pages

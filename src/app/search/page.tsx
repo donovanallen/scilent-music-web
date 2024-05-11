@@ -10,6 +10,7 @@ import Button from '@/components/Button';
 import Header from '@/components/Header';
 
 import SearchContent from '@/app/search/components/SearchContent';
+import TextButton from '@/components/buttons/TextButton';
 
 const SearchFilters = [
   {
@@ -37,26 +38,33 @@ const Search = () => {
   >();
 
   return (
-    <Box className='h-full overflow-hidden overflow-y-scroll no-scrollbar px-6'>
+    <Box className='bg-dark rounded-md h-full flex flex-col overflow-y-auto overflow-x-hidden'>
       <Header>
-        <div className='w-full flex items-center gap-x-2'>
-          <h1 className='text-brand-light'>Search</h1>
-          {SearchFilters.map((option) => (
-            <Button
-              key={option.value}
-              className={cn(
-                'subtitle text-neutral-800 bg-transparent hover:text-brand-dark transition',
-                selectedFilter == option.value ? 'text-brand-primary' : '',
-              )}
-              onClick={() =>
-                setSelectedFilter(
-                  selectedFilter == option.value ? undefined : option.value,
-                )
-              }
-            >
-              {option.label}
-            </Button>
-          ))}
+        <div className='flex items-center justify-between text-light mb-4 cursor-pointer gap-x-4 md:justify-start'>
+          <h1 className='text-brand-light w-fit text-lg sm:text-xl md:text-2xl'>
+            Search
+          </h1>
+          <div className='flex items-center w-fit gap-x-2 sm:gap-x-4 lg:gap-x-6'>
+            {SearchFilters.map((option) => (
+              <TextButton
+                key={option.value}
+                className={cn(
+                  'subtitle text-neutral-800 hover:text-brand-dark',
+                  'bg-transparent transition',
+                  'flex',
+                  selectedFilter == option.value ? 'text-brand-primary' : '',
+                )}
+                variant='basic'
+                onClick={() =>
+                  setSelectedFilter(
+                    selectedFilter == option.value ? undefined : option.value,
+                  )
+                }
+              >
+                {option.label}
+              </TextButton>
+            ))}
+          </div>
         </div>
         <input
           type='search'
@@ -66,7 +74,9 @@ const Search = () => {
           placeholder='Search music...'
         />
       </Header>
-      <SearchContent searchInput={searchInput} searchType={selectedFilter} />
+      <div className='overflow-y-auto overflow-x-hidden px-6'>
+        <SearchContent searchInput={searchInput} searchType={selectedFilter} />
+      </div>
     </Box>
   );
 };
