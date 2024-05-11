@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TrackItem renders correctly 1`] = `
+<DocumentFragment>
+  <a
+    aria-disabled="false"
+    class="cursor-pointer"
+    href="/release/undefined"
+  >
+    <div
+      class="w-full items-center px-4 py-2 flex gap-x-4 h-fit rounded-md overflow-hidden hover:bg-neutral-800/40 hover:text-brand-dark transition"
+    >
+      <div
+        class="relative min-h-[64px] min-w-[64px] rounded-md overflow-hidden bg-neutral-700"
+      >
+        <svg
+          class="m-auto h-full text-dark"
+          fill="currentColor"
+          height="36"
+          stroke="currentColor"
+          stroke-width="0"
+          viewBox="0 0 512 512"
+          width="36"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M499.1 6.3c8.1 6 12.9 15.6 12.9 25.7v72V368c0 44.2-43 80-96 80s-96-35.8-96-80s43-80 96-80c11.2 0 22 1.6 32 4.6V147L192 223.8V432c0 44.2-43 80-96 80s-96-35.8-96-80s43-80 96-80c11.2 0 22 1.6 32 4.6V200 128c0-14.1 9.3-26.6 22.8-30.7l320-96c9.7-2.9 20.2-1.1 28.3 5z"
+          />
+        </svg>
+      </div>
+      <div
+        class="flex flex-col h-full items-start justify-between flex-1"
+      >
+        <div
+          class="w-full overflow-clip"
+        >
+          <h4
+            class="font-normal truncate"
+          />
+          <p
+            class="subtitle font-normal text-neutral-500 truncate"
+          />
+        </div>
+      </div>
+      <div>
+        <h4
+          class="subtitle text-neutral-500"
+        >
+          NaN:NaN:NaN
+        </h4>
+      </div>
+    </div>
+  </a>
+</DocumentFragment>
+`;
