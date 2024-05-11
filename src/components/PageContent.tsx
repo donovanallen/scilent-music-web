@@ -19,6 +19,7 @@ interface PageContentProps {
   history?: PlayHistory[];
   albums?: Album[] | SimplifiedAlbum[] | ScilentAlbum[];
   tracks?: Track[] | SimplifiedTrack[];
+  tracksNumbered?: boolean;
 }
 
 // const renderGrid = (
@@ -43,6 +44,7 @@ const PageContent: React.FC<PageContentProps> = ({
   history,
   albums,
   tracks,
+  tracksNumbered = false,
 }) => {
   if (albums) {
     return albums?.length !== 0 ? (
@@ -87,11 +89,16 @@ const PageContent: React.FC<PageContentProps> = ({
       <div className='flex flex-col w-full overflow-y-scroll no-scrollbar'>
         {tracks &&
           tracks.map((track, i) => (
-            <TrackItem key={i} track={track} numbered disabled />
+            <TrackItem
+              key={i}
+              track={track}
+              disabled
+              numbered={tracksNumbered}
+            />
           ))}
       </div>
     ) : (
-      <div className='mt-4 text-neutral-400'>No albums found</div>
+      <div className='mt-4 text-neutral-400'>No tracks found</div>
     );
   }
 

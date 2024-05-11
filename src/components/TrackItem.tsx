@@ -40,7 +40,7 @@ const TrackItem: React.FC<TrackItemProps> = ({
     >
       <div
         className={cn(
-          'w-full items-center px-4 py-2 flex gap-x-4 h-fit rounded-md overflow-hidden ',
+          'w-full items-center justify-between px-2 py-2 flex gap-x-4 h-fit rounded-md overflow-hidden',
           !disabled
             ? 'hover:bg-neutral-800/40 hover:text-brand-dark transition'
             : 'hover:bg-neutral-800/40 transition',
@@ -49,7 +49,7 @@ const TrackItem: React.FC<TrackItemProps> = ({
       >
         {numbered ? (
           <div className='mr-2'>
-            <h4 className='subtitle'>{track.track_number}</h4>
+            <h4 className='subtitle text-neutral-400'>{track.track_number}</h4>
           </div>
         ) : (
           <div className='relative min-h-[64px] min-w-[64px] rounded-md overflow-hidden bg-neutral-700'>
@@ -67,9 +67,9 @@ const TrackItem: React.FC<TrackItemProps> = ({
           </div>
         )}
         <div className='flex flex-col h-full items-start justify-between flex-1'>
-          <div className='w-full overflow-clip'>
-            <h4 className='font-normal truncate'>{track.name}</h4>
-            <p className='subtitle font-normal text-neutral-500 truncate'>
+          <div className='w-full'>
+            <h4 className='font-normal line-clamp-1'>{track.name}</h4>
+            <p className='subtitle font-normal text-neutral-500 line-clamp-1'>
               {formatArtists(track.artists)}
             </p>
           </div>

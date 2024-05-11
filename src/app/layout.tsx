@@ -41,15 +41,15 @@ export default async function RootLayout({
 
   return (
     <html>
-      <AuthSessionProvider session={session}>
-        <body>
+      <body>
+        <AuthSessionProvider session={session}>
           <ToastProvider />
           <ModalProvider />
           <Sidebar>{children}</Sidebar>
           <SpeedInsights />
           <Analytics />
-        </body>
-      </AuthSessionProvider>
+        </AuthSessionProvider>
+      </body>
     </html>
   );
 }

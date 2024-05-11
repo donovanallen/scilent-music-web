@@ -1,7 +1,9 @@
+'use client';
+
 import { Album, Artist, Track } from '@spotify/web-api-ts-sdk';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { IconType } from 'react-icons';
 import { BiAlbum } from 'react-icons/bi';
 import { FaChevronUp, FaMinus, FaPlus } from 'react-icons/fa6';
@@ -10,8 +12,10 @@ import { TbMusicHeart, TbUserHeart } from 'react-icons/tb';
 import { cn, formatArtists } from '@/lib/utils';
 import { useTopMusic } from '@/hooks/useTopMusic';
 
+import TextButton from '@/components/buttons/TextButton';
 import Button from '@/components/Button';
 import HeaderItem from '@/components/HeaderItem';
+import Skeleton from '@/components/Skeleton';
 
 interface ExpandedTopItemProps {
   items: (Artist | Track | Album)[];
@@ -169,103 +173,114 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
     <div className={cn('w-full h-full p-6')}>
       {/* TITLE */}
       <div
-        className='flex items-center justify-between text-light mb-4 cursor-pointer'
+        className='flex items-center justify-between text-light mb-4 cursor-pointer gap-x-1'
         onClick={() => setExpanded(!expanded)}
       >
-        <h3 className='w-fit text-xl md:text-2xl'>Top Music</h3>
+        <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>Top Music</h3>
         {/* TOP ITEMS FILTER OPTIONS */}
         {expanded && (
           <>
             {filterOptions && (topArtists || topAlbums || topTracks) && (
               // TODO: Refactor to FilterOptions component
-              <div className='flex items-center'>
+              <div className='flex items-center w-fit gap-x-2 sm:gap-x-4 lg:gap-x-6'>
                 {filterOptions.map((option) => (
-                  <Button
+                  <TextButton
                     key={option.value}
                     className={cn(
-                      'subtitle text-neutral-800 bg-transparent hover:text-brand-dark transition',
+                      'subtitle text-neutral-800 hover:text-brand-dark',
+                      'bg-transparent transition',
+                      'flex',
                       selectedFilter == option.value
                         ? 'text-brand-primary'
                         : '',
                     )}
+                    variant='basic'
                     onClick={() => setSelectedFilter(option.value)}
                   >
                     {option.label}
-                  </Button>
+                  </TextButton>
                 ))}
-                {expanded ? <FaMinus /> : <FaPlus />}
+                <div className='text-lg md:text-xl'>
+                  {expanded ? <FaMinus /> : <FaPlus />}
+                </div>
               </div>
             )}
           </>
         )}
-        {!expanded && <FaPlus />}
+        {!expanded && (
+          <div className='text-lg md:text-xl'>
+            <FaPlus />
+          </div>
+        )}
       </div>
 
       {/* CONTAINER */}
       <div className='flex flex-col items-center'>
         {/* TOP ITEMS */}
-        <div className={cn('flex w-full flex-col md:flex-row gap-4')}>
-          {/* TOP ARTISTS */}
-          <div className='w-full flex-1'>
-            {topArtists &&
-              (!expanded ? (
-                <HeaderItem
-                  title='Top Artist'
-                  name={topArtists[0].name}
-                  icon={TbUserHeart}
-                  image={topArtists[0].images[0].url}
-                  onClick={() => router.push(`/artist/${topArtists[0].id}`)}
-                />
-              ) : (
-                <ExpandedTopItem
-                  title='Top Artists'
-                  items={topArtists}
-                  icon={TbUserHeart}
-                />
-              ))}
-          </div>
+        <Suspense fallback={<Skeleton />}>
+          <div className={cn('flex w-full flex-col md:flex-row gap-4')}>
+            {/* TOP ARTISTS */}
+            <div className='w-full flex-1'>
+              {topArtists &&
+                (!expanded ? (
+                  <HeaderItem
+                    title='Top Artist'
+                    name={topArtists[0].name}
+                    icon={TbUserHeart}
+                    image={topArtists[0].images[0].url}
+                    onClick={() => router.push(`/artist/${topArtists[0].id}`)}
+                  />
+                ) : (
+                  <ExpandedTopItem
+                    title='Top Artists'
+                    items={topArtists}
+                    icon={TbUserHeart}
+                  />
+                ))}
+            </div>
 
-          {/* TOP TRACKS */}
-          <div className='w-full flex-1'>
-            {topTracks &&
-              (!expanded ? (
-                <HeaderItem
-                  title='Top Track'
-                  name={topTracks[0].name}
-                  icon={TbMusicHeart}
-                  image={topTracks[0].album.images[0].url}
-                  onClick={() =>
-                    router.push(`/release/${topTracks[0].album.id}`)
-                  }
-                />
-              ) : (
-                <ExpandedTopItem
-                  title='Top Tracks'
-                  items={topTracks}
-                  icon={TbMusicHeart}
-                />
-              ))}
-          </div>
+            {/* TOP TRACKS */}
+            <div className='w-full flex-1'>
+              {topTracks &&
+                (!expanded ? (
+                  <HeaderItem
+                    title='Top Track'
+                    name={topTracks[0].name}
+                    icon={TbMusicHeart}
+                    image={topTracks[0].album.images[0].url}
+                    onClick={() =>
+                      router.push(`/release/${topTracks[0].album.id}`)
+                    }
+                  />
+                ) : (
+                  <ExpandedTopItem
+                    title='Top Tracks'
+                    items={topTracks}
+                    icon={TbMusicHeart}
+                  />
+                ))}
+            </div>
 
-          {/* TOP ALBUMS */}
-          <div className='w-full flex-1'>
-            {topAlbums &&
-              (!expanded ? (
-                <HeaderItem
-                  title='Top Album'
-                  name='Coming Soon'
-                  icon={BiAlbum}
-                  disabled
-                />
-              ) : (
-                <ExpandedTopItem
-                  title='Top Albums'
-                  items={topAlbums}
-                  icon={BiAlbum}
-                />
-              ))}
+            {/* TOP ALBUMS */}
+            <div className='w-full flex-1'>
+              {topAlbums &&
+                (!expanded ? (
+                  <HeaderItem
+                    title='Top Album'
+                    name='Coming Soon'
+                    icon={BiAlbum}
+                    disabled
+                  />
+                ) : (
+                  <ExpandedTopItem
+                    title='Top Albums'
+                    items={topAlbums}
+                    icon={BiAlbum}
+                  />
+                ))}
+            </div>
           </div>
-        </div>
+        </Suspense>
 
         {/* TOP ITEMS FILTER OPTIONS */}
         {filterOptions && (topArtists || topAlbums || topTracks) && (
