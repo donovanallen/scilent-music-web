@@ -16,7 +16,7 @@ export default function HomePage() {
   logger({ data: session, status }, 'page.tsx line 16');
 
   return (
-    <Box className='flex flex-col min-h-full px-6'>
+    <Box className='flex flex-col h-full bg-dark overflow-y-auto overflow-x-hidden'>
       <Header
         title={
           session
@@ -25,13 +25,15 @@ export default function HomePage() {
         }
       ></Header>
 
-      {status === 'authenticated' ? (
-        <TopItems initExpanded />
-      ) : (
-        <div className='flex flex-col items-center justify-center flex-1'>
-          <Logo className='px-96' />
-        </div>
-      )}
+      <div className='overflow-y-auto overflow-x-hidden no-scrollbar px-6'>
+        {status === 'authenticated' ? (
+          <TopItems initExpanded />
+        ) : (
+          <div className='flex flex-col items-center justify-center flex-1'>
+            <Logo className='px-96' />
+          </div>
+        )}
+      </div>
     </Box>
   );
 }

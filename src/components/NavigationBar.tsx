@@ -38,55 +38,54 @@ const NavigationBar: React.FC = () => {
   };
 
   return (
-    <div className='w-full flex items-center justify-between mb-4'>
+    <div className='w-full flex items-center justify-between mb-6'>
       {/* NAVIGATION ARROWS */}
-      <div
-        className={cn(
-          'hidden md:flex gap-x-2 items-center',
-          pathname === '/' ? 'md:hidden' : '',
-        )}
-      >
+      <div className={cn('hidden md:flex gap-x-2 items-center')}>
         <IconButton
-          variant='ghost'
+          variant='outline'
           icon={RxCaretLeft}
           onClick={goBack}
-          className='text-xl'
+          className='text-xl bg-dark/60 hover:border-brand-dark'
         />
         <IconButton
-          variant='ghost'
+          variant='outline'
           icon={RxCaretRight}
           onClick={goForward}
-          className='text-xl'
+          className='text-xl bg-dark/60 hover:border-brand-dark'
         />
       </div>
 
-      {/* HOME/SEARCH */}
-      <div className='flex md:hidden gap-x-2 items-center'>
-        <IconLink href='/' icon={HiHome} />
-        <IconLink href='/search' icon={BiSearch} />
-      </div>
-
-      {/* LOG IN/LOG OUT/SIGN UP */}
       {status === 'authenticated' ? (
-        <div className='flex gap-x-4 items-center justify-end flex-1'>
-          <Button onClick={handleLogout} className='text-xs'>
-            Log out
-          </Button>
-
-          {pathname !== '/profile' ? (
-            <div className='relative aspect-square w-10 rounded-full overflow-hidden bg-neutral-700  border border-light hover:border-brand-primary hover:border-2 transition'>
-              <Link href='/profile'>
-                {session.user?.image ? (
-                  <NextImage src={session.user?.image} alt='User Image' fill />
-                ) : (
-                  <FaUserAlt size={24} className='text-light' />
-                )}
-              </Link>
-            </div>
-          ) : (
-            <IconLink href='/settings' icon={TbSettings2} />
-          )}
-        </div>
+        <>
+          {/* HOME/SEARCH */}
+          <div className='flex md:hidden gap-x-2 items-center'>
+            <IconLink href='/' icon={HiHome} />
+            <IconLink href='/search' icon={BiSearch} />
+          </div>
+          {/* LOG IN/LOG OUT/SIGN UP */}
+          <div className='flex gap-x-4 items-center justify-end flex-1'>
+            <Button onClick={handleLogout} className='text-xs'>
+              Log out
+            </Button>
+            {pathname !== '/profile' ? (
+              <div className='relative aspect-square w-10 rounded-full overflow-hidden bg-neutral-700  border border-light hover:border-brand-primary hover:border-2 transition'>
+                <Link href='/profile'>
+                  {session.user?.image ? (
+                    <NextImage
+                      src={session.user?.image}
+                      alt='User Image'
+                      fill
+                    />
+                  ) : (
+                    <FaUserAlt size={24} className='text-light' />
+                  )}
+                </Link>
+              </div>
+            ) : (
+              <IconLink href='/settings' icon={TbSettings2} />
+            )}
+          </div>
+        </>
       ) : (
         <div className='flex items-center flex-1 justify-end gap-x-4'>
           <Button

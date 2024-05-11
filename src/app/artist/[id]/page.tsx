@@ -105,8 +105,8 @@ const Artist = ({ params }: { params: { id: string } }) => {
   }, [metadata]);
 
   return (
-    <Box className='h-full overflow-hidden overflow-y-auto'>
-      <Header className='flex flex-col gap-y-6 w-full overflow-hidden'>
+    <Box className='bg-dark rounded-md h-full flex flex-col overflow-y-auto overflow-x-hidden'>
+      <Header>
         {/* ARTIST METADATA */}
         <div className='flex w-full items-center justify-between'>
           <div className='flex items-center gap-x-2 text-neutral-500'>
@@ -153,50 +153,52 @@ const Artist = ({ params }: { params: { id: string } }) => {
         )}
       </Header>
 
-      {/* ARTIST TOP ITEMS */}
-      {topItems && (
-        <div className='flex flex-col my-4 px-6 gap-y-4'>
-          <h3 className='text-neutral-500'>Top Music</h3>
-          <HeaderItem
-            title='Top Track'
-            name={topItems[0].name}
-            icon={TbMusicHeart}
-            image={topItems[0].album.images[0].url}
-            onClick={() => router.push(`/release/${topItems[0].album.id}`)}
-            className='self-center'
-          />
-        </div>
-      )}
+      <div className='overflow-y-auto overflow-x-hidden px-6 no-scrollbar'>
+        {/* ARTIST TOP ITEMS */}
+        {topItems && (
+          <div className='flex flex-col my-4 gap-y-4'>
+            <h3 className='text-neutral-500'>Top Music</h3>
+            <HeaderItem
+              title='Top Track'
+              name={topItems[0].name}
+              icon={TbMusicHeart}
+              image={topItems[0].album.images[0].url}
+              onClick={() => router.push(`/release/${topItems[0].album.id}`)}
+              className='self-center'
+            />
+          </div>
+        )}
 
-      {/* ARTIST RELEASES */}
-      <div className='mt-2 mb-7 px-6'>
-        <div className='w-full flex items-center gap-x-2'>
-          <h3 className='text-neutral-500'>Releases</h3>
-          {ReleaseFilters.map((option) => (
-            <Button
-              key={option.value}
-              className={cn(
-                'subtitle text-neutral-800 bg-transparent hover:text-brand-dark transition',
-                selectedReleaseFilter == option.value
-                  ? 'text-brand-primary'
-                  : '',
-              )}
-              onClick={() =>
-                setSelectedReleaseFilter(
+        {/* ARTIST RELEASES */}
+        <div className='mt-2 mb-7'>
+          <div className='w-full flex items-center gap-x-2'>
+            <h3 className='text-neutral-500'>Releases</h3>
+            {ReleaseFilters.map((option) => (
+              <Button
+                key={option.value}
+                className={cn(
+                  'subtitle text-neutral-800 bg-transparent hover:text-brand-dark transition',
                   selectedReleaseFilter == option.value
-                    ? undefined
-                    : option.value,
-                )
-              }
-            >
-              {option.label}
-            </Button>
-          ))}
+                    ? 'text-brand-primary'
+                    : '',
+                )}
+                onClick={() =>
+                  setSelectedReleaseFilter(
+                    selectedReleaseFilter == option.value
+                      ? undefined
+                      : option.value,
+                  )
+                }
+              >
+                {option.label}
+              </Button>
+            ))}
+          </div>
+          <PageContent albums={releases} />
         </div>
-        <PageContent albums={releases} />
-      </div>
 
-      {/* Credits */}
+        {/* Credits */}
+      </div>
     </Box>
   );
 };

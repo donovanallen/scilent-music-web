@@ -4,6 +4,8 @@ import * as Dialog from '@radix-ui/react-dialog';
 import React from 'react';
 import { IoMdClose } from 'react-icons/io';
 
+import { cn } from '@/lib/utils';
+
 import IconButton from '@/components/buttons/IconButton';
 
 interface ModalProps {
@@ -21,12 +23,21 @@ const Modal: React.FC<ModalProps> = ({
   title,
   description,
   children,
+  className,
 }) => {
   return (
     <Dialog.Root open={isOpen} defaultOpen={isOpen} onOpenChange={onChange}>
       <Dialog.Portal>
         <Dialog.Overlay className='bg-dark/90 backdrop-blur-sm fixed inset-0 z-10' />
-        <Dialog.Content className='fixed drop-shadow-md border border-neutral-400 top-[50%] left-[50%] max-h-full min-h-1/3 md:h-auto md:max-h-[85vh] min-w-1/3 w-auto md:w-[90vw] md:max-w-[450px] translate-x-[-50%] translate-y-[-50%] rounded-lg p-12 focus:outline-none z-10'>
+        <Dialog.Content
+          className={cn(
+            'fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] z-10',
+            'drop-shadow-md border border-neutral-400 rounded-lg py-12 px-6 focus:outline-none',
+            'max-h-[90vh] min-h-1/2 md:h-auto md:max-h-[85vh]',
+            'max-w-[90vw] w-auto sm:min-w-1/2 md:w-[90vw] md:max-w-[450px]',
+            className,
+          )}
+        >
           <Dialog.Close asChild>
             <IconButton
               icon={IoMdClose}
@@ -35,16 +46,16 @@ const Modal: React.FC<ModalProps> = ({
             />
           </Dialog.Close>
           {title && (
-            <Dialog.Title className='h1 font-normal text-2xl md:text-3xl text-center mb-6 w-full'>
+            <Dialog.Title className='h1 font-normal text-lg md:text-3xl sm:text-2xl text-center mb-6 w-full'>
               {title}
             </Dialog.Title>
           )}
           {description && (
-            <Dialog.Description className='font-thin text-sm md:text-base mb-6 text-center'>
+            <Dialog.Description className='font-thin text-sm md:text-base mb-6 text-center px-6'>
               {description}
             </Dialog.Description>
           )}
-          <div className='flex flex-col'>{children}</div>
+          <div className='flex flex-col w-full'>{children}</div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

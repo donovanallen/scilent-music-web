@@ -21,7 +21,9 @@ const ProfileInfo: React.FC<UserProfile> = (profile) => {
         fallbackIcon={FaUser}
       />
       <div className='flex-1'>
-        <h2 className='text-brand-primary'>{profile.display_name}</h2>
+        <h2 className='text-brand-primary w-full line-clamp-1 text-lg sm:h2'>
+          {profile.display_name}
+        </h2>
         <div
           className='flex gap-x-1 items-center cursor-pointer'
           onClick={() => router.push('/artists')}
