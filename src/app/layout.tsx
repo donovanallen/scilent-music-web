@@ -15,6 +15,7 @@ import { siteConfig } from '@/constant/config';
 import AuthSessionProvider from '@/providers/AuthSessionProvider';
 import ModalProvider from '@/providers/ModalProvider';
 import ToastProvider from '@/providers/ToastProvider';
+import TrackPlayerProvider from '@/providers/TrackPlayerProvider';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -41,15 +42,17 @@ export default async function RootLayout({
 
   return (
     <html>
-      <body>
-        <AuthSessionProvider session={session}>
-          <ToastProvider />
-          <ModalProvider />
-          <Sidebar>{children}</Sidebar>
-          <SpeedInsights />
-          <Analytics />
-        </AuthSessionProvider>
-      </body>
+      <AuthSessionProvider session={session}>
+        <TrackPlayerProvider>
+          <body>
+            <ToastProvider />
+            <ModalProvider />
+            <Sidebar>{children}</Sidebar>
+            <SpeedInsights />
+            <Analytics />
+          </body>
+        </TrackPlayerProvider>
+      </AuthSessionProvider>
     </html>
   );
 }

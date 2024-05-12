@@ -20,7 +20,7 @@ const SCOPES: string[] = [
   'user-follow-read',
   'user-top-read',
   'user-read-recently-played',
-  // 'user-modify-playback-state',
+  'user-modify-playback-state',
   // 'user-library-read', // applies to saved content
   // 'user-library-modify', // applies to modifyiing saved content
   // 'user-read-email',
