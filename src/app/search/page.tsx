@@ -6,11 +6,10 @@ import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 
 import Box from '@/components/Box';
-import Button from '@/components/Button';
+import TextButton from '@/components/buttons/TextButton';
 import Header from '@/components/Header';
 
 import SearchContent from '@/app/search/components/SearchContent';
-import TextButton from '@/components/buttons/TextButton';
 
 const SearchFilters = [
   {

@@ -25,12 +25,12 @@ export default function HomePage() {
         }
       ></Header>
 
-      <div className='overflow-y-auto overflow-x-hidden no-scrollbar px-6'>
+      <div className='overflow-y-auto overflow-x-hidden no-scrollbar px-6 h-full'>
         {status === 'authenticated' ? (
           <TopItems initExpanded />
         ) : (
-          <div className='flex flex-col items-center justify-center flex-1'>
-            <Logo className='px-96' />
+          <div className='flex justify-center items-center w-full h-full'>
+            <Logo className='w-1/2' />
           </div>
         )}
       </div>

@@ -10,7 +10,6 @@ import { FaUserAlt } from 'react-icons/fa';
 import { FaSpotify } from 'react-icons/fa6';
 import { HiHome } from 'react-icons/hi';
 import { RxCaretLeft, RxCaretRight } from 'react-icons/rx';
-import { TbSettings2 } from 'react-icons/tb';
 
 import { cn } from '@/lib/utils';
 import useAuthModal from '@/hooks/useAuthModal';
@@ -39,24 +38,24 @@ const NavigationBar: React.FC = () => {
 
   return (
     <div className='w-full flex items-center justify-between mb-6'>
-      {/* NAVIGATION ARROWS */}
-      <div className={cn('hidden md:flex gap-x-2 items-center')}>
-        <IconButton
-          variant='outline'
-          icon={RxCaretLeft}
-          onClick={goBack}
-          className='text-xl bg-dark/60 hover:border-brand-dark'
-        />
-        <IconButton
-          variant='outline'
-          icon={RxCaretRight}
-          onClick={goForward}
-          className='text-xl bg-dark/60 hover:border-brand-dark'
-        />
-      </div>
-
       {status === 'authenticated' ? (
         <>
+          {/* NAVIGATION ARROWS */}
+          <div className={cn('hidden md:flex gap-x-2 items-center')}>
+            <IconButton
+              variant='outline'
+              icon={RxCaretLeft}
+              onClick={goBack}
+              className='text-xl bg-dark/60 hover:border-brand-dark'
+            />
+            <IconButton
+              variant='outline'
+              icon={RxCaretRight}
+              onClick={goForward}
+              className='text-xl bg-dark/60 hover:border-brand-dark'
+            />
+          </div>
+
           {/* HOME/SEARCH */}
           <div className='flex md:hidden gap-x-2 items-center'>
             <IconLink href='/' icon={HiHome} />
@@ -67,7 +66,7 @@ const NavigationBar: React.FC = () => {
             <Button onClick={handleLogout} className='text-xs'>
               Log out
             </Button>
-            {pathname !== '/profile' ? (
+            {pathname !== '/profile' && (
               <div className='relative aspect-square w-10 rounded-full overflow-hidden bg-neutral-700  border border-light hover:border-brand-primary hover:border-2 transition'>
                 <Link href='/profile'>
                   {session.user?.image ? (
@@ -81,9 +80,10 @@ const NavigationBar: React.FC = () => {
                   )}
                 </Link>
               </div>
-            ) : (
-              <IconLink href='/settings' icon={TbSettings2} />
             )}
+            {/* //   : (
+            //   <IconLink href='/settings' icon={TbSettings2} />
+            // )} */}
           </div>
         </>
       ) : (

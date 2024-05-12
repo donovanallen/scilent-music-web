@@ -45,7 +45,7 @@ export default function NextImage({
     >
       <Image
         className={cn(
-          'aspect-square object-cover',
+          'relative aspect-square object-cover',
           classNames?.image,
           status === 'loading' && cn('animate-pulse', classNames?.blur),
         )}

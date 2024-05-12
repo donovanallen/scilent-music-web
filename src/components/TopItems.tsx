@@ -12,8 +12,8 @@ import { TbMusicHeart, TbUserHeart } from 'react-icons/tb';
 import { cn, formatArtists } from '@/lib/utils';
 import { useTopMusic } from '@/hooks/useTopMusic';
 
-import TextButton from '@/components/buttons/TextButton';
 import Button from '@/components/Button';
+import TextButton from '@/components/buttons/TextButton';
 import HeaderItem from '@/components/HeaderItem';
 import Skeleton from '@/components/Skeleton';
 
