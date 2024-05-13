@@ -1,12 +1,13 @@
 import Box from '@/components/Box';
+import LoadingIndicator from '@/components/LoadingIndicator';
 
-import Logo from '~/svg/Logo_Full_Gray.svg';
+import Logo from '~/svg/Logo_Gray.svg';
 
 export default function ArtistsLoading() {
-  // Or a custom loading skeleton component
   return (
-    <Box className='flex flex-col items-center justify-center h-full w-full px-64 gap-y-12'>
-      <Logo />
+    <Box className='flex flex-col items-center justify-center h-full w-full gap-y-12'>
+      <Logo className='w-1/4' />
+      <LoadingIndicator />
       <h4>Loading followed artists...</h4>
     </Box>
   );

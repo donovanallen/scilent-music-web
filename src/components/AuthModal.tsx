@@ -48,8 +48,8 @@ const AuthModal = () => {
         size='lg'
         aria-label='Log in with Spotify'
         className={cn(
-          'bg-spotify-primary rounded-lg min-w-fit w-full mt-6',
-          'justify-center gap-x-4',
+          'bg-spotify-primary rounded-lg min-w-fit w-1/2 mt-6',
+          ' self-center justify-center gap-x-4',
           'text-sm md:text-base',
         )}
         isLoading={status === 'loading'}
