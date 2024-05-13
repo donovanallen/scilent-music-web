@@ -7,14 +7,18 @@ import useAuthModal from '@/hooks/useAuthModal';
 import Box from '@/components/Box';
 import Button from '@/components/buttons/Button';
 
+import Logo from '~/svg/Logo_Full_Gray.svg';
+
 const Login = () => {
   const authModal = useAuthModal();
 
   return (
-    <Box className='h-full flex items-center justify-center '>
+    <Box className='h-full flex flex-col items-center justify-center gap-y-12'>
+      <Logo className='w-1/2' />
       <Button
         onClick={authModal.onOpen}
-        className='flex text-center justify-center'
+        size='lg'
+        className='animated-underline'
       >
         Get Started
       </Button>
