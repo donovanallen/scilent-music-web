@@ -38,7 +38,11 @@ const AuthModal = () => {
       className='border-brand-dark'
     >
       <Button
-        onClick={() => signIn('spotify')}
+        onClick={() =>
+          signIn('spotify', {
+            callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}`,
+          })
+        }
         rightIcon={FaSpotify}
         variant='ghost'
         size='lg'

@@ -30,10 +30,9 @@ const NavigationBar: React.FC = () => {
 
   const handleLogout = () => {
     // TODO: Error handling
-    signOut();
+    signOut({ callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/` });
     authModal.onClose();
     toast.success('Logged out');
-    router.replace('/');
   };
 
   return (

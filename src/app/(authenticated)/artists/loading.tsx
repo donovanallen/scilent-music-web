@@ -7,7 +7,7 @@ export default function ArtistsLoading() {
   return (
     <Box className='flex flex-col items-center justify-center h-full w-full px-64 gap-y-12'>
       <Logo />
-      <h3>Loading followed artists...</h3>
+      <h4>Loading followed artists...</h4>
     </Box>
   );
 }

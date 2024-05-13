@@ -10,9 +10,9 @@ import Box from '@/components/Box';
 import Header from '@/components/Header';
 import IconLink from '@/components/links/IconLink';
 import Skeleton from '@/components/Skeleton';
+import TopItems from '@/components/TopItems';
 
 import ProfileInfo from './components/ProfileInfo';
-import TopItems from '../../components/TopItems';
 
 const Profile: React.FC = () => {
   const [profile, setProfile] = useState<UserProfile>();

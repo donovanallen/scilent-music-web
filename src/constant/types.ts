@@ -1,6 +1,10 @@
+import { DefaultSession } from 'next-auth';
 import { IconType } from 'react-icons';
 import { FaApple, FaMusic, FaSoundcloud, FaSpotify } from 'react-icons/fa6';
 
+export interface AuthSession extends Omit<DefaultSession, 'user'> {
+  user: AuthUser;
+}
 export interface ArtistQueryResult {
   id: string;
   name: string;

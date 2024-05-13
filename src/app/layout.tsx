@@ -1,16 +1,15 @@
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Metadata } from 'next';
-import { getServerSession } from 'next-auth';
 import * as React from 'react';
 
 import '@/styles/globals.css';
 
+import { getAuthSession } from '@/lib/helper';
 import logger from '@/lib/logger';
 
 import Sidebar from '@/components/Sidebar';
 
-import authOptions from '@/app/api/auth/[...nextauth]/authOptions';
 import { siteConfig } from '@/constant/config';
 import AuthSessionProvider from '@/providers/AuthSessionProvider';
 import ModalProvider from '@/providers/ModalProvider';
@@ -36,20 +35,20 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
+  const session = await getAuthSession();
   logger({ session }, 'layout.tsx line 38');
 
   return (
     <html>
-      <body>
-        <AuthSessionProvider session={session}>
+      <AuthSessionProvider session={session}>
+        <body>
           <ToastProvider />
           <ModalProvider />
-          <Sidebar>{children}</Sidebar>
           <SpeedInsights />
           <Analytics />
-        </AuthSessionProvider>
-      </body>
+          {session ? <Sidebar>{children}</Sidebar> : children}
+        </body>
+      </AuthSessionProvider>
     </html>
   );
 }

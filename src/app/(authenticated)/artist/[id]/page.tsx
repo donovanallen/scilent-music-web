@@ -26,6 +26,7 @@ import {
   ScilentAlbum,
   ScilentExternalLink,
 } from '@/constant/types';
+// import { getArtistDiscography } from '@/actions/getArtistDiscography';
 
 // TODO: style header and metadata
 // TODO: add MB fetch for credits, etc
@@ -45,6 +46,10 @@ const Artist = ({ params }: { params: { id: string } }) => {
 
   const session = useSession();
   const router = useRouter();
+
+  // const [artist, artistTopTracks, artistAlbums, relatedArtists] =
+  //   await getArtistDiscography(params.id);
+  // console.log({ artist, artistTopTracks, artistAlbums, relatedArtists });
 
   useEffect(() => {
     if (session) {
