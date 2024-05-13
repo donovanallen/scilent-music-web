@@ -7,7 +7,7 @@ export default function Loading() {
   return (
     <Box className='flex flex-col items-center justify-center h-full w-full px-64 gap-y-12'>
       <Logo />
-      <h3>Loading...</h3>
+      <h4>Loading...</h4>
     </Box>
   );
 }

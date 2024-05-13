@@ -9,7 +9,7 @@ import Box from '@/components/Box';
 import TextButton from '@/components/buttons/TextButton';
 import Header from '@/components/Header';
 
-import SearchContent from '@/app/search/components/SearchContent';
+import SearchContent from './components/SearchContent';
 
 const SearchFilters = [
   {
