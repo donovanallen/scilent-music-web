@@ -170,7 +170,7 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
   } = useTopMusic('short_term');
 
   return (
-    <div className={cn('w-full h-full p-6')}>
+    <div className={cn('w-full h-auto p-6')}>
       {/* TITLE */}
       <div
         className='flex items-center justify-between text-light mb-4 cursor-pointer gap-x-1'

@@ -45,6 +45,7 @@ const HeaderItem: React.FC<HeaderItemProps> = ({
       )}
       style={backgroundImageStyle}
     >
+      {children}
       <div
         className={cn('flex flex-col justify-end gap-y-2 px-4 w-full h-full')}
       >
@@ -54,7 +55,6 @@ const HeaderItem: React.FC<HeaderItemProps> = ({
           {Icon && <Icon size={20} />}
         </div>
       </div>
-      {children}
     </button>
   );
 };
