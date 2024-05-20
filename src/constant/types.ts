@@ -1,6 +1,16 @@
 import { DefaultSession } from 'next-auth';
 import { IconType } from 'react-icons';
 import { BiPulse } from 'react-icons/bi';
+import { LuUnplug } from 'react-icons/lu';
+import { TbMoodUp } from 'react-icons/tb';
+import {
+  PiGuitar,
+  PiMetronome,
+  PiAtom,
+  PiSliders,
+  PiTicket,
+} from 'react-icons/pi';
+import { DiscoBall, Lectern } from '@phosphor-icons/react/dist/ssr';
 import { FaApple, FaMusic, FaSoundcloud, FaSpotify } from 'react-icons/fa6';
 import { GiAcousticMegaphone, GiRoundKnob } from 'react-icons/gi';
 
@@ -285,7 +295,7 @@ export const AURAS: Aura[] = [
     name: 'property',
     label: 'Properties',
     description: '',
-    icon: GiRoundKnob,
+    icon: PiSliders,
     // visualization: 'radar',
     features: ['tempo', 'loudness', 'speechiness'],
   },
@@ -315,7 +325,7 @@ export const AUDIO_FEATURES: ScilentAudioFeatures[] = [
     label: 'Energy', // 'Energy',
     labelShort: 'Energy', // 'Energy',
     type: 'mood',
-    icon: BiPulse,
+    icon: PiAtom,
     description: 'Represents the intensity and activity level of a track.',
     descriptionFull:
       'Energy is a measure from 0.0 to 1.0 and represents a perceptual measure of intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. For example, death metal has high energy, while a Bach prelude scores low on the scale. Perceptual features contributing to this attribute include dynamic range, perceived loudness, timbre, onset rate, and general entropy.',
@@ -331,7 +341,7 @@ export const AUDIO_FEATURES: ScilentAudioFeatures[] = [
     label: 'Groove Factor', // 'Danceability',
     labelShort: 'Groove', // 'Danceability',
     type: 'mood',
-    icon: BiPulse,
+    icon: DiscoBall as IconType,
     description:
       'Measures the suitability of a track for dancing based on a combination of musical elements.',
     descriptionFull:
@@ -348,7 +358,7 @@ export const AUDIO_FEATURES: ScilentAudioFeatures[] = [
     label: 'Feel', // 'Valence',
     labelShort: 'Feel', // 'Valence',
     type: 'mood',
-    icon: BiPulse,
+    icon: TbMoodUp,
     description: 'Measures the musical positiveness conveyed by a track.',
     descriptionFull:
       'A measure from 0.0 to 1.0 describing the musical positiveness conveyed by a track. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry).',
@@ -364,7 +374,7 @@ export const AUDIO_FEATURES: ScilentAudioFeatures[] = [
     label: 'Live Factor', // 'Liveness',
     labelShort: 'Live', // 'Liveness',
     type: 'context',
-    icon: BiPulse,
+    icon: PiTicket,
     description:
       'indicates the presence of a live audience in a track or the likelihood of the track being performed live.',
     descriptionFull:
@@ -381,7 +391,7 @@ export const AUDIO_FEATURES: ScilentAudioFeatures[] = [
     label: 'Acoustic', // 'Acousticness',
     labelShort: 'Acoustic', // 'Acousticness',
     type: 'context',
-    icon: BiPulse,
+    icon: LuUnplug,
     description: 'Measures the probability of a track being acoustic.',
     descriptionFull:
       'A confidence measure from 0.0 to 1.0 of whether the track is acoustic. 1.0 represents high confidence the track is acoustic.',
@@ -397,7 +407,7 @@ export const AUDIO_FEATURES: ScilentAudioFeatures[] = [
     label: 'Instrumental', // 'Instrumentation',
     labelShort: 'Instrumental', // 'Instrumentation',
     type: 'context',
-    icon: BiPulse,
+    icon: PiGuitar,
     description: 'Measures the likelihood of a track being instrumental.',
     descriptionFull:
       'Predicts whether a track contains no vocals. "Ooh" and "aah" sounds are treated as instrumental in this context. Rap or spoken word tracks are clearly "vocal". The closer the instrumentalness value is to 1.0, the greater likelihood the track contains no vocal content. Values above 0.5 are intended to represent instrumental tracks, but confidence is higher as the value approaches 1.0.',
@@ -413,7 +423,7 @@ export const AUDIO_FEATURES: ScilentAudioFeatures[] = [
     label: 'BPM (Beats Per Minute)', // 'Tempo',
     labelShort: 'BPM', // 'Tempo',
     type: 'property',
-    icon: BiPulse,
+    icon: PiMetronome,
     description: 'Represents the overall beats per minute (BPM) of a track.',
     descriptionFull:
       'The overall estimated tempo of a track in beats per minute (BPM). In musical terminology, tempo is the speed or pace of a given piece and derives directly from the average beat duration.',
@@ -429,7 +439,7 @@ export const AUDIO_FEATURES: ScilentAudioFeatures[] = [
     label: 'Loudness (dB)',
     labelShort: 'Loudness',
     type: 'property',
-    icon: BiPulse,
+    icon: GiRoundKnob,
     description: 'Measures the overall loudness of a track in decibels (dB).',
     descriptionFull:
       'The overall loudness of a track in decibels (dB). Loudness values are averaged across the entire track and are useful for comparing relative loudness of tracks. Loudness is the quality of a sound that is the primary psychological correlate of physical strength (amplitude). Values typically range between -60 and 0 db.',
@@ -445,7 +455,7 @@ export const AUDIO_FEATURES: ScilentAudioFeatures[] = [
     label: 'Speech Factor', // 'Speechiness',
     labelShort: 'Speech', // 'Speechiness',
     type: 'property',
-    icon: BiPulse,
+    icon: Lectern as IconType,
     description: 'Measures the presence of spoken words in a track.',
     descriptionFull:
       'Speechiness detects the presence of spoken words in a track. The more exclusively speech-like the recording (e.g. talk show, audio book, poetry), the closer to 1.0 the attribute value. Values above 0.66 describe tracks that are probably made entirely of spoken words. Values between 0.33 and 0.66 describe tracks that may contain both music and speech, either in sections or layered, including such cases as rap music. Values below 0.33 most likely represent music and other non-speech-like tracks.',
