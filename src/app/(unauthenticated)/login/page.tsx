@@ -14,10 +14,10 @@ const Login = () => {
 
   return (
     <Box className='h-full flex flex-col items-center justify-center gap-y-12'>
-      <Logo className='w-1/2' />
+      <Logo className='w-1/3' />
       <Button
         onClick={authModal.onOpen}
-        size='lg'
+        size='base'
         className='animated-underline'
       >
         Get Started
