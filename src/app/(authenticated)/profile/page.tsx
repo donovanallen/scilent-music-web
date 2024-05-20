@@ -49,10 +49,10 @@ const Profile: React.FC = () => {
       </Header>
       <div className='overflow-y-auto overflow-x-hidden px-6 no-scrollbar'>
         <Suspense fallback={<Skeleton />}>
-          <ProfileAura />
+          <TopItems />
         </Suspense>
         <Suspense fallback={<Skeleton />}>
-          <TopItems />
+          <ProfileAura />
         </Suspense>
       </div>
     </Box>

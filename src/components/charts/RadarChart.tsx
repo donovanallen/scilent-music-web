@@ -83,7 +83,7 @@ const RadarChart = ({
   const maxima = getMaxima(data);
   const maximum = Math.max(...(Object.values(maxima) as number[]));
   // console.log(maxima, { maximum });
-  console.log(data, { data });
+  // console.log('data', { data });
 
   const SmallRadarChart = () => (
     // Wrapper Svg needed for onPress events to work properly
@@ -159,12 +159,12 @@ const RadarChart = ({
           />
         </VictoryGroup>
       </VictoryChart>
-      <div className='w-4/5 flex items-center justify-evenly'>
+      <div className='w-4/5 flex items-center justify-evenly gap-x-2'>
         {data.map((d) => (
-          <div key={d.labelShort} className='flex gap-x-2 items-center my-2'>
+          <div key={d.labelShort} className='flex gap-x-1 items-center my-2'>
             <d.icon />
 
-            <span className='subtitle text-xs text-neutral-500'>
+            <span className='subtitle text-xs text-neutral-500 line-clamp-1'>
               {d.labelShort}
             </span>
           </div>

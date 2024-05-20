@@ -88,16 +88,18 @@ const MultiRadialChart = ({
   return (
     <div className='flex flex-col items-center justify-around h-full'>
       <svg ref={ref} width={width} height={width} className=''></svg>
-      <div className='w-4/5 flex items-center justify-evenly'>
+      <div className='w-4/5 flex items-center justify-evenly gap-x-2'>
         {chartData.map((d) => (
-          <div key={d.name} className='flex gap-x-2 items-center my-2'>
+          <div key={d.name} className='flex gap-x-1 items-center my-2'>
             <div
               className={cn('h-2 w-2 rounded-full')}
               style={{
                 backgroundColor: d.color,
               }}
             ></div>
-            <span className='subtitle text-xs text-neutral-500'>{d.name}</span>
+            <span className='subtitle text-xs text-neutral-500 line-clamp-1'>
+              {d.name}
+            </span>
           </div>
         ))}
       </div>

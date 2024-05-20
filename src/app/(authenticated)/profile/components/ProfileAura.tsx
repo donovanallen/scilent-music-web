@@ -16,6 +16,7 @@ import {
   getAudioFeature,
   getAura,
 } from '@/actions/getProfileAura';
+import PropertiesChart from '@/components/charts/PropertiesChart';
 
 const ProfileAura = () => {
   const [expanded, setExpanded] = useState(false);
@@ -60,7 +61,7 @@ const ProfileAura = () => {
           const mood = data.filter((a) => a.type === 'mood');
           const context = data.filter((a) => a.type === 'context');
           const properties = data.filter((a) => a.type === 'property');
-          // console.log('auraFeatures', { mood, context, properties });
+          // console.log('auraFeatures :: properties', { properties });
           setAuraFeatures({ mood, context, properties });
         }
       }
@@ -79,17 +80,19 @@ const ProfileAura = () => {
       </div>
 
       {/* CONTAINER */}
-      <div className='flex flex-col items-center'>
+      <div className='flex items-center'>
         {/* AURA ITEMS */}
         <Suspense fallback={<Skeleton />}>
-          <div className={cn('flex w-full flex-col md:flex-row gap-4')}>
+          <div
+            className={cn('flex w-full flex-col lg:flex-row gap-4 flex-wrap')}
+          >
             {/* AURA - MOOD */}
-            <div className='w-full flex-1'>
+            <div className='flex-1 w-full'>
               {auraFeatures?.mood && (
                 <HeaderItem
                   title={getAura('mood')?.label}
                   icon={getAura('mood')?.icon}
-                  className='py-4 '
+                  className='h-full'
                 >
                   {/* MULTIRADIAL CHART */}
                   <MultiRadialChart data={auraFeatures?.mood} width={200} />
@@ -98,24 +101,27 @@ const ProfileAura = () => {
             </div>
 
             {/* AURA - CONTEXT */}
-            <div className='w-full flex-1'>
+            <div className='flex-1 w-full'>
               {auraFeatures?.context && (
                 <HeaderItem
                   title={getAura('context')?.label}
                   icon={getAura('context')?.icon}
-                  className='py-8'
+                  className='h-full'
                 >
                   <RadarChart width={200} data={auraFeatures.context} />
                 </HeaderItem>
               )}
             </div>
             {/* AURA - PROPERTIES */}
-            <div className='w-full flex-1'>
+            <div className='flex-1 w-full'>
               {auraFeatures?.context && (
                 <HeaderItem
                   title={getAura('property')?.label}
                   icon={getAura('property')?.icon}
-                />
+                  className='h-full'
+                >
+                  <PropertiesChart data={auraFeatures?.properties} />
+                </HeaderItem>
               )}
             </div>
           </div>
