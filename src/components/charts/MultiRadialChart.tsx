@@ -82,7 +82,7 @@ const MultiRadialChart = ({
       .text((d) => `${d.value}`)
       .attr('fill', 'white')
       .attr('font-size', 18)
-      .each(function (d) {
+      .each(function (_d) {
         const text = d3.select(this);
         // text
         //   .append('svg')
