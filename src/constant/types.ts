@@ -1,18 +1,18 @@
+import { DiscoBall, Lectern } from '@phosphor-icons/react/dist/ssr';
 import { DefaultSession } from 'next-auth';
 import { IconType } from 'react-icons';
 import { BiPulse } from 'react-icons/bi';
+import { FaApple, FaMusic, FaSoundcloud, FaSpotify } from 'react-icons/fa6';
+import { GiAcousticMegaphone, GiRoundKnob } from 'react-icons/gi';
 import { LuUnplug } from 'react-icons/lu';
-import { TbMoodUp } from 'react-icons/tb';
 import {
+  PiAtom,
   PiGuitar,
   PiMetronome,
-  PiAtom,
   PiSliders,
   PiTicket,
 } from 'react-icons/pi';
-import { DiscoBall, Lectern } from '@phosphor-icons/react/dist/ssr';
-import { FaApple, FaMusic, FaSoundcloud, FaSpotify } from 'react-icons/fa6';
-import { GiAcousticMegaphone, GiRoundKnob } from 'react-icons/gi';
+import { TbMoodUp } from 'react-icons/tb';
 
 export interface AuthSession extends Omit<DefaultSession, 'user'> {
   user: AuthUser;

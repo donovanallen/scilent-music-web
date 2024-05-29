@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { useTopMusic } from '@/hooks/useTopMusic';
 
 import MultiRadialChart from '@/components/charts/MultiRadialChart';
+import PropertiesChart from '@/components/charts/PropertiesChart';
 import RadarChart from '@/components/charts/RadarChart';
 import HeaderItem from '@/components/HeaderItem';
 import Skeleton from '@/components/Skeleton';
@@ -16,7 +17,6 @@ import {
   getAudioFeature,
   getAura,
 } from '@/actions/getProfileAura';
-import PropertiesChart from '@/components/charts/PropertiesChart';
 
 const ProfileAura = () => {
   const [expanded, setExpanded] = useState(false);

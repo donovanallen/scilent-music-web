@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
+import { IconType } from 'react-icons';
 import {
   VictoryArea,
   VictoryChart,
@@ -10,7 +11,6 @@ import {
 } from 'victory';
 
 import { ScilentAudioFeatures } from '@/constant/types';
-import { IconType } from 'react-icons';
 
 interface RadarChartProps {
   width: number;
