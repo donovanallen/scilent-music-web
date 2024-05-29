@@ -69,7 +69,7 @@ const ProfileAura = () => {
   }, [topTracks]);
 
   return (
-    <div className={cn('w-full h-auto border-b p-6')}>
+    <div className={cn('w-full h-auto border-b py-6')}>
       {/* TITLE */}
       <div
         className='flex items-center justify-between text-light mb-4 cursor-pointer gap-x-1'
