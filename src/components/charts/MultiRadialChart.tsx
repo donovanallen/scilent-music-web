@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { IconType } from 'react-icons';
 
 import { cn, generateColorScale } from '@/lib/utils';
@@ -36,7 +36,7 @@ const MultiRadialChart = ({
   data,
   fullSize = false,
 }: MultiRadialChartProps) => {
-  const chartData: RadialChartData[] = formatData(data);
+  const chartData: RadialChartData[] = useMemo(() => formatData(data), [data]);
   const ref = useRef(null);
 
   useEffect(() => {

@@ -6,10 +6,12 @@ import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { cn } from '@/lib/utils';
 import { useTopMusic } from '@/hooks/useTopMusic';
 
+import TextButton from '@/components/buttons/TextButton';
 import MultiRadialChart from '@/components/charts/MultiRadialChart';
 import PropertiesChart from '@/components/charts/PropertiesChart';
 import RadarChart from '@/components/charts/RadarChart';
 import HeaderItem from '@/components/HeaderItem';
+import LoadingIndicator from '@/components/LoadingIndicator';
 import Skeleton from '@/components/Skeleton';
 
 import {
@@ -24,9 +26,10 @@ const ProfileAura = () => {
   const {
     tracks: topTracks,
     // artists: topArtists,
-    // filterOptions,
-    // selectedFilter,
-    // setSelectedFilter,
+    filterOptions,
+    selectedFilter,
+    setSelectedFilter,
+    isLoading,
   } = useTopMusic('short_term');
 
   const [auraFeatures, setAuraFeatures] = useState<{
@@ -76,7 +79,32 @@ const ProfileAura = () => {
         onClick={() => setExpanded(!expanded)}
       >
         <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>Aura</h3>
-        {/* TOP ITEMS FILTER OPTIONS */}
+        {/* AURA ITEMS FILTER OPTIONS */}
+        <>
+          {filterOptions && topTracks && (
+            // TODO: Refactor to FilterOptions component
+            <div className='flex items-center w-fit gap-x-2 sm:gap-x-4 lg:gap-x-6'>
+              {filterOptions.map((option) => (
+                <TextButton
+                  key={option.value}
+                  className={cn(
+                    'subtitle text-neutral-800 hover:text-brand-dark',
+                    'bg-transparent transition',
+                    'flex',
+                    selectedFilter == option.value ? 'text-brand-primary' : '',
+                  )}
+                  variant='basic'
+                  onClick={() => setSelectedFilter(option.value)}
+                >
+                  {option.label}
+                </TextButton>
+              ))}
+              {/* <div className='text-lg md:text-xl'>
+                {expanded ? <FaMinus /> : <FaPlus />}
+              </div> */}
+            </div>
+          )}
+        </>
       </div>
 
       {/* CONTAINER */}
@@ -95,7 +123,11 @@ const ProfileAura = () => {
                   className='h-full'
                 >
                   {/* MULTIRADIAL CHART */}
-                  <MultiRadialChart data={auraFeatures?.mood} width={200} />
+                  {isLoading ? (
+                    <LoadingIndicator />
+                  ) : (
+                    <MultiRadialChart data={auraFeatures?.mood} width={200} />
+                  )}
                 </HeaderItem>
               )}
             </div>
@@ -108,7 +140,11 @@ const ProfileAura = () => {
                   icon={getAura('context')?.icon}
                   className='h-full'
                 >
-                  <RadarChart width={200} data={auraFeatures.context} />
+                  {isLoading ? (
+                    <LoadingIndicator />
+                  ) : (
+                    <RadarChart width={200} data={auraFeatures.context} />
+                  )}
                 </HeaderItem>
               )}
             </div>
@@ -120,14 +156,16 @@ const ProfileAura = () => {
                   icon={getAura('property')?.icon}
                   className='h-full'
                 >
-                  <PropertiesChart data={auraFeatures?.properties} />
+                  {isLoading ? (
+                    <LoadingIndicator />
+                  ) : (
+                    <PropertiesChart data={auraFeatures?.properties} />
+                  )}
                 </HeaderItem>
               )}
             </div>
           </div>
         </Suspense>
-
-        {/* AURA ITEMS FILTER OPTIONS */}
 
         {/* SHOW MORE BUTTON */}
       </div>
