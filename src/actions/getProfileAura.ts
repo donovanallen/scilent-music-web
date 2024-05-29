@@ -64,14 +64,14 @@ export const analyzeAudioFeatures = (
       return acc;
     },
     {
-      key: {},
-      mode: {},
-      time_signature: {},
+      key: {} as any,
+      mode: {} as any,
+      time_signature: {} as any,
     },
   );
 
-  const mostFrequent = (obj) => {
-    const maxOccurrences = Math.max(...Object.values(obj));
+  const mostFrequent = (obj: any) => {
+    const maxOccurrences = Math.max(...(Object.values(obj) as number[]));
     return Object.keys(obj).find((key) => obj[key] === maxOccurrences);
   };
 

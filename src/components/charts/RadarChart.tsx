@@ -9,8 +9,20 @@ import {
   VictoryScatter,
 } from 'victory';
 
-import { getAudioFeature } from '@/actions/getProfileAura';
 import { ScilentAudioFeatures } from '@/constant/types';
+import { IconType } from 'react-icons';
+
+interface RadarChartProps {
+  width: number;
+  data: ScilentAudioFeatures[];
+  fullSize?: boolean;
+}
+
+interface RadarChartData {
+  x: number;
+  y: number;
+  iconLabel?: IconType;
+}
 
 const getMaxima = (data: ScilentAudioFeatures[]): any => {
   const contentValues = data.map((feature: any) => parseFloat(feature.content));
@@ -31,48 +43,28 @@ const processData = (data: ScilentAudioFeatures[]): RadarChartData[] => {
     return {
       x: feature.value,
       y: parseFloat(feature.content) / maxByGroup[feature.value],
+      iconLabel: feature.icon,
     };
   });
 };
 
 const ChartLabelIcon = (props: {
-  x: number;
-  y: number;
-  datum: any;
+  x?: number;
+  y?: number;
+  datum?: any;
+  scale?: any;
+  polar?: boolean;
 }): ReactNode | undefined => {
   const { x, y, datum } = props;
 
-  const iconName = datum.icon
-    ? datum.icon.name
-    : datum.xName
-      ? getAudioFeature(datum.xName).icon.name
-      : undefined;
+  const IconComponent = datum.iconLabel;
 
-  if (datum.icon) {
-    return (
-      <foreignObject x={x - 10} y={y - 10}>
-        {iconName}
-      </foreignObject>
-    );
-  } else if (datum.xName) {
-    return (
-      <foreignObject x={x - 10} y={y - 10}>
-        {iconName}
-      </foreignObject>
-    );
-  }
+  return (
+    <foreignObject x={x ? x - 5 : -5} y={y ? y - 5 : -5} width={10} height={10}>
+      <IconComponent size={10} />
+    </foreignObject>
+  );
 };
-
-interface RadarChartProps {
-  width: number;
-  data: ScilentAudioFeatures[];
-  fullSize?: boolean;
-}
-
-interface RadarChartData {
-  x: number;
-  y: number;
-}
 
 const RadarChart = ({
   data,
@@ -81,9 +73,7 @@ const RadarChart = ({
 }: RadarChartProps) => {
   const chartData: RadarChartData[] = processData(data);
   const maxima = getMaxima(data);
-  const maximum = Math.max(...(Object.values(maxima) as number[]));
-  // console.log(maxima, { maximum });
-  // console.log('data', { data });
+  // const maximum = Math.max(...(Object.values(maxima) as number[]));
 
   const SmallRadarChart = () => (
     // Wrapper Svg needed for onPress events to work properly
@@ -130,9 +120,9 @@ const RadarChart = ({
             style={{
               data: {
                 fillOpacity: 0.7,
-                strokeWidth: 2,
+                strokeWidth: 1,
                 strokeLinejoin: 'round',
-                fill: 'white',
+                fill: '#f9d3b4',
                 stroke: 'white',
               },
             }}
@@ -142,24 +132,20 @@ const RadarChart = ({
           <VictoryScatter
             data={chartData}
             polar
-            size={4}
+            size={2}
             style={{
               data: {
                 stroke: 'white',
-                fill: 'white',
-                strokeWidth: 1,
+                fill: '#756456',
+                strokeWidth: 0.5,
               },
-              // labels: {
-              // 	stroke: SCILENT_COLORS.scilentWhite,
-              // },
             }}
-            dataComponent={<ChartLabelIcon />}
-            // labels={() => ''}
-            // labelComponent={<ChartLabelIcon />}
+            labelComponent={<ChartLabelIcon />}
+            labels={({ datum }) => (datum.label ? '' : null)} // Ensure labels are processed only if there is an icon
           />
         </VictoryGroup>
       </VictoryChart>
-      <div className='w-4/5 flex items-center justify-evenly gap-x-2'>
+      <div className='w-full flex self-center items-center justify-evenly gap-x-2'>
         {data.map((d) => (
           <div key={d.labelShort} className='flex gap-x-1 items-center my-2'>
             <d.icon />

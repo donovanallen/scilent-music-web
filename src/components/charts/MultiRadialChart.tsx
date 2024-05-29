@@ -71,18 +71,34 @@ const MultiRadialChart = ({
       .attr('fill', (d) => d.color)
       .attr('transform', `translate(${chartRadius}, ${chartRadius})`);
 
-    // TODO Replace with icon
+    // TODO integrate icon
     // Render text labels for each bar
-    // svg
-    //   .selectAll('text')
-    //   .data(chartData)
-    //   .join('text')
-    //   .text((d) => d.name)
-    //   .attr('x', chartRadius + 10)
-    //   .attr('y', (d) => chartRadius + d.radius + barPadding + 10)
-    //   .attr('text-anchor', 'left')
-    //   .attr('fill', 'white')
-    //   .attr('font-size', 12);
+    svg
+      .selectAll('text')
+      .data(chartData)
+      .join('text')
+      .append('tspan')
+      .attr('class', 'value')
+      .text((d) => `${d.value}`)
+      .attr('fill', 'white')
+      .attr('font-size', 18)
+      .each(function (d) {
+        const text = d3.select(this);
+        // text
+        //   .append('svg')
+        //   .attr('class', 'icon')
+        //   .html(() => `${d.icon as IconType}`)
+        //   .attr('fill', 'white');
+        text
+          .append('tspan')
+          .attr('class', 'scale')
+          .text(' / 100')
+          .attr('fill', 'gray')
+          .attr('font-size', 12);
+      })
+      .attr('x', chartRadius + 10)
+      .attr('y', (d) => chartRadius + (d.radius || 0) + barPadding + 8)
+      .attr('text-anchor', 'left');
   }, [chartData, width, fullSize]);
 
   return (
