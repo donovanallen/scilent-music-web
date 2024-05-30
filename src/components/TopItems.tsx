@@ -12,7 +12,7 @@ import { TbMusicHeart, TbUserHeart } from 'react-icons/tb';
 import { cn, formatArtists } from '@/lib/utils';
 import { useTopMusic } from '@/hooks/useTopMusic';
 
-import TextButton from '@/components/buttons/TextButton';
+import FilterOptions from '@/components/FilterOptions';
 import HeaderItem from '@/components/HeaderItem';
 import Skeleton from '@/components/Skeleton';
 
@@ -181,23 +181,12 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
 
         {/* TOP ITEMS FILTER OPTIONS */}
         {filterOptions && (topArtists || topAlbums || topTracks) && (
-          // TODO: Refactor to FilterOptions component
-          <div className='flex items-center w-fit gap-x-2 sm:gap-x-4 lg:gap-x-6'>
-            {filterOptions.map((option) => (
-              <TextButton
-                key={option.value}
-                className={cn(
-                  'subtitle text-neutral-800 hover:text-brand-dark',
-                  'bg-transparent transition',
-                  'flex',
-                  selectedFilter == option.value ? 'text-brand-primary' : '',
-                )}
-                variant='basic'
-                onClick={() => setSelectedFilter(option.value)}
-              >
-                {option.label}
-              </TextButton>
-            ))}
+          <div className='inline-flex items-center gap-x-4'>
+            <FilterOptions
+              filterOptions={filterOptions}
+              selectedFilter={selectedFilter}
+              onFilterSelect={setSelectedFilter as () => void}
+            />
             <div className='text-lg md:text-xl'>
               {expanded ? <FaMinus /> : <FaPlus />}
             </div>
@@ -274,15 +263,13 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
         </Suspense>
 
         {/* SHOW MORE BUTTON */}
-        {expanded &&
-          filterOptions &&
-          (topArtists || topAlbums || topTracks) && (
-            <FaChevronUp
-              onClick={() => setExpanded(!expanded)}
-              size={24}
-              className='my-4 text-neutral-500 hover:text-light cursor-pointer transition'
-            />
-          )}
+        {expanded && (topArtists || topAlbums || topTracks) && (
+          <FaChevronUp
+            onClick={() => setExpanded(!expanded)}
+            size={24}
+            className='my-4 text-neutral-500 hover:text-light cursor-pointer transition'
+          />
+        )}
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { TOP_ITEMS_FILTER_OPTIONS } from '@/lib/utils';
 
 export const useTopMusic = (
-  filter?: 'short_term' | 'medium_term' | 'long_term' | undefined,
+  filter?: 'short_term' | 'medium_term' | 'long_term',
 ) => {
   const [selectedFilter, setSelectedFilter] = useState(filter);
   const [artists, setArtists] = useState<Artist[]>();
