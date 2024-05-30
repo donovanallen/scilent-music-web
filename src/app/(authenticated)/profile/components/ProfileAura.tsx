@@ -18,6 +18,7 @@ import {
   getAudioFeature,
   getAura,
 } from '@/actions/getProfileAura';
+import InfoIcon from '@/components/InfoIcon';
 
 const ProfileAura: React.FC = () => {
   const [expanded, setExpanded] = useState(false);
@@ -74,7 +75,11 @@ const ProfileAura: React.FC = () => {
         className='flex items-center justify-between text-light mb-4 cursor-pointer gap-x-1'
         onClick={() => setExpanded(!expanded)}
       >
-        <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>Aura</h3>
+        {/* TITLE */}
+        <div className='inline-flex items-center gap-x-2'>
+          <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>Aura</h3>
+          <InfoIcon />
+        </div>
         {/* AURA ITEMS FILTER OPTIONS */}
         <>
           {filterOptions && topTracks && (

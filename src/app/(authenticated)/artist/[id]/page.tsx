@@ -26,6 +26,7 @@ import {
   ScilentAlbum,
   ScilentExternalLink,
 } from '@/constant/types';
+import InfoIcon from '@/components/InfoIcon';
 // import { getArtistDiscography } from '@/actions/getArtistDiscography';
 
 // TODO: style header and metadata
@@ -150,10 +151,13 @@ const Artist = ({ params }: { params: { id: string } }) => {
 
         {/* ARTIST GENRES */}
         {metadata?.genres && (
-          <div className='w-full flex gap-x-2 mt-4'>
-            {metadata.genres.map((genre) => (
-              <Pill key={genre} text={genre}></Pill>
-            ))}
+          <div className='w-full flex flex-col gap-x-2 mt-4'>
+            <h4 className='subtitle text-neutral-500 text-2xs mb-2'>Genres</h4>
+            <div className='inline-flex items-center gap-x-2'>
+              {metadata.genres.map((genre) => (
+                <Pill key={genre} text={genre}></Pill>
+              ))}
+            </div>
           </div>
         )}
       </Header>
@@ -162,7 +166,10 @@ const Artist = ({ params }: { params: { id: string } }) => {
         {/* ARTIST TOP ITEMS */}
         {topItems && (
           <div className='flex flex-col my-4 gap-y-4'>
-            <h3 className='text-neutral-500'>Top Music</h3>
+            <div className='inline-flex items-center gap-x-2'>
+              <h3 className='text-neutral-500'>Top Music</h3>
+              <InfoIcon />
+            </div>
             <HeaderItem
               title='Top Track'
               name={topItems[0].name}
@@ -177,7 +184,10 @@ const Artist = ({ params }: { params: { id: string } }) => {
         {/* ARTIST RELEASES */}
         <div className='mt-2 mb-7'>
           <div className='w-full flex items-center gap-x-2'>
-            <h3 className='text-neutral-500'>Releases</h3>
+            <div className='inline-flex items-center gap-x-2'>
+              <h3 className='text-neutral-500'>Releases</h3>
+              <InfoIcon />
+            </div>
             {ReleaseFilters.map((option) => (
               <Button
                 key={option.value}

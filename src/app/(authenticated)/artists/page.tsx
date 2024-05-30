@@ -10,6 +10,7 @@ import sdk from '@/lib/spotify-sdk/ClientInstance';
 import Box from '@/components/Box';
 import Header from '@/components/Header';
 import PageContent from '@/components/PageContent';
+import InfoIcon from '@/components/InfoIcon';
 
 const Artists = () => {
   const [ref, entry] = useIntersectionObserver({
@@ -61,8 +62,16 @@ const Artists = () => {
 
   return (
     <Box className='bg-dark rounded-md h-full flex flex-col overflow-y-auto overflow-x-hidden'>
-      <Header title='Followed Artists'>
-        <h4 className='self-end font-thin'>
+      <Header>
+        {/* TITLE */}
+        {/* TITLE */}
+        <div className='inline-flex items-center gap-x-2'>
+          <h1 className='text-brand-light w-fit text-lg sm:text-xl md:text-2xl'>
+            Followed Artists
+          </h1>
+          <InfoIcon />
+        </div>
+        <h4 className='self-end font-thin subtitle'>
           {artists?.pages.flatMap((page) => page.items).length} of{' '}
           {followedArtists?.artists?.total} total
         </h4>

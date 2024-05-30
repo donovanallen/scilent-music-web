@@ -15,6 +15,7 @@ import { useTopMusic } from '@/hooks/useTopMusic';
 import TextButton from '@/components/buttons/TextButton';
 import HeaderItem from '@/components/HeaderItem';
 import Skeleton from '@/components/Skeleton';
+import InfoIcon from '@/components/InfoIcon';
 
 interface ExpandedTopItemProps {
   items: (Artist | Track | Album)[];
@@ -177,7 +178,10 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
         onClick={() => setExpanded(!expanded)}
       >
         {/* TITLE */}
-        <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>Top Music</h3>
+        <div className='inline-flex items-center gap-x-2'>
+          <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>Top Music</h3>
+          <InfoIcon />
+        </div>
 
         {/* TOP ITEMS FILTER OPTIONS */}
         {filterOptions && (topArtists || topAlbums || topTracks) && (

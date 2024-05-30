@@ -10,6 +10,7 @@ import TextButton from '@/components/buttons/TextButton';
 import Header from '@/components/Header';
 
 import SearchContent from './components/SearchContent';
+import InfoIcon from '@/components/InfoIcon';
 
 const SearchFilters = [
   {
@@ -40,9 +41,13 @@ const Search = () => {
     <Box className='bg-dark rounded-md h-full flex flex-col overflow-y-auto overflow-x-hidden'>
       <Header>
         <div className='flex items-center justify-between text-light mb-4 cursor-pointer gap-x-4 md:justify-start'>
-          <h1 className='text-brand-light w-fit text-lg sm:text-xl md:text-2xl'>
-            Search
-          </h1>
+          {/* TITLE */}
+          <div className='inline-flex items-center gap-x-2'>
+            <h1 className='text-brand-light w-fit text-lg sm:text-xl md:text-2xl'>
+              Search
+            </h1>
+            <InfoIcon />
+          </div>
           <div className='flex items-center w-fit gap-x-2 sm:gap-x-4 lg:gap-x-6'>
             {SearchFilters.map((option) => (
               <TextButton
