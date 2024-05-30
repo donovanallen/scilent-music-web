@@ -85,8 +85,9 @@ export type AuthUser = {
   id: string;
 };
 
+export type FilterValue = 'short_term' | 'medium_term' | 'long_term';
 export type FilterOption = {
-  value?: 'short_term' | 'medium_term' | 'long_term';
+  value?: FilterValue;
   label: string;
   desc: string;
 };

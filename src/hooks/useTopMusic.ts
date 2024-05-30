@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react';
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { TOP_ITEMS_FILTER_OPTIONS } from '@/lib/utils';
 
-export const useTopMusic = (
-  filter?: 'short_term' | 'medium_term' | 'long_term',
-) => {
-  const [selectedFilter, setSelectedFilter] = useState(filter);
+import { FilterValue } from '@/constant/types';
+
+export const useTopMusic = (filter?: FilterValue) => {
+  const [selectedFilter, setSelectedFilter] = useState<FilterValue | undefined>(
+    filter,
+  );
   const [artists, setArtists] = useState<Artist[]>();
   const [tracks, setTracks] = useState<Track[]>();
   const [albums, setAlbums] = useState<Album[]>([] as Album[]);

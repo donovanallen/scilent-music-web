@@ -4,12 +4,12 @@ import { cn } from '@/lib/utils';
 
 import TextButton from '@/components/buttons/TextButton';
 
-import { FilterOption } from '@/constant/types';
+import { FilterOption, FilterValue } from '@/constant/types';
 
 interface FilterOptionsProps {
   filterOptions: FilterOption[];
-  selectedFilter?: string;
-  onFilterSelect: (filterValue?: string) => void;
+  selectedFilter?: FilterValue;
+  onFilterSelect: (filterValue?: FilterValue) => void;
   className?: string;
 }
 
