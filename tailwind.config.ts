@@ -1,6 +1,6 @@
+import { nextui } from '@nextui-org/react';
 import type { Config } from 'tailwindcss';
 import defaultTheme from 'tailwindcss/defaultTheme';
-import { nextui } from '@nextui-org/react';
 
 export default {
   content: [
