@@ -9,8 +9,8 @@ import sdk from '@/lib/spotify-sdk/ClientInstance';
 
 import Box from '@/components/Box';
 import Header from '@/components/Header';
-import PageContent from '@/components/PageContent';
 import InfoIcon from '@/components/InfoIcon';
+import PageContent from '@/components/PageContent';
 
 const Artists = () => {
   const [ref, entry] = useIntersectionObserver({

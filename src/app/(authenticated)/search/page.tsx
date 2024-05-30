@@ -8,9 +8,9 @@ import { cn } from '@/lib/utils';
 import Box from '@/components/Box';
 import TextButton from '@/components/buttons/TextButton';
 import Header from '@/components/Header';
+import InfoIcon from '@/components/InfoIcon';
 
 import SearchContent from './components/SearchContent';
-import InfoIcon from '@/components/InfoIcon';
 
 const SearchFilters = [
   {

@@ -17,6 +17,7 @@ import ExternalLinks from '@/components/ExternalLinks';
 import Header from '@/components/Header';
 import HeaderImage from '@/components/HeaderImage';
 import HeaderItem from '@/components/HeaderItem';
+import InfoIcon from '@/components/InfoIcon';
 import PageContent from '@/components/PageContent';
 import Pill from '@/components/Pill';
 
@@ -26,7 +27,6 @@ import {
   ScilentAlbum,
   ScilentExternalLink,
 } from '@/constant/types';
-import InfoIcon from '@/components/InfoIcon';
 // import { getArtistDiscography } from '@/actions/getArtistDiscography';
 
 // TODO: style header and metadata

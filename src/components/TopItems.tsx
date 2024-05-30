@@ -14,8 +14,8 @@ import { useTopMusic } from '@/hooks/useTopMusic';
 
 import TextButton from '@/components/buttons/TextButton';
 import HeaderItem from '@/components/HeaderItem';
-import Skeleton from '@/components/Skeleton';
 import InfoIcon from '@/components/InfoIcon';
+import Skeleton from '@/components/Skeleton';
 
 interface ExpandedTopItemProps {
   items: (Artist | Track | Album)[];

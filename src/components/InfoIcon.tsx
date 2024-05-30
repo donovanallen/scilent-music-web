@@ -1,9 +1,10 @@
 import React from 'react';
+import { IconType } from 'react-icons';
+import { PiInfo } from 'react-icons/pi';
 
 import { cn } from '@/lib/utils';
-import { IconType } from 'react-icons';
+
 import IconButton from '@/components/buttons/IconButton';
-import { PiInfo } from 'react-icons/pi';
 
 type InfoIconProps = {
   icon?: IconType;

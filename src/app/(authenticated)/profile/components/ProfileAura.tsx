@@ -11,6 +11,7 @@ import MultiRadialChart from '@/components/charts/MultiRadialChart';
 import PropertiesChart from '@/components/charts/PropertiesChart';
 import RadarChart from '@/components/charts/RadarChart';
 import HeaderItem from '@/components/HeaderItem';
+import InfoIcon from '@/components/InfoIcon';
 import Skeleton from '@/components/Skeleton';
 
 import {
@@ -18,7 +19,6 @@ import {
   getAudioFeature,
   getAura,
 } from '@/actions/getProfileAura';
-import InfoIcon from '@/components/InfoIcon';
 
 const ProfileAura: React.FC = () => {
   const [expanded, setExpanded] = useState(false);
