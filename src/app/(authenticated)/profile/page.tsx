@@ -12,6 +12,8 @@ import IconLink from '@/components/links/IconLink';
 import Skeleton from '@/components/Skeleton';
 import TopItems from '@/components/TopItems';
 
+import ProfileAura from '@/app/(authenticated)/profile/components/ProfileAura';
+
 import ProfileInfo from './components/ProfileInfo';
 
 const Profile: React.FC = () => {
@@ -46,6 +48,9 @@ const Profile: React.FC = () => {
         </Suspense>
       </Header>
       <div className='overflow-y-auto overflow-x-hidden px-6 no-scrollbar'>
+        <Suspense fallback={<Skeleton />}>
+          <ProfileAura />
+        </Suspense>
         <Suspense fallback={<Skeleton />}>
           <TopItems />
         </Suspense>

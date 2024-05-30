@@ -129,3 +129,45 @@ export const getSourceIcon = (source: string): IconType => {
       return FaMusic;
   }
 };
+
+export const generateColorScale = (
+  minValue: number,
+  maxValue: number,
+  currentValue: number,
+) => {
+  if (minValue >= maxValue) {
+    throw new Error('Invalid range: minValue must be less than maxValue');
+  }
+
+  const range = maxValue - minValue;
+  const segmentSize = range / 10; // Divide the range into 10 segments
+
+  if (currentValue < minValue || currentValue > maxValue) {
+    throw new Error(
+      'Invalid value: currentValue must be within the specified range',
+    );
+  }
+
+  // Determine the segment index of the current value
+  const segmentIndex = Math.floor((currentValue - minValue) / segmentSize);
+
+  // Define the color scale for each segment
+  const colorScale = [
+    '#FF0000', // Red
+    '#FF4500', // OrangeRed
+    '#FF8C00', // DarkOrange
+    '#FFA500', // Orange
+    '#FFD700', // Gold
+    '#FFFF00', // Yellow
+    '#ADFF2F', // GreenYellow
+    '#7FFF00', // Chartreuse
+    '#00FF00', // Lime
+    '#00FA9A', // MediumSpringGreen
+    '#00FFFF', // Cyan
+  ];
+
+  // Retrieve the color associated with the segment index
+  const color = colorScale[segmentIndex];
+
+  return color;
+};

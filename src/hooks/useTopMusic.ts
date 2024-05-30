@@ -12,14 +12,23 @@ export const useTopMusic = (
   const [tracks, setTracks] = useState<Track[]>();
   const [albums, setAlbums] = useState<Album[]>([] as Album[]);
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+
   useEffect(() => {
     (async () => {
+      setIsLoading(true);
       const artists = await sdk.currentUser.topItems('artists', selectedFilter);
       const tracks = await sdk.currentUser.topItems('tracks', selectedFilter);
       setArtists(() => artists.items);
       setTracks(() => tracks.items);
       setAlbums(() => [] as Album[]);
-    })();
+    })()
+      .catch((e) => {
+        console.error('ERROR getting Top Artists/Tracks:', e);
+        setError(true);
+      })
+      .finally(() => setIsLoading(false));
   }, [selectedFilter]);
 
   return {
@@ -32,8 +41,8 @@ export const useTopMusic = (
     setSelectedFilter,
 
     // Status
-    // isLoading: isLoading && !error && !data,
-    // isError: error,
+    isLoading: isLoading && !error,
+    isError: error,
     // isValidating,
   };
 };
