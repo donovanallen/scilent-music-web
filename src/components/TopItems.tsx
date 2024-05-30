@@ -14,7 +14,6 @@ import { useTopMusic } from '@/hooks/useTopMusic';
 
 import TextButton from '@/components/buttons/TextButton';
 import HeaderItem from '@/components/HeaderItem';
-import LoadingIndicator from '@/components/LoadingIndicator';
 import Skeleton from '@/components/Skeleton';
 
 interface ExpandedTopItemProps {
@@ -172,44 +171,38 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
 
   return (
     <div className={cn('w-full h-auto py-6 border-b-2')}>
-      {/* TITLE */}
+      {/* HEADER */}
       <div
         className='flex items-center justify-between text-light mb-4 cursor-pointer gap-x-1'
         onClick={() => setExpanded(!expanded)}
       >
+        {/* TITLE */}
         <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>Top Music</h3>
-        {/* TOP ITEMS FILTER OPTIONS */}
-        <>
-          {filterOptions && (topArtists || topAlbums || topTracks) && (
-            // TODO: Refactor to FilterOptions component
-            <div className='flex items-center w-fit gap-x-2 sm:gap-x-4 lg:gap-x-6'>
-              {filterOptions.map((option) => (
-                <TextButton
-                  key={option.value}
-                  className={cn(
-                    'subtitle text-neutral-800 hover:text-brand-dark',
-                    'bg-transparent transition',
-                    'flex',
-                    selectedFilter == option.value ? 'text-brand-primary' : '',
-                  )}
-                  variant='basic'
-                  onClick={() => setSelectedFilter(option.value)}
-                >
-                  {option.label}
-                </TextButton>
-              ))}
-              <div className='text-lg md:text-xl'>
-                {expanded ? <FaMinus /> : <FaPlus />}
-              </div>
-            </div>
-          )}
-        </>
 
-        {/* {!expanded && (
-          <div className='text-lg md:text-xl'>
-            <FaPlus />
+        {/* TOP ITEMS FILTER OPTIONS */}
+        {filterOptions && (topArtists || topAlbums || topTracks) && (
+          // TODO: Refactor to FilterOptions component
+          <div className='flex items-center w-fit gap-x-2 sm:gap-x-4 lg:gap-x-6'>
+            {filterOptions.map((option) => (
+              <TextButton
+                key={option.value}
+                className={cn(
+                  'subtitle text-neutral-800 hover:text-brand-dark',
+                  'bg-transparent transition',
+                  'flex',
+                  selectedFilter == option.value ? 'text-brand-primary' : '',
+                )}
+                variant='basic'
+                onClick={() => setSelectedFilter(option.value)}
+              >
+                {option.label}
+              </TextButton>
+            ))}
+            <div className='text-lg md:text-xl'>
+              {expanded ? <FaMinus /> : <FaPlus />}
+            </div>
           </div>
-        )} */}
+        )}
       </div>
 
       {/* CONTAINER */}
@@ -219,10 +212,7 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
           <div className={cn('flex w-full flex-col md:flex-row gap-4')}>
             {/* TOP ARTISTS */}
             <div className='w-full flex-1'>
-              {isLoading ? (
-                <LoadingIndicator />
-              ) : (
-                topArtists &&
+              {topArtists &&
                 (!expanded ? (
                   <HeaderItem
                     title='Top Artist'
@@ -237,16 +227,12 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
                     items={topArtists}
                     icon={TbUserHeart}
                   />
-                ))
-              )}
+                ))}
             </div>
 
             {/* TOP TRACKS */}
             <div className='w-full flex-1'>
-              {isLoading ? (
-                <LoadingIndicator />
-              ) : (
-                topTracks &&
+              {topTracks &&
                 (!expanded ? (
                   <HeaderItem
                     title='Top Track'
@@ -263,16 +249,12 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
                     items={topTracks}
                     icon={TbMusicHeart}
                   />
-                ))
-              )}
+                ))}
             </div>
 
             {/* TOP ALBUMS */}
             <div className='w-full flex-1'>
-              {isLoading ? (
-                <LoadingIndicator />
-              ) : (
-                topAlbums &&
+              {topAlbums &&
                 (!expanded ? (
                   <HeaderItem
                     title='Top Album'
@@ -286,43 +268,20 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
                     items={topAlbums}
                     icon={BiAlbum}
                   />
-                ))
-              )}
+                ))}
             </div>
           </div>
         </Suspense>
 
         {/* SHOW MORE BUTTON */}
-        {/* TOP ITEMS FILTER OPTIONS */}
         {expanded &&
           filterOptions &&
           (topArtists || topAlbums || topTracks) && (
-            <>
-              {/* <div className='flex items-center w-fit gap-x-2 sm:gap-x-4 lg:gap-x-6 my-4'>
-                {filterOptions.map((option) => (
-                  <TextButton
-                    key={option.value}
-                    className={cn(
-                      'subtitle text-neutral-800 hover:text-brand-dark',
-                      'bg-transparent transition',
-                      'flex',
-                      selectedFilter == option.value
-                        ? 'text-brand-primary'
-                        : '',
-                    )}
-                    variant='basic'
-                    onClick={() => setSelectedFilter(option.value)}
-                  >
-                    {option.label}
-                  </TextButton>
-                ))}
-              </div> */}
-              <FaChevronUp
-                onClick={() => setExpanded(!expanded)}
-                size={24}
-                className='my-4 text-neutral-500 hover:text-light cursor-pointer transition'
-              />
-            </>
+            <FaChevronUp
+              onClick={() => setExpanded(!expanded)}
+              size={24}
+              className='my-4 text-neutral-500 hover:text-light cursor-pointer transition'
+            />
           )}
       </div>
     </div>

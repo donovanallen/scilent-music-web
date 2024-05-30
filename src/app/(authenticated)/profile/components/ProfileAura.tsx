@@ -11,7 +11,6 @@ import MultiRadialChart from '@/components/charts/MultiRadialChart';
 import PropertiesChart from '@/components/charts/PropertiesChart';
 import RadarChart from '@/components/charts/RadarChart';
 import HeaderItem from '@/components/HeaderItem';
-import LoadingIndicator from '@/components/LoadingIndicator';
 import Skeleton from '@/components/Skeleton';
 
 import {
@@ -20,12 +19,11 @@ import {
   getAura,
 } from '@/actions/getProfileAura';
 
-const ProfileAura = () => {
+const ProfileAura: React.FC = () => {
   const [expanded, setExpanded] = useState(false);
 
   const {
     tracks: topTracks,
-    // artists: topArtists,
     filterOptions,
     selectedFilter,
     setSelectedFilter,
@@ -44,10 +42,8 @@ const ProfileAura = () => {
         const audioFeatures = await sdk.tracks.audioFeatures(
           topTracks?.map((track) => track.id),
         );
-        // console.log({ audioFeatures });
 
         const aura = analyzeAudioFeatures(audioFeatures);
-        // console.log({ aura });
 
         if (aura) {
           const { averages } = aura;
@@ -61,10 +57,10 @@ const ProfileAura = () => {
               }
             }
           }
+
           const mood = data.filter((a) => a.type === 'mood');
           const context = data.filter((a) => a.type === 'context');
           const properties = data.filter((a) => a.type === 'property');
-          // console.log('auraFeatures :: properties', { properties });
           setAuraFeatures({ mood, context, properties });
         }
       }
@@ -123,11 +119,7 @@ const ProfileAura = () => {
                   className='h-full'
                 >
                   {/* MULTIRADIAL CHART */}
-                  {isLoading ? (
-                    <LoadingIndicator />
-                  ) : (
-                    <MultiRadialChart data={auraFeatures?.mood} width={200} />
-                  )}
+                  <MultiRadialChart data={auraFeatures?.mood} width={200} />
                 </HeaderItem>
               )}
             </div>
@@ -140,11 +132,7 @@ const ProfileAura = () => {
                   icon={getAura('context')?.icon}
                   className='h-full'
                 >
-                  {isLoading ? (
-                    <LoadingIndicator />
-                  ) : (
-                    <RadarChart width={200} data={auraFeatures.context} />
-                  )}
+                  <RadarChart width={200} data={auraFeatures.context} />
                 </HeaderItem>
               )}
             </div>
@@ -156,18 +144,12 @@ const ProfileAura = () => {
                   icon={getAura('property')?.icon}
                   className='h-full'
                 >
-                  {isLoading ? (
-                    <LoadingIndicator />
-                  ) : (
-                    <PropertiesChart data={auraFeatures?.properties} />
-                  )}
+                  <PropertiesChart data={auraFeatures?.properties} />
                 </HeaderItem>
               )}
             </div>
           </div>
         </Suspense>
-
-        {/* SHOW MORE BUTTON */}
       </div>
     </div>
   );
