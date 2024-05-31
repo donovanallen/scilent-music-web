@@ -1,20 +1,35 @@
 'use client';
 
-import { zoomies } from 'ldrs';
+import { Progress } from '@nextui-org/react';
 import * as React from 'react';
-// type LoadingIndicatorProps = React.ComponentPropsWithoutRef<'div'>;
 
-export default function LoadingIndicator() {
-  zoomies.register();
-  return (
-    <div>
-      <l-zoomies
-        size='150'
-        stroke='2'
-        bg-opacity='0.2'
-        speed='1.2'
-        color='#f9d3b4'
-      ></l-zoomies>
-    </div>
-  );
+import { cn } from '@/lib/utils';
+
+interface LoadingIndicatorProps {
+  label?: string;
+  className?: string;
 }
+
+const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({
+  label = 'Loading',
+  className,
+}) => {
+  return (
+    <Progress
+      size='sm'
+      color='primary'
+      isIndeterminate
+      aria-label='Loading...'
+      className={cn(className)}
+      classNames={{
+        base: 'max-w-md',
+        track: 'drop-shadow-md',
+        indicator: 'bg-gradient-to-r from-brand-dark to-brand-primary',
+        label: 'tracking-wider font-medium text-default-600',
+        value: 'text-foreground/60',
+      }}
+    />
+  );
+};
+
+export default LoadingIndicator;
