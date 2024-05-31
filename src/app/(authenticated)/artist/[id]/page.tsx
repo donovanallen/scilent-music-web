@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import numbro from 'numbro';
 import React, { useEffect, useState } from 'react';
-import { FaCheck, FaUser } from 'react-icons/fa6';
+import toast from 'react-hot-toast';
+import { FaCheck, FaPlus, FaUser } from 'react-icons/fa6';
 import { TbMusicHeart } from 'react-icons/tb';
 
 import sdk from '@/lib/spotify-sdk/ClientInstance';
@@ -14,6 +15,7 @@ import { cn } from '@/lib/utils';
 
 import Box from '@/components/Box';
 import TextButton from '@/components/buttons/TextButton';
+import IconButton from '@/components/buttons/IconButton';
 import ExternalLinks from '@/components/ExternalLinks';
 import Header from '@/components/Header';
 import HeaderImage from '@/components/HeaderImage';
@@ -110,6 +112,20 @@ const Artist = ({ params }: { params: { id: string } }) => {
     }
   }, [metadata]);
 
+  const followArtist = async (id: string) => {
+    return await sdk.currentUser
+      .followArtistsOrUsers([id], 'artist')
+      .catch((e) => {
+        toast.error('Error following artist: ', e);
+      })
+      .then(() => {
+        setUserFollows(true);
+      })
+      .finally(() => {
+        toast.success('Artist followed');
+      });
+  };
+
   return (
     <Box className='bg-dark rounded-md h-full flex flex-col overflow-y-auto overflow-x-hidden'>
       <Header>
@@ -117,7 +133,15 @@ const Artist = ({ params }: { params: { id: string } }) => {
         <div className='flex w-full items-center justify-between'>
           <div className='flex items-center gap-x-2 text-neutral-500'>
             <h4>{metadata?.type}</h4>
-            {userFollows && <FaCheck />}
+            {userFollows ? (
+              <FaCheck className='text-brand-dark' />
+            ) : (
+              <IconButton
+                onClick={() => followArtist(params.id)}
+                icon={FaPlus}
+                variant='ghost'
+              />
+            )}
           </div>
           <ExternalLinks links={links} />
         </div>
