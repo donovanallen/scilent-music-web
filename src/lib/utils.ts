@@ -82,9 +82,9 @@ export const TOP_ITEMS_FILTER_OPTIONS: FilterOption[] = [
     desc: 'Approximately last 6 months',
   },
   {
-    label: 'All-time',
+    label: '1 Year',
     value: 'long_term', // calculated from several years of data and including all new data as it becomes available
-    desc: 'Calculated from several years of data and including all new data as it becomes available',
+    desc: 'Calculated from ~1 year of data and including all new data as it becomes available',
   },
 ];
 
