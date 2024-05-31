@@ -10,8 +10,7 @@ import { cn } from '@/lib/utils';
 import useAuthModal from '@/hooks/useAuthModal';
 
 import Button from '@/components/buttons/Button';
-// import Modal from '@/components/Modal';
-import NextModal from '@/components/next/Modal';
+import NextModal from '@/components/Modal';
 
 const AuthModal = () => {
   const router = useRouter();
