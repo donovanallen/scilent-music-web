@@ -1,18 +1,17 @@
 'use client';
 
 import { ScrollShadow } from '@nextui-org/react';
-import { ItemTypes } from '@spotify/web-api-ts-sdk';
 import React, { useState } from 'react';
 
-import { cn } from '@/lib/utils';
-
 import Box from '@/components/Box';
-import TextButton from '@/components/buttons/TextButton';
+import FilterOptions from '@/components/FilterOptions';
 import Header from '@/components/Header';
+
+import { FilterOption, SearchFilterValue } from '@/constant/types';
 
 import SearchContent from './components/SearchContent';
 
-const SearchFilters = [
+const SearchFilters: FilterOption[] = [
   {
     value: 'artist',
     desc: 'Show artists in search results',
@@ -34,7 +33,7 @@ const SearchFilters = [
 const Search = () => {
   const [searchInput, setSearchInput] = useState('');
   const [selectedFilter, setSelectedFilter] = useState<
-    ItemTypes | string | undefined
+    SearchFilterValue | undefined
   >();
 
   return (
@@ -45,25 +44,12 @@ const Search = () => {
             Search
           </h1>
           <div className='flex items-center w-fit gap-x-2 sm:gap-x-4 lg:gap-x-6'>
-            {SearchFilters.map((option) => (
-              <TextButton
-                key={option.value}
-                className={cn(
-                  'subtitle text-neutral-800 hover:text-brand-dark',
-                  'bg-transparent transition',
-                  'flex',
-                  selectedFilter == option.value ? 'text-brand-primary' : '',
-                )}
-                variant='basic'
-                onClick={() =>
-                  setSelectedFilter(
-                    selectedFilter == option.value ? undefined : option.value,
-                  )
-                }
-              >
-                {option.label}
-              </TextButton>
-            ))}
+            <FilterOptions
+              filterOptions={SearchFilters}
+              selectedFilter={selectedFilter}
+              onFilterSelect={setSelectedFilter as () => void}
+              isNullable
+            />
           </div>
         </div>
         <input

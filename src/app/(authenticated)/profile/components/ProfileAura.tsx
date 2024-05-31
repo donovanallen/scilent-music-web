@@ -71,12 +71,14 @@ const ProfileAura: React.FC = () => {
   return (
     <div className={cn('w-full h-auto border-b py-6')}>
       {/* HEADER */}
-      <div
-        className='flex items-center justify-between text-light mb-4 cursor-pointer gap-x-1'
-        onClick={() => setExpanded(!expanded)}
-      >
+      <div className='flex items-center justify-between text-light mb-4 cursor-pointer gap-x-1'>
         {/* TITLE */}
-        <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>Aura</h3>
+        <h3
+          className='w-fit text-lg sm:text-xl md:text-2xl'
+          onClick={() => setExpanded(!expanded)}
+        >
+          Aura
+        </h3>
 
         {/* AURA ITEMS FILTER OPTIONS */}
         {filterOptions && topTracks && (
@@ -86,7 +88,10 @@ const ProfileAura: React.FC = () => {
               selectedFilter={selectedFilter}
               onFilterSelect={setSelectedFilter as () => void}
             />
-            <div className='text-lg md:text-xl'>
+            <div
+              className='text-lg md:text-xl'
+              onClick={() => setExpanded(!expanded)}
+            >
               {expanded ? <FaMinus /> : <FaPlus />}
             </div>
           </div>

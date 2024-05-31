@@ -1,15 +1,20 @@
 import React from 'react';
+import { IoClose } from 'react-icons/io5';
 
 import { cn } from '@/lib/utils';
 
+import IconButton from '@/components/buttons/IconButton';
 import TextButton from '@/components/buttons/TextButton';
 
 import { FilterOption, FilterValue } from '@/constant/types';
 
+import { SearchFilterValue } from '../constant/types';
+
 interface FilterOptionsProps {
   filterOptions: FilterOption[];
-  selectedFilter?: FilterValue;
-  onFilterSelect: (filterValue?: FilterValue) => void;
+  selectedFilter?: FilterValue | SearchFilterValue;
+  onFilterSelect: (filterValue?: FilterValue | SearchFilterValue) => void;
+  isNullable?: boolean;
   className?: string;
 }
 
@@ -18,6 +23,7 @@ const FilterOptions: React.FC<FilterOptionsProps> = ({
   selectedFilter,
   onFilterSelect,
   className,
+  isNullable,
 }) => {
   return (
     <div
@@ -41,6 +47,14 @@ const FilterOptions: React.FC<FilterOptionsProps> = ({
           {option.label}
         </TextButton>
       ))}
+      {isNullable && selectedFilter && (
+        <IconButton
+          icon={IoClose}
+          variant='ghost'
+          onClick={() => onFilterSelect(null)}
+          disabled={selectedFilter == null}
+        />
+      )}
     </div>
   );
 };

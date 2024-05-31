@@ -86,8 +86,9 @@ export type AuthUser = {
 };
 
 export type FilterValue = 'short_term' | 'medium_term' | 'long_term';
+export type SearchFilterValue = 'artist' | 'album' | 'track' | null;
 export type FilterOption = {
-  value?: FilterValue;
+  value?: FilterValue | SearchFilterValue;
   label: string;
   desc: string;
 };

@@ -172,12 +172,14 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
   return (
     <div className={cn('w-full h-auto py-6 border-b-2')}>
       {/* HEADER */}
-      <div
-        className='flex items-center justify-between text-light mb-4 cursor-pointer gap-x-1'
-        onClick={() => setExpanded(!expanded)}
-      >
+      <div className='flex items-center justify-between text-light mb-4 cursor-pointer gap-x-1'>
         {/* TITLE */}
-        <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>Top Music</h3>
+        <h3
+          onClick={() => setExpanded(!expanded)}
+          className='w-fit text-lg sm:text-xl md:text-2xl'
+        >
+          Top Music
+        </h3>
 
         {/* TOP ITEMS FILTER OPTIONS */}
         {filterOptions && (topArtists || topAlbums || topTracks) && (
@@ -187,7 +189,10 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
               selectedFilter={selectedFilter}
               onFilterSelect={setSelectedFilter as () => void}
             />
-            <div className='text-lg md:text-xl'>
+            <div
+              onClick={() => setExpanded(!expanded)}
+              className='text-lg md:text-xl'
+            >
               {expanded ? <FaMinus /> : <FaPlus />}
             </div>
           </div>
