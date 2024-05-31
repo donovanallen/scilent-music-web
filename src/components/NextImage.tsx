@@ -41,7 +41,7 @@ export default function NextImage({
   const widthIsSet = className?.includes('w-') ?? false;
 
   return (
-    <Skeleton className='rounded-md bg-neutral-500' isLoaded={isImageLoaded}>
+    <Skeleton className='rounded-md' isLoaded={isImageLoaded}>
       <div
         style={!widthIsSet ? { width: `${width}px` } : undefined}
         className={className}
