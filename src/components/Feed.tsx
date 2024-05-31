@@ -9,6 +9,7 @@ import { TbPlaylist } from 'react-icons/tb';
 
 import Box from '@/components/Box';
 import FeedItem from '@/components/FeedItem';
+import InfoIcon from '@/components/InfoIcon';
 
 interface FeedProps {
   title?: string;
@@ -22,9 +23,18 @@ const Feed: React.FC<FeedProps> = ({ title, cpTrack, history }) => {
       <div className='sticky top-0 bg-dark z-10'>
         {/* HEADING/TITLE */}
         {title && (
-          <div className='inline-flex items-center gap-x-2'>
-            <TbPlaylist className='text-neutral-400' />
-            <h3 className='text-neutral-400'>{title}</h3>
+          <div className='inline-flex items-center w-full justify-between'>
+            <div className='inline-flex items-center gap-x-2'>
+              <TbPlaylist className='text-neutral-400' />
+              <h3 className='text-neutral-400'>{title}</h3>
+              <InfoIcon
+                tooltipEnabled
+                tooltip={{
+                  content:
+                    "This is your Live Mix. Here you'll find your recent activity and your currently playing track. In future versions, this will be home to much more including live aura updates, friend activity, and recent releases.",
+                }}
+              />
+            </div>
           </div>
         )}
 

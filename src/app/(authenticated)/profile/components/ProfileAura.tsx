@@ -1,7 +1,6 @@
 'use client';
 
 import React, { Suspense, useEffect, useState } from 'react';
-import { FaMinus, FaPlus } from 'react-icons/fa6';
 
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { cn } from '@/lib/utils';
@@ -12,6 +11,7 @@ import PropertiesChart from '@/components/charts/PropertiesChart';
 import RadarChart from '@/components/charts/RadarChart';
 import FilterOptions from '@/components/FilterOptions';
 import HeaderItem from '@/components/HeaderItem';
+import InfoIcon from '@/components/InfoIcon';
 import Skeleton from '@/components/Skeleton';
 
 import {
@@ -21,7 +21,7 @@ import {
 } from '@/actions/getProfileAura';
 
 const ProfileAura: React.FC = () => {
-  const [expanded, setExpanded] = useState(false);
+  // const [expanded, setExpanded] = useState(false);
 
   const {
     tracks: topTracks,
@@ -73,12 +73,27 @@ const ProfileAura: React.FC = () => {
       {/* HEADER */}
       <div className='flex items-center justify-between text-light mb-4 cursor-pointer gap-x-1'>
         {/* TITLE */}
-        <h3
-          className='w-fit text-lg sm:text-xl md:text-2xl'
-          onClick={() => setExpanded(!expanded)}
-        >
-          Aura
-        </h3>
+        <div className='inline-flex items-center'>
+          <h3
+            className='w-fit text-lg sm:text-xl md:text-2xl'
+            // onClick={() => setExpanded(!expanded)}
+          >
+            Aura
+          </h3>
+          {/* <div
+            onClick={() => setExpanded(!expanded)}
+            className='text-lg md:text-xl'
+          >
+            {expanded ? <FaMinus /> : <FaPlus />}
+          </div> */}
+          <InfoIcon
+            tooltipEnabled
+            tooltip={{
+              content:
+                'Your Aura consists of live insights from your listening data. For the given time periods, you can see how different aspects of your music preferences have changed. In future versions, this data will be much more extensive and you will be able to compare with friends and share socially.',
+            }}
+          />
+        </div>
 
         {/* AURA ITEMS FILTER OPTIONS */}
         {filterOptions && topTracks && (
@@ -87,13 +102,8 @@ const ProfileAura: React.FC = () => {
               filterOptions={filterOptions}
               selectedFilter={selectedFilter}
               onFilterSelect={setSelectedFilter as () => void}
+              tooltipsEnabled
             />
-            <div
-              className='text-lg md:text-xl'
-              onClick={() => setExpanded(!expanded)}
-            >
-              {expanded ? <FaMinus /> : <FaPlus />}
-            </div>
           </div>
         )}
       </div>
