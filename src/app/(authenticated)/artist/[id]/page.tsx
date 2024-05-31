@@ -1,5 +1,6 @@
 'use client';
 
+import { ScrollShadow } from '@nextui-org/react';
 import { Artist, SimplifiedAlbum, Track } from '@spotify/web-api-ts-sdk';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
@@ -12,13 +13,13 @@ import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { cn } from '@/lib/utils';
 
 import Box from '@/components/Box';
-import Button from '@/components/Button';
+import TextButton from '@/components/buttons/TextButton';
 import ExternalLinks from '@/components/ExternalLinks';
 import Header from '@/components/Header';
 import HeaderImage from '@/components/HeaderImage';
 import HeaderItem from '@/components/HeaderItem';
 import PageContent from '@/components/PageContent';
-import Pill from '@/components/Pill';
+import NextPill from '@/components/Pill';
 
 import {
   ReleaseFilters,
@@ -152,58 +153,61 @@ const Artist = ({ params }: { params: { id: string } }) => {
         {metadata?.genres && (
           <div className='w-full flex gap-x-2 mt-4'>
             {metadata.genres.map((genre) => (
-              <Pill key={genre} text={genre}></Pill>
+              <NextPill text={genre} variant='solid' size='sm' key={genre} />
             ))}
           </div>
         )}
       </Header>
 
-      <div className='overflow-y-auto overflow-x-hidden px-6 no-scrollbar'>
-        {/* ARTIST TOP ITEMS */}
-        {topItems && (
-          <div className='flex flex-col my-4 gap-y-4'>
-            <h3 className='text-neutral-500'>Top Music</h3>
-            <HeaderItem
-              title='Top Track'
-              name={topItems[0].name}
-              icon={TbMusicHeart}
-              image={topItems[0].album.images[0].url}
-              onClick={() => router.push(`/release/${topItems[0].album.id}`)}
-              className='self-center'
-            />
-          </div>
-        )}
+      <ScrollShadow hideScrollBar>
+        <div className='overflow-y-auto overflow-x-hidden px-6 no-scrollbar'>
+          {/* ARTIST TOP ITEMS */}
+          {topItems && (
+            <div className='flex flex-col my-4 gap-y-4'>
+              <h3 className='text-neutral-500'>Top Music</h3>
+              <HeaderItem
+                title='Top Track'
+                name={topItems[0].name}
+                icon={TbMusicHeart}
+                image={topItems[0].album.images[0].url}
+                onClick={() => router.push(`/release/${topItems[0].album.id}`)}
+                className='self-center'
+              />
+            </div>
+          )}
 
-        {/* ARTIST RELEASES */}
-        <div className='mt-2 mb-7'>
-          <div className='w-full flex items-center gap-x-2'>
-            <h3 className='text-neutral-500'>Releases</h3>
-            {ReleaseFilters.map((option) => (
-              <Button
-                key={option.value}
-                className={cn(
-                  'subtitle text-neutral-800 bg-transparent hover:text-brand-dark transition',
-                  selectedReleaseFilter == option.value
-                    ? 'text-brand-primary'
-                    : '',
-                )}
-                onClick={() =>
-                  setSelectedReleaseFilter(
+          {/* ARTIST RELEASES */}
+          <div className='mt-2 mb-7'>
+            <div className='w-full flex items-center gap-x-2'>
+              <h3 className='text-neutral-500'>Releases</h3>
+              {ReleaseFilters.map((option) => (
+                <TextButton
+                  variant='basic'
+                  key={option.value}
+                  className={cn(
+                    'subtitle text-neutral-800 bg-transparent hover:text-brand-dark transition',
                     selectedReleaseFilter == option.value
-                      ? undefined
-                      : option.value,
-                  )
-                }
-              >
-                {option.label}
-              </Button>
-            ))}
+                      ? 'text-brand-primary'
+                      : '',
+                  )}
+                  onClick={() =>
+                    setSelectedReleaseFilter(
+                      selectedReleaseFilter == option.value
+                        ? undefined
+                        : option.value,
+                    )
+                  }
+                >
+                  {option.label}
+                </TextButton>
+              ))}
+            </div>
+            <PageContent albums={releases} />
           </div>
-          <PageContent albums={releases} />
-        </div>
 
-        {/* Credits */}
-      </div>
+          {/* Credits */}
+        </div>
+      </ScrollShadow>
     </Box>
   );
 };

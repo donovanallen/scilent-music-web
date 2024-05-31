@@ -1,5 +1,6 @@
 'use client';
 
+import { ScrollShadow } from '@nextui-org/react';
 import { PlayHistory, Track } from '@spotify/web-api-ts-sdk';
 import React from 'react';
 import { GiBackwardTime } from 'react-icons/gi';
@@ -42,7 +43,7 @@ const Feed: React.FC<FeedProps> = ({ title, cpTrack, history }) => {
 
       {/* LISTEN HISTORY */}
       {history && (
-        <div className='py-2'>
+        <ScrollShadow hideScrollBar className='py-2'>
           <div className='flex items-center gap-x-1 text-neutral-500 mb-2'>
             <GiBackwardTime />
             <h4 className='subtitle'>History</h4>
@@ -57,7 +58,7 @@ const Feed: React.FC<FeedProps> = ({ title, cpTrack, history }) => {
               />
             ))}
           </div>
-        </div>
+        </ScrollShadow>
       )}
     </Box>
   );

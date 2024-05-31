@@ -9,8 +9,8 @@ import {
 import { useRouter } from 'next/navigation';
 import React from 'react';
 
-import AlbumCard from '@/components/next/AlbumCard';
-import ArtistCard from '@/components/next/ArtistCard';
+import AlbumCard from '@/components/AlbumCard';
+import ArtistCard from '@/components/ArtistCard';
 import TrackItem from '@/components/TrackItem';
 
 import { ScilentAlbum } from '@/constant/types';

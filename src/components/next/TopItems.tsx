@@ -13,7 +13,7 @@ import { TbMusicHeart, TbUserHeart } from 'react-icons/tb';
 import { cn, formatArtists } from '@/lib/utils';
 import { useTopMusic } from '@/hooks/useTopMusic';
 
-import Button from '@/components/Button';
+import TextButton from '@/components/buttons/TextButton';
 import HeaderItem from '@/components/HeaderItem';
 import Skeleton from '@/components/Skeleton';
 
@@ -256,7 +256,8 @@ const NextTopItems: React.FC<{ initExpanded?: boolean }> = ({
             {filterOptions && (topArtists || topAlbums || topTracks) && (
               <div className='flex w-fit items-center justify-evenly self-center my-4'>
                 {filterOptions.map((option) => (
-                  <Button
+                  <TextButton
+                    variant='basic'
                     key={option.value}
                     className={cn(
                       'subtitle text-neutral-800 bg-transparent hover:text-brand-dark transition',
@@ -267,7 +268,7 @@ const NextTopItems: React.FC<{ initExpanded?: boolean }> = ({
                     onClick={() => setSelectedFilter(option.value)}
                   >
                     {option.label}
-                  </Button>
+                  </TextButton>
                 ))}
               </div>
             )}
