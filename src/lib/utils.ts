@@ -5,6 +5,7 @@ import { FaMusic, FaSpotify } from 'react-icons/fa6';
 import { twMerge } from 'tailwind-merge';
 
 import {
+  FilterOption,
   ScilentExternalLink,
   ScilentStreamingLinkType,
   SUPPORTED_EXTERNAL_LINKS,
@@ -69,11 +70,7 @@ export const getDurationText = (durationMs: number): string => {
   return timeArray.join(':');
 };
 
-export const TOP_ITEMS_FILTER_OPTIONS: {
-  label: string;
-  value: 'short_term' | 'medium_term' | 'long_term' | undefined;
-  desc: string;
-}[] = [
+export const TOP_ITEMS_FILTER_OPTIONS: FilterOption[] = [
   {
     label: 'Weeks',
     value: 'short_term', // approximately last 4 weeks
