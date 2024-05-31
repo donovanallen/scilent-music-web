@@ -65,18 +65,24 @@ const Artists = () => {
     <Box className='bg-dark rounded-md h-full flex flex-col overflow-y-auto overflow-x-hidden'>
       <Header>
         {/* TITLE */}
-        {/* TITLE */}
         <div className='inline-flex items-center gap-x-2'>
           <h1 className='text-brand-light w-fit text-lg sm:text-xl md:text-2xl'>
             Followed Artists
           </h1>
-          <InfoIcon />
+
+          <InfoIcon
+            tooltipEnabled
+            tooltip={{
+              content:
+                'Your collection of artists followed on Spotify. Follow you favorite artists to enhance your Scilent Music experience.',
+            }}
+          />
         </div>
         <h4 className='self-end font-thin subtitle'>
           {artists?.pages.flatMap((page) => page.items).length} of{' '}
           {followedArtists?.artists?.total} total
         </h4>
-        {/* add top artist(s)? top 3?  */}
+        {/* add top artist(s)? top 3  */}
       </Header>
 
       <ScrollShadow hideScrollBar>

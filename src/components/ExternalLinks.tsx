@@ -1,3 +1,4 @@
+import { Tooltip } from '@nextui-org/react';
 import React, { useState } from 'react';
 import { FaPlus } from 'react-icons/fa6';
 
@@ -44,17 +45,18 @@ const ExternalLinks: React.FC<LinksProps> = ({
     const to = link.url || '';
 
     return (
-      <div
-        className={cn(
-          'flex items-center transition',
-          tooltip !== link.label ? 'text-neutral-500' : 'text-brand-dark',
-        )}
-        onMouseEnter={() => setTooltip(link.label)}
-        onMouseLeave={() => setTooltip(null)}
+      <Tooltip
+        content={
+          link.label
+            ? `Go to ${link.label}`
+            : 'Anywhere you see the Spotify icon, click to go directly to the app for any profile, artist, album, track, or playlist.'
+        }
+        delay={1000}
+        classNames={{
+          content: 'text-dark bg-light',
+          base: 'max-w-xs',
+        }}
       >
-        {/* <p className={cn('subtitle ml-2', tooltip !== link.label && 'hidden')}>
-          {link.label}
-        </p> */}
         <IconLink
           href={to}
           target='_blank'
@@ -63,7 +65,7 @@ const ExternalLinks: React.FC<LinksProps> = ({
           variant='ghost'
           className='relative text-lg'
         />
-      </div>
+      </Tooltip>
     );
   };
 

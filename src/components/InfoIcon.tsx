@@ -1,3 +1,4 @@
+import { Tooltip } from '@nextui-org/react';
 import React from 'react';
 import { IconType } from 'react-icons';
 import { PiInfo } from 'react-icons/pi';
@@ -12,6 +13,10 @@ type InfoIconProps = {
   onClick?: () => void;
   className?: string;
   children?: React.ReactNode;
+  tooltipEnabled?: boolean;
+  tooltip?: {
+    content: string | React.ReactNode;
+  };
 };
 
 const InfoIcon: React.FC<InfoIconProps> = ({
@@ -20,18 +25,33 @@ const InfoIcon: React.FC<InfoIconProps> = ({
   onClick,
   className,
   children,
+  tooltipEnabled = false,
+  tooltip,
 }) => {
   return (
-    <IconButton
-      className={cn(className)}
-      classNames={{ icon: 'text-neutral-600 hover:text-light' }}
-      icon={icon}
-      onMouseOver={onHover}
-      onClick={onClick}
-      variant='ghost'
+    <Tooltip
+      isDisabled={!tooltipEnabled}
+      shadow='md'
+      size='md'
+      content={tooltip?.content}
+      classNames={{
+        content: 'text-dark bg-light p-4',
+        base: 'max-w-xs',
+      }}
+      delay={1000}
+      showArrow
     >
-      {children}
-    </IconButton>
+      <IconButton
+        className={cn(className)}
+        classNames={{ icon: 'text-neutral-600 hover:text-light' }}
+        icon={icon}
+        onMouseOver={onHover}
+        onClick={onClick}
+        variant='ghost'
+      >
+        {children}
+      </IconButton>
+    </Tooltip>
   );
 };
 

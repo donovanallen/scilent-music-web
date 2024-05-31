@@ -1,6 +1,6 @@
 'use client';
 
-import { ScrollShadow } from '@nextui-org/react';
+import { ScrollShadow, Tooltip } from '@nextui-org/react';
 import { UserProfile } from '@spotify/web-api-ts-sdk';
 import React, { Suspense, useEffect, useState } from 'react';
 
@@ -31,8 +31,15 @@ const Profile: React.FC = () => {
       <Header>
         <div className='flex w-full items-center justify-between'>
           <h4 className='text-neutral-500'>Profile</h4>
-          <Suspense>
-            {profile && (
+          {profile && (
+            <Tooltip
+              content='Anywhere you see the Spotify icon, click to go directly to the app for any profile, artist, album, track, or playlist.'
+              delay={1200}
+              classNames={{
+                content: 'text-dark bg-light p-4',
+                base: 'max-w-xs',
+              }}
+            >
               <IconLink
                 href={profile.external_urls.spotify || ''}
                 target='_blank'
@@ -40,8 +47,8 @@ const Profile: React.FC = () => {
                 icon={getSourceIcon('spotify')}
                 variant='ghost'
               />
-            )}
-          </Suspense>
+            </Tooltip>
+          )}
         </div>
 
         <Suspense fallback={<Skeleton />}>

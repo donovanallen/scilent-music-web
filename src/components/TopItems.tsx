@@ -14,6 +14,7 @@ import { useTopMusic } from '@/hooks/useTopMusic';
 
 import FilterOptions from '@/components/FilterOptions';
 import HeaderItem from '@/components/HeaderItem';
+import InfoIcon from '@/components/InfoIcon';
 import Skeleton from '@/components/Skeleton';
 
 interface ExpandedTopItemProps {
@@ -174,12 +175,27 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
       {/* HEADER */}
       <div className='flex items-center justify-between text-light mb-4 cursor-pointer gap-x-1'>
         {/* TITLE */}
-        <h3
-          onClick={() => setExpanded(!expanded)}
-          className='w-fit text-lg sm:text-xl md:text-2xl'
-        >
-          Top Music
-        </h3>
+        <div className='inline-flex items-center gap-x-2'>
+          <h3
+            onClick={() => setExpanded(!expanded)}
+            className='w-fit text-lg sm:text-xl md:text-2xl'
+          >
+            Top Music
+          </h3>
+          <div
+            onClick={() => setExpanded(!expanded)}
+            className='text-lg md:text-xl'
+          >
+            {expanded ? <FaMinus /> : <FaPlus />}
+          </div>
+          <InfoIcon
+            tooltipEnabled
+            tooltip={{
+              content:
+                'These are your top artists and tracks over the selected time period. Expand to see your full Top 20 for each category. Adjust the time filter to see more. Top Albums and Genres coming soon.',
+            }}
+          />
+        </div>
 
         {/* TOP ITEMS FILTER OPTIONS */}
         {filterOptions && (topArtists || topAlbums || topTracks) && (
@@ -188,13 +204,8 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
               filterOptions={filterOptions}
               selectedFilter={selectedFilter}
               onFilterSelect={setSelectedFilter as () => void}
+              tooltipsEnabled
             />
-            <div
-              onClick={() => setExpanded(!expanded)}
-              className='text-lg md:text-xl'
-            >
-              {expanded ? <FaMinus /> : <FaPlus />}
-            </div>
           </div>
         )}
       </div>

@@ -15,17 +15,17 @@ import SearchContent from './components/SearchContent';
 const SearchFilters: FilterOption[] = [
   {
     value: 'artist',
-    desc: 'Show artists in search results',
+    desc: 'Show only artists in search results',
     label: 'Artists',
   },
   {
     value: 'album',
-    desc: 'Show albums in search results',
+    desc: 'Show only albums in search results',
     label: 'Albums',
   },
   {
     value: 'track',
-    desc: 'Show tracks in search results',
+    desc: 'Show only tracks in search results',
     label: 'Tracks',
   },
 ];
@@ -46,13 +46,20 @@ const Search = () => {
             <h1 className='text-brand-light w-fit text-lg sm:text-xl md:text-2xl'>
               Search
             </h1>
-            <InfoIcon />
+            <InfoIcon
+              tooltipEnabled
+              tooltip={{
+                content:
+                  'Search for any and all music. Use the filters to see a specific type of result. Support for playlists, users, genres and extended album types (mixtapes, compilations, etc.) coming soon. Undecided on support for podcasts, sorry 🤷',
+              }}
+            />
           </div>
           <div className='flex items-center w-fit gap-x-2 sm:gap-x-4 lg:gap-x-6'>
             <FilterOptions
               filterOptions={SearchFilters}
               selectedFilter={selectedFilter}
               onFilterSelect={setSelectedFilter as () => void}
+              tooltipsEnabled
               isNullable
             />
           </div>
