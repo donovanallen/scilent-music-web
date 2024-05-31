@@ -1,8 +1,8 @@
 'use client';
 
 import { Card, CardFooter } from '@nextui-org/card';
-import { Image } from '@nextui-org/react';
-import React from 'react';
+import { Image, Skeleton } from '@nextui-org/react';
+import React, { useState } from 'react';
 import { IconType } from 'react-icons';
 
 import { cn } from '@/lib/utils';
@@ -33,34 +33,39 @@ const HeaderCard: React.FC<HeaderCardProps> = ({
     ? { backgroundImage: `url(${image})` }
     : {};
 
+  const [isCardLoaded, setIsCardLoaded] = useState(false);
+
   return (
-    <Card
-      isFooterBlurred
-      radius='lg'
-      className={cn(
-        'border',
-        'relative group min-h-36 max-h-50 rounded-lg w-full overflow-hidden transition',
-      )}
-      isPressable={!!onClick}
-      onPress={onClick}
-    >
-      <Image
-        alt='Card Image'
-        className='border object-cover object-center overflow-hidden aspect-square'
+    <Skeleton className='rounded-md bg-neutral-500' isLoaded={isCardLoaded}>
+      <Card
+        isFooterBlurred
         radius='lg'
-        // height={200}
-        src={image}
-        // width={200}
-      />
-      {/* <CardHeader></CardHeader> */}
-      {/* <CardBody>
+        className={cn(
+          'border',
+          'relative group min-h-36 max-h-50 rounded-lg w-full overflow-hidden transition',
+        )}
+        isPressable={!!onClick}
+        onPress={onClick}
+        onLoad={() => setIsCardLoaded(true)}
+      >
+        <Image
+          alt='Card Image'
+          className='border object-cover object-center overflow-hidden aspect-square'
+          radius='lg'
+          // height={200}
+          src={image}
+          // width={200}
+        />
+        {/* <CardHeader></CardHeader> */}
+        {/* <CardBody>
         <h2 className='text-lg lg:text-2xl xl:text-3xl line-clamp-1'>{name}</h2>
       </CardBody> */}
-      <CardFooter className='border w-auto flex-col self-center justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-2 absolute before:rounded-xl rounded-large bottom-1 shadow-small ml-1 z-10 text-brand-dark'>
-        <h4 className='subtitle text-xs lg:text-sm line-clamp-1'>{title}</h4>
-        {Icon && <Icon size={20} />}
-      </CardFooter>
-    </Card>
+        <CardFooter className='border w-auto flex-col self-center justify-between before:bg-white/10 border-white/20 overflow-hidden py-2 absolute before:rounded-xl rounded-large bottom-1 shadow-small ml-1 z-10 text-brand-dark'>
+          <h4 className='subtitle text-xs lg:text-sm line-clamp-1'>{title}</h4>
+          {Icon && <Icon size={20} />}
+        </CardFooter>
+      </Card>
+    </Skeleton>
     // <button
     //   onClick={onClick}
     //   className={cn(
