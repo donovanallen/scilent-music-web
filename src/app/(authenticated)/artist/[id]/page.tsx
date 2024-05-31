@@ -177,7 +177,7 @@ const Artist = ({ params }: { params: { id: string } }) => {
         {metadata?.genres && (
           <div className='w-full flex gap-x-2 mt-4'>
             {metadata.genres.map((genre) => (
-              <NextPill text={genre} variant='solid' size='sm' key={genre} />
+              <NextPill text={genre} variant='bordered' size='sm' key={genre} />
             ))}
           </div>
         )}
