@@ -1,27 +1,49 @@
+import { Chip } from '@nextui-org/react';
 import React from 'react';
 
 import { cn } from '@/lib/utils';
 
-type PillProps = {
+type NextPillProps = {
   text: string;
   className?: string;
   children?: React.ReactNode;
+  variant?:
+    | 'solid'
+    | 'bordered'
+    | 'light'
+    | 'flat'
+    | 'faded'
+    | 'shadow'
+    | 'dot';
+  size?: 'sm' | 'md' | 'lg';
+  disabled?: boolean;
 };
 
-const Pill: React.FC<PillProps> = ({ text, className, children }) => {
+const NextPill: React.FC<NextPillProps> = ({
+  text,
+  className,
+  children,
+  variant,
+  disabled = false,
+  size,
+}) => {
   return (
-    <div
-      className={cn(
-        'border border-light rounded-md px-2 py-1 w-fit',
-        className,
-      )}
+    <Chip
+      size={size}
+      variant={variant}
+      radius='lg'
+      isDisabled={disabled}
+      className={cn(className)}
+      color='primary'
+      classNames={{
+        base: 'z-10 bg-opacity-90',
+        content:
+          'drop-shadow shadow-black text-white subtitle font-thin text-2xs lg:text-xs line-clamp-1',
+      }}
     >
-      <p className='font-thin subtitle text-2xs lg:text-xs line-clamp-1'>
-        {text}
-      </p>
-      {children}
-    </div>
+      {text}
+    </Chip>
   );
 };
 
-export default Pill;
+export default NextPill;

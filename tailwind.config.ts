@@ -1,8 +1,12 @@
+import { nextui } from '@nextui-org/react';
 import type { Config } from 'tailwindcss';
 import defaultTheme from 'tailwindcss/defaultTheme';
 
 export default {
-  content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  content: [
+    './src/**/*.{js,jsx,ts,tsx}',
+    './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
+  ],
   theme: {
     extend: {
       fontSize: {
@@ -68,5 +72,54 @@ export default {
       // },
     },
   },
+  darkMode: 'class',
+  plugins: [
+    nextui({
+      themes: {
+        light: {
+          colors: {
+            background: '#121212',
+            foreground: '#d6d6d6',
+            primary: {
+              DEFAULT: '#121212',
+              foreground: '#d6d6d6',
+            },
+            // Add custom colors
+            // brand: '#f9d3b4',
+            // cta: '#7edbf0',
+            // danger: '#ff5f59',
+            // success: '#76ea5e',
+            // spotify: '#1db954',
+          },
+          // Add custom fonts
+          // font: {
+          //   sans: ['TT-Hoves', ...defaultTheme.fontFamily.sans],
+          //   serif: ['Inter', ...defaultTheme.fontFamily.serif],
+          // },
+        },
+        dark: {
+          colors: {
+            background: '#121212',
+            foreground: '#d6d6d6',
+            primary: {
+              DEFAULT: '#d6d6d6',
+              foreground: '#d6d6d6',
+            },
+            // Add custom colors
+            // brand: '#f9d3b4',
+            // cta: '#7edbf0',
+            // danger: '#ff5f59',
+            // success: '#76ea5e',
+            // spotify: '#1db954',
+          },
+          // Add custom fonts
+          // font: {
+          //   sans: ['TT-Hoves', ...defaultTheme.fontFamily.sans],
+          //   serif: ['Inter', ...defaultTheme.fontFamily.serif],
+          // },
+        },
+      },
+    }),
+  ],
   // plugins: [require('@tailwindcss/forms')],
 } satisfies Config;

@@ -1,3 +1,5 @@
+'use client';
+
 import Box from '@/components/Box';
 import LoadingIndicator from '@/components/LoadingIndicator';
 
