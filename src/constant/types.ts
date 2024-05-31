@@ -85,6 +85,14 @@ export type AuthUser = {
   id: string;
 };
 
+export type FilterValue = 'short_term' | 'medium_term' | 'long_term';
+export type SearchFilterValue = 'artist' | 'album' | 'track' | null;
+export type FilterOption = {
+  value?: FilterValue | SearchFilterValue;
+  label: string;
+  desc: string;
+};
+
 export type SearchTypes = 'artist' | 'album' | 'track';
 export const SearchFilters = [
   {

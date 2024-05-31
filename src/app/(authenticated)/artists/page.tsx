@@ -1,5 +1,6 @@
 'use client';
 
+import { ScrollShadow } from '@nextui-org/react';
 import { Artist, FollowedArtists } from '@spotify/web-api-ts-sdk';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useIntersectionObserver } from '@uidotdev/usehooks';
@@ -78,16 +79,18 @@ const Artists = () => {
         {/* add top artist(s)? top 3?  */}
       </Header>
 
-      <div className='overflow-y-auto overflow-x-hidden px-6'>
-        <PageContent
-          artists={
-            artists?.pages
-              .flatMap((page) => page.items)
-              .sort((a, b) => a.name.localeCompare(b.name)) as Artist[]
-          }
-        />
-        <hr ref={ref} />
-      </div>
+      <ScrollShadow hideScrollBar>
+        <div className='overflow-y-auto overflow-x-hidden px-6'>
+          <PageContent
+            artists={
+              artists?.pages
+                .flatMap((page) => page.items)
+                .sort((a, b) => a.name.localeCompare(b.name)) as Artist[]
+            }
+          />
+          <hr ref={ref} />
+        </div>
+      </ScrollShadow>
     </Box>
   );
 };

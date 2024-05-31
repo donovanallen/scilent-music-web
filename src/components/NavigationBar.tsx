@@ -1,12 +1,12 @@
 'use client';
 
+import { Avatar, AvatarIcon } from '@nextui-org/react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
 import React from 'react';
 import toast from 'react-hot-toast';
 import { BiSearch } from 'react-icons/bi';
-import { FaUserAlt } from 'react-icons/fa';
 import { FaSpotify } from 'react-icons/fa6';
 import { HiHome } from 'react-icons/hi';
 import { RxCaretLeft, RxCaretRight } from 'react-icons/rx';
@@ -17,7 +17,6 @@ import useAuthModal from '@/hooks/useAuthModal';
 import Button from '@/components/buttons/Button';
 import IconButton from '@/components/buttons/IconButton';
 import IconLink from '@/components/links/IconLink';
-import NextImage from '@/components/NextImage';
 
 const NavigationBar: React.FC = () => {
   const authModal = useAuthModal();
@@ -36,7 +35,7 @@ const NavigationBar: React.FC = () => {
   };
 
   return (
-    <div className='w-full flex items-center justify-between mb-6'>
+    <div className='w-full h-fit flex items-center justify-between mb-4'>
       {status === 'authenticated' ? (
         <>
           {/* NAVIGATION ARROWS */}
@@ -45,13 +44,13 @@ const NavigationBar: React.FC = () => {
               variant='outline'
               icon={RxCaretLeft}
               onClick={goBack}
-              className='text-xl bg-dark/60 hover:border-brand-dark'
+              className='text-xl'
             />
             <IconButton
               variant='outline'
               icon={RxCaretRight}
               onClick={goForward}
-              className='text-xl bg-dark/60 hover:border-brand-dark'
+              className='text-xl'
             />
           </div>
 
@@ -62,23 +61,29 @@ const NavigationBar: React.FC = () => {
           </div>
           {/* LOG IN/LOG OUT/SIGN UP */}
           <div className='flex gap-x-4 items-center justify-end flex-1'>
-            <Button onClick={handleLogout} className='text-xs'>
+            <Button
+              onClick={handleLogout}
+              className='text-xs'
+              variant='outline'
+            >
               Log out
             </Button>
             {pathname !== '/profile' && (
-              <div className='relative aspect-square w-10 rounded-full overflow-hidden bg-neutral-700  border border-light hover:border-brand-primary hover:border-2 transition'>
-                <Link href='/profile'>
-                  {session.user?.image ? (
-                    <NextImage
-                      src={session.user?.image}
-                      alt='User Image'
-                      fill
-                    />
-                  ) : (
-                    <FaUserAlt size={24} className='text-light' />
-                  )}
-                </Link>
-              </div>
+              <Link
+                href='/profile'
+                className='rounded-full border p-0.5 border-light hover:border-brand-primary hover:border-2 transition'
+              >
+                {session.user && (
+                  <Avatar
+                    src={session.user.image || undefined}
+                    size='md'
+                    name={session.user.name || undefined}
+                    fallback={<AvatarIcon />}
+                    isFocusable
+                    showFallback
+                  />
+                )}
+              </Link>
             )}
             {/* //   : (
             //   <IconLink href='/settings' icon={TbSettings2} />

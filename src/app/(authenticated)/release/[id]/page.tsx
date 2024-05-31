@@ -1,5 +1,6 @@
 'use client';
 
+import { ScrollShadow } from '@nextui-org/react';
 import { Album, SimplifiedTrack } from '@spotify/web-api-ts-sdk';
 import {
   formatDuration,
@@ -18,7 +19,7 @@ import Header from '@/components/Header';
 import IconLink from '@/components/links/IconLink';
 import NextImage from '@/components/NextImage';
 import PageContent from '@/components/PageContent';
-import Pill from '@/components/Pill';
+import NextPill from '@/components/Pill';
 
 const getAlbumDuration = (album: Album): string => {
   let totalDuration = 0;
@@ -130,30 +131,32 @@ const Release = ({ params }: { params: { id: string } }) => {
           {albumDetails?.genres && albumDetails?.genres.length > 0 && (
             <div className='w-full flex gap-x-2 mt-4'>
               {albumDetails?.genres.map((genre) => (
-                <Pill key={genre} text={genre}></Pill>
+                <NextPill text={genre} variant='solid' size='sm' key={genre} />
               ))}
             </div>
           )}
         </div>
       </Header>
-      <div className='overflow-y-auto overflow-x-hidden no-scrollbar px-6'>
-        {albumDetails?.tracks && (
-          <>
-            <h3 className='text-neutral-400 my-4'>Tracklist </h3>
-            <PageContent
-              tracks={albumDetails.tracks.items as SimplifiedTrack[]}
-              tracksNumbered
-            />
-          </>
-        )}
-        <div className='flex w-full m-6'>
-          {albumDetails?.copyrights && (
-            <h4 className='subtitle text-xs font-normal text-neutral-500'>
-              Copyright: {albumDetails?.copyrights[0].text}
-            </h4>
+      <ScrollShadow hideScrollBar>
+        <div className='overflow-y-auto overflow-x-hidden no-scrollbar px-6'>
+          {albumDetails?.tracks && (
+            <>
+              <h3 className='text-neutral-400 my-4'>Tracklist </h3>
+              <PageContent
+                tracks={albumDetails.tracks.items as SimplifiedTrack[]}
+                tracksNumbered
+              />
+            </>
           )}
+          <div className='flex w-full m-6'>
+            {albumDetails?.copyrights && (
+              <h4 className='subtitle text-xs font-normal text-neutral-500'>
+                Copyright: {albumDetails?.copyrights[0].text}
+              </h4>
+            )}
+          </div>
         </div>
-      </div>
+      </ScrollShadow>
     </Box>
   );
 };

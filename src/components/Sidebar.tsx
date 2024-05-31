@@ -13,7 +13,7 @@ import sdk from '@/lib/spotify-sdk/ClientInstance';
 import useAuthModal from '@/hooks/useAuthModal';
 
 import Box from '@/components/Box';
-import Button from '@/components/Button';
+import Button from '@/components/buttons/Button';
 import Feed from '@/components/Feed';
 import SidebarItem from '@/components/SidebarItem';
 

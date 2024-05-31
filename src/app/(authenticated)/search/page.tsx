@@ -1,18 +1,18 @@
 'use client';
 
-import { ItemTypes } from '@spotify/web-api-ts-sdk';
+import { ScrollShadow } from '@nextui-org/react';
 import React, { useState } from 'react';
 
-import { cn } from '@/lib/utils';
-
 import Box from '@/components/Box';
-import TextButton from '@/components/buttons/TextButton';
+import FilterOptions from '@/components/FilterOptions';
 import Header from '@/components/Header';
 import InfoIcon from '@/components/InfoIcon';
 
+import { FilterOption, SearchFilterValue } from '@/constant/types';
+
 import SearchContent from './components/SearchContent';
 
-const SearchFilters = [
+const SearchFilters: FilterOption[] = [
   {
     value: 'artist',
     desc: 'Show artists in search results',
@@ -34,7 +34,7 @@ const SearchFilters = [
 const Search = () => {
   const [searchInput, setSearchInput] = useState('');
   const [selectedFilter, setSelectedFilter] = useState<
-    ItemTypes | string | undefined
+    SearchFilterValue | undefined
   >();
 
   return (
@@ -49,25 +49,12 @@ const Search = () => {
             <InfoIcon />
           </div>
           <div className='flex items-center w-fit gap-x-2 sm:gap-x-4 lg:gap-x-6'>
-            {SearchFilters.map((option) => (
-              <TextButton
-                key={option.value}
-                className={cn(
-                  'subtitle text-neutral-800 hover:text-brand-dark',
-                  'bg-transparent transition',
-                  'flex',
-                  selectedFilter == option.value ? 'text-brand-primary' : '',
-                )}
-                variant='basic'
-                onClick={() =>
-                  setSelectedFilter(
-                    selectedFilter == option.value ? undefined : option.value,
-                  )
-                }
-              >
-                {option.label}
-              </TextButton>
-            ))}
+            <FilterOptions
+              filterOptions={SearchFilters}
+              selectedFilter={selectedFilter}
+              onFilterSelect={setSelectedFilter as () => void}
+              isNullable
+            />
           </div>
         </div>
         <input
@@ -78,9 +65,14 @@ const Search = () => {
           placeholder='Search music...'
         />
       </Header>
-      <div className='overflow-y-auto overflow-x-hidden px-6'>
-        <SearchContent searchInput={searchInput} searchType={selectedFilter} />
-      </div>
+      <ScrollShadow hideScrollBar>
+        <div className='overflow-y-auto overflow-x-hidden px-6'>
+          <SearchContent
+            searchInput={searchInput}
+            searchType={selectedFilter}
+          />
+        </div>
+      </ScrollShadow>
     </Box>
   );
 };
