@@ -14,8 +14,8 @@ import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { cn } from '@/lib/utils';
 
 import Box from '@/components/Box';
-import TextButton from '@/components/buttons/TextButton';
 import IconButton from '@/components/buttons/IconButton';
+import TextButton from '@/components/buttons/TextButton';
 import ExternalLinks from '@/components/ExternalLinks';
 import Header from '@/components/Header';
 import HeaderImage from '@/components/HeaderImage';
