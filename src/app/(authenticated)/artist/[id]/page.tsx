@@ -1,24 +1,27 @@
 'use client';
 
+import { ScrollShadow } from '@nextui-org/react';
 import { Artist, SimplifiedAlbum, Track } from '@spotify/web-api-ts-sdk';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import numbro from 'numbro';
 import React, { useEffect, useState } from 'react';
-import { FaCheck, FaUser } from 'react-icons/fa6';
+import toast from 'react-hot-toast';
+import { FaCheck, FaPlus, FaUser } from 'react-icons/fa6';
 import { TbMusicHeart } from 'react-icons/tb';
 
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { cn } from '@/lib/utils';
 
 import Box from '@/components/Box';
-import Button from '@/components/Button';
+import IconButton from '@/components/buttons/IconButton';
+import TextButton from '@/components/buttons/TextButton';
 import ExternalLinks from '@/components/ExternalLinks';
 import Header from '@/components/Header';
 import HeaderImage from '@/components/HeaderImage';
 import HeaderItem from '@/components/HeaderItem';
 import PageContent from '@/components/PageContent';
-import Pill from '@/components/Pill';
+import NextPill from '@/components/Pill';
 
 import {
   ReleaseFilters,
@@ -109,6 +112,20 @@ const Artist = ({ params }: { params: { id: string } }) => {
     }
   }, [metadata]);
 
+  const followArtist = async (id: string) => {
+    return await sdk.currentUser
+      .followArtistsOrUsers([id], 'artist')
+      .catch((e) => {
+        toast.error('Error following artist: ', e);
+      })
+      .then(() => {
+        setUserFollows(true);
+      })
+      .finally(() => {
+        toast.success('Artist followed');
+      });
+  };
+
   return (
     <Box className='bg-dark rounded-md h-full flex flex-col overflow-y-auto overflow-x-hidden'>
       <Header>
@@ -116,7 +133,15 @@ const Artist = ({ params }: { params: { id: string } }) => {
         <div className='flex w-full items-center justify-between'>
           <div className='flex items-center gap-x-2 text-neutral-500'>
             <h4>{metadata?.type}</h4>
-            {userFollows && <FaCheck />}
+            {userFollows ? (
+              <FaCheck className='text-brand-dark' />
+            ) : (
+              <IconButton
+                onClick={() => followArtist(params.id)}
+                icon={FaPlus}
+                variant='ghost'
+              />
+            )}
           </div>
           <ExternalLinks links={links} />
         </div>
@@ -152,58 +177,61 @@ const Artist = ({ params }: { params: { id: string } }) => {
         {metadata?.genres && (
           <div className='w-full flex gap-x-2 mt-4'>
             {metadata.genres.map((genre) => (
-              <Pill key={genre} text={genre}></Pill>
+              <NextPill text={genre} variant='bordered' size='sm' key={genre} />
             ))}
           </div>
         )}
       </Header>
 
-      <div className='overflow-y-auto overflow-x-hidden px-6 no-scrollbar'>
-        {/* ARTIST TOP ITEMS */}
-        {topItems && (
-          <div className='flex flex-col my-4 gap-y-4'>
-            <h3 className='text-neutral-500'>Top Music</h3>
-            <HeaderItem
-              title='Top Track'
-              name={topItems[0].name}
-              icon={TbMusicHeart}
-              image={topItems[0].album.images[0].url}
-              onClick={() => router.push(`/release/${topItems[0].album.id}`)}
-              className='self-center'
-            />
-          </div>
-        )}
+      <ScrollShadow hideScrollBar>
+        <div className='overflow-y-auto overflow-x-hidden px-6 no-scrollbar'>
+          {/* ARTIST TOP ITEMS */}
+          {topItems && (
+            <div className='flex flex-col my-4 gap-y-4'>
+              <h3 className='text-neutral-500'>Top Music</h3>
+              <HeaderItem
+                title='Top Track'
+                name={topItems[0].name}
+                icon={TbMusicHeart}
+                image={topItems[0].album.images[0].url}
+                onClick={() => router.push(`/release/${topItems[0].album.id}`)}
+                className='self-center'
+              />
+            </div>
+          )}
 
-        {/* ARTIST RELEASES */}
-        <div className='mt-2 mb-7'>
-          <div className='w-full flex items-center gap-x-2'>
-            <h3 className='text-neutral-500'>Releases</h3>
-            {ReleaseFilters.map((option) => (
-              <Button
-                key={option.value}
-                className={cn(
-                  'subtitle text-neutral-800 bg-transparent hover:text-brand-dark transition',
-                  selectedReleaseFilter == option.value
-                    ? 'text-brand-primary'
-                    : '',
-                )}
-                onClick={() =>
-                  setSelectedReleaseFilter(
+          {/* ARTIST RELEASES */}
+          <div className='mt-2 mb-7'>
+            <div className='w-full flex items-center gap-x-2'>
+              <h3 className='text-neutral-500'>Releases</h3>
+              {ReleaseFilters.map((option) => (
+                <TextButton
+                  variant='basic'
+                  key={option.value}
+                  className={cn(
+                    'subtitle text-neutral-800 bg-transparent hover:text-brand-dark transition',
                     selectedReleaseFilter == option.value
-                      ? undefined
-                      : option.value,
-                  )
-                }
-              >
-                {option.label}
-              </Button>
-            ))}
+                      ? 'text-brand-primary'
+                      : '',
+                  )}
+                  onClick={() =>
+                    setSelectedReleaseFilter(
+                      selectedReleaseFilter == option.value
+                        ? undefined
+                        : option.value,
+                    )
+                  }
+                >
+                  {option.label}
+                </TextButton>
+              ))}
+            </div>
+            <PageContent albums={releases} />
           </div>
-          <PageContent albums={releases} />
-        </div>
 
-        {/* Credits */}
-      </div>
+          {/* Credits */}
+        </div>
+      </ScrollShadow>
     </Box>
   );
 };

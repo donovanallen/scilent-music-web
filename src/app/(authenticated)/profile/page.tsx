@@ -1,5 +1,6 @@
 'use client';
 
+import { ScrollShadow } from '@nextui-org/react';
 import { UserProfile } from '@spotify/web-api-ts-sdk';
 import React, { Suspense, useEffect, useState } from 'react';
 
@@ -47,14 +48,16 @@ const Profile: React.FC = () => {
           {profile && <ProfileInfo {...profile} />}
         </Suspense>
       </Header>
-      <div className='overflow-y-auto overflow-x-hidden px-6 no-scrollbar'>
-        <Suspense fallback={<Skeleton />}>
-          <ProfileAura />
-        </Suspense>
-        <Suspense fallback={<Skeleton />}>
-          <TopItems />
-        </Suspense>
-      </div>
+      <ScrollShadow hideScrollBar>
+        <div className='overflow-y-auto overflow-x-hidden px-6 no-scrollbar'>
+          <Suspense fallback={<Skeleton />}>
+            <ProfileAura />
+          </Suspense>
+          <Suspense fallback={<Skeleton />}>
+            <TopItems />
+          </Suspense>
+        </div>
+      </ScrollShadow>
     </Box>
   );
 };

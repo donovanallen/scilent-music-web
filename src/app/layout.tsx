@@ -1,3 +1,4 @@
+import { NextUIProvider } from '@nextui-org/react';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Metadata } from 'next';
@@ -40,15 +41,19 @@ export default async function RootLayout({
 
   return (
     <html>
-      <AuthSessionProvider session={session}>
-        <body>
-          <ToastProvider />
-          <ModalProvider />
-          <SpeedInsights />
-          <Analytics />
-          {session ? <Sidebar>{children}</Sidebar> : children}
-        </body>
-      </AuthSessionProvider>
+      <body>
+        <NextUIProvider className='h-full'>
+          <AuthSessionProvider session={session}>
+            <ToastProvider />
+            <ModalProvider />
+            <SpeedInsights />
+            <Analytics />
+            {/* <main className='h-full'> */}
+            {session ? <Sidebar>{children}</Sidebar> : children}
+            {/* </main> */}
+          </AuthSessionProvider>
+        </NextUIProvider>
+      </body>
     </html>
   );
 }

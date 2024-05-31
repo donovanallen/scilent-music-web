@@ -6,10 +6,11 @@ import {
   SimplifiedTrack,
   Track,
 } from '@spotify/web-api-ts-sdk';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
-import AlbumItem from '@/components/AlbumItem';
-import ArtistItem from '@/components/ArtistItem';
+import AlbumCard from '@/components/AlbumCard';
+import ArtistCard from '@/components/ArtistCard';
 import TrackItem from '@/components/TrackItem';
 
 import { ScilentAlbum } from '@/constant/types';
@@ -46,18 +47,20 @@ const PageContent: React.FC<PageContentProps> = ({
   tracks,
   tracksNumbered = false,
 }) => {
+  const router = useRouter();
   if (albums) {
     return albums?.length !== 0 ? (
       <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-8 gap-4 my-4 overflow-y-scroll no-scrollbar'>
         {albums &&
           albums.map((album: Album | ScilentAlbum | SimplifiedAlbum | any) => (
-            <AlbumItem
+            <AlbumCard
               key={album.id}
               name={album.title || album.name}
               image={album.images ? album.images[0]?.url : album.artwork?.url}
               timestamp={album.releaseDate || album.release_date}
               type={album.album_type || album.type}
               id={album.id}
+              onClick={() => router.push(`/release/${album.id}`)}
             />
           ))}
       </div>
@@ -70,12 +73,13 @@ const PageContent: React.FC<PageContentProps> = ({
     return artists.length ? (
       <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-8 gap-4 my-4 overflow-y-scroll no-scrollbar'>
         {artists.map((artist) => (
-          <ArtistItem
+          <ArtistCard
             key={artist.id}
-            id={artist.id}
             name={artist.name}
-            image={artist.images[0]?.url}
+            image={artist.images ? artist.images[0]?.url : undefined}
             type={artist.type}
+            id={artist.id}
+            onClick={() => router.push(`/artist/${artist.id}`)}
           />
         ))}
       </div>

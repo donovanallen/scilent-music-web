@@ -1,5 +1,6 @@
 'use client';
 
+import { ScrollShadow } from '@nextui-org/react';
 import { ItemTypes } from '@spotify/web-api-ts-sdk';
 import React, { useState } from 'react';
 
@@ -73,9 +74,14 @@ const Search = () => {
           placeholder='Search music...'
         />
       </Header>
-      <div className='overflow-y-auto overflow-x-hidden px-6'>
-        <SearchContent searchInput={searchInput} searchType={selectedFilter} />
-      </div>
+      <ScrollShadow hideScrollBar>
+        <div className='overflow-y-auto overflow-x-hidden px-6'>
+          <SearchContent
+            searchInput={searchInput}
+            searchType={selectedFilter}
+          />
+        </div>
+      </ScrollShadow>
     </Box>
   );
 };

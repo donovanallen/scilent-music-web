@@ -1,3 +1,4 @@
+import { ScrollShadow } from '@nextui-org/react';
 import { redirect } from 'next/navigation';
 
 import { getAuthSession } from '@/lib/helper';
@@ -22,9 +23,11 @@ export default async function HomePage() {
         title={`Welcome ${session?.user ? firstName(session.user.name || '') : ''}`}
       ></Header>
 
-      <div className='overflow-y-auto overflow-x-hidden no-scrollbar px-6 h-full'>
-        <TopItems initExpanded />
-      </div>
+      <ScrollShadow hideScrollBar>
+        <div className='overflow-y-auto overflow-x-hidden no-scrollbar px-6 h-full'>
+          <TopItems initExpanded />
+        </div>
+      </ScrollShadow>
     </Box>
   );
 }
