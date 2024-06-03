@@ -79,7 +79,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         setCurrentTrack(result.currently_playing as TrackItem);
       })();
     }
-  }, [session]);
+  }, [session, setCurrentTrack]);
 
   return (
     <div className='flex h-full'>

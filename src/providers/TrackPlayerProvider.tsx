@@ -3,10 +3,10 @@
 import { TrackItem } from '@spotify/web-api-ts-sdk';
 import {
   createContext,
-  Dispatch,
-  SetStateAction,
+  // Dispatch,
+  // SetStateAction,
+  // useCallback,
   useContext,
-  useEffect,
   useState,
 } from 'react';
 
@@ -15,16 +15,16 @@ import { useStore } from './zustand';
 interface TrackProviderState {
   currentTrackAudio: HTMLAudioElement | null;
   isPlaying: boolean;
-  play: () => Promise<void>;
-  pause: () => void;
-  togglePlay: () => Promise<void>;
   duration: number;
   currentTime: number;
-  slider: number;
-  setSlider: Dispatch<SetStateAction<number>>;
-  drag: number;
-  setDrag: Dispatch<SetStateAction<number>>;
   currentTrack: TrackItem | null;
+  // play: () => Promise<void>;
+  // pause: () => void;
+  // togglePlay: () => Promise<void>;
+  // slider: number;
+  // setSlider: Dispatch<SetStateAction<number>>;
+  // drag: number;
+  // setDrag: Dispatch<SetStateAction<number>>;
 }
 
 const PlayerContext = createContext<TrackProviderState>({} as any);
@@ -36,100 +36,100 @@ interface Props {
 export default function TrackPlayerProvider({ children }: Props) {
   const { currentTrack } = useStore();
 
-  const [currentTrackAudio, setCurrentTrackAudio] =
+  const [currentTrackAudio, _setCurrentTrackAudio] =
     useState<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [duration, setDuration] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [slider, setSlider] = useState(1);
-  const [drag, setDrag] = useState(0);
+  const [isPlaying, _setIsPlaying] = useState(false);
+  const [duration, _setDuration] = useState(0);
+  const [currentTime, _setCurrentTime] = useState(0);
+  // const [slider, setSlider] = useState(1);
+  // const [drag, setDrag] = useState(0);
 
-  useEffect(() => {
-    if (!currentTrack) return;
-    if (isPlaying) {
-      pause();
-      setCurrentTrackAudio(null);
-    }
-    const tempAudio = new Audio(
-      'preview_url' in currentTrack
-        ? currentTrack.preview_url || undefined
-        : undefined,
-    );
+  // const togglePlay = async () => {
+  //   if (isPlaying) pause();
+  //   else await play();
+  // };
 
-    const setAudioData = () => {
-      setDuration(tempAudio.duration);
-      setCurrentTime(tempAudio.currentTime);
-    };
+  // const play = useCallback(async () => {
+  //   setIsPlaying(true);
+  //   await currentTrackAudio?.play();
+  // }, [currentTrackAudio]);
 
-    const setAudioTime = () => {
-      const currTime = tempAudio.currentTime;
-      setCurrentTime(currTime);
-      setSlider(
-        currTime
-          ? Number(((currTime * 100) / tempAudio.duration).toFixed(1))
-          : 0,
-      );
-    };
+  // const pause = useCallback(() => {
+  //   setIsPlaying(false);
+  //   currentTrackAudio?.pause();
+  // }, [currentTrackAudio]);
 
-    tempAudio.addEventListener('loadeddata', setAudioData);
-    tempAudio.addEventListener('timeupdate', setAudioTime);
-    tempAudio.preload = 'none';
+  // useEffect(() => {
+  //   if (!currentTrack) return;
+  //   if (isPlaying) {
+  //     pause();
+  //     setCurrentTrackAudio(null);
+  //   }
+  //   const tempAudio = new Audio(
+  //     'preview_url' in currentTrack
+  //       ? currentTrack.preview_url || undefined
+  //       : undefined,
+  //   );
 
-    setCurrentTrackAudio(tempAudio);
+  //   const setAudioData = () => {
+  //     setDuration(tempAudio.duration);
+  //     setCurrentTime(tempAudio.currentTime);
+  //   };
 
-    return () => {
-      pause();
-      setCurrentTrackAudio(null);
-    };
-  }, [currentTrack]);
+  //   const setAudioTime = () => {
+  //     const currTime = tempAudio.currentTime;
+  //     setCurrentTime(currTime);
+  //     setSlider(
+  //       currTime
+  //         ? Number(((currTime * 100) / tempAudio.duration).toFixed(1))
+  //         : 0,
+  //     );
+  //   };
 
-  useEffect(() => {
-    const handlePlay = async () => {
-      if (currentTrackAudio) {
-        await play();
-      }
-    };
-    handlePlay();
-  }, [currentTrackAudio]);
+  //   tempAudio.addEventListener('loadeddata', setAudioData);
+  //   tempAudio.addEventListener('timeupdate', setAudioTime);
+  //   tempAudio.preload = 'none';
 
-  const togglePlay = async () => {
-    if (isPlaying) pause();
-    else await play();
-  };
+  //   setCurrentTrackAudio(tempAudio);
 
-  const play = async () => {
-    setIsPlaying(true);
-    await currentTrackAudio?.play();
-  };
+  //   return () => {
+  //     pause();
+  //     setCurrentTrackAudio(null);
+  //   };
+  // }, [currentTrack, isPlaying, pause]);
 
-  const pause = () => {
-    setIsPlaying(false);
-    currentTrackAudio?.pause();
-  };
+  // useEffect(() => {
+  //   const handlePlay = async () => {
+  //     if (currentTrackAudio) {
+  //       await play();
+  //     }
+  //   };
+  //   handlePlay();
+  // }, [currentTrackAudio, play]);
 
-  useEffect(() => {
-    if (currentTrackAudio && drag) {
-      currentTrackAudio.currentTime = Math.round(
-        (drag * currentTrackAudio.duration) / 100,
-      );
-    }
-  }, [drag]);
+  // useEffect(() => {
+  //   if (currentTrackAudio && drag) {
+  //     currentTrackAudio.currentTime = Math.round(
+  //       (drag * currentTrackAudio.duration) / 100,
+  //     );
+  //   }
+  // }, [currentTrackAudio, drag]);
 
   return (
     <PlayerContext.Provider
       value={{
         currentTrackAudio,
         isPlaying,
-        play,
-        pause,
-        togglePlay,
         duration,
         currentTime,
-        slider,
-        setSlider,
-        drag,
-        setDrag,
         currentTrack,
+        // play,
+        // pause,
+        // togglePlay,
+        // slider,
+        // setSlider,
+        // drag,
+        // setDrag,
       }}
     >
       {children}

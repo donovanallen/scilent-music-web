@@ -15,7 +15,7 @@ import { siteConfig } from '@/constant/config';
 import AuthSessionProvider from '@/providers/AuthSessionProvider';
 import ModalProvider from '@/providers/ModalProvider';
 import ToastProvider from '@/providers/ToastProvider';
-// import TrackPlayerProvider from '@/providers/TrackPlayerProvider';
+import TrackPlayerProvider from '@/providers/TrackPlayerProvider';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -49,9 +49,11 @@ export default async function RootLayout({
             <ModalProvider />
             <SpeedInsights />
             <Analytics />
-            {/* <main className='h-full'> */}
-            {session ? <Sidebar>{children}</Sidebar> : children}
-            {/* </main> */}
+            <TrackPlayerProvider>
+              {/* <main className='h-full'> */}
+              {session ? <Sidebar>{children}</Sidebar> : children}
+              {/* </main> */}
+            </TrackPlayerProvider>
           </AuthSessionProvider>
         </NextUIProvider>
       </body>
