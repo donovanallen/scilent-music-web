@@ -1,5 +1,6 @@
 'use client';
 
+import { ScrollShadow } from '@nextui-org/react';
 import { Artist, FollowedArtists } from '@spotify/web-api-ts-sdk';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useIntersectionObserver } from '@uidotdev/usehooks';
@@ -9,6 +10,7 @@ import sdk from '@/lib/spotify-sdk/ClientInstance';
 
 import Box from '@/components/Box';
 import Header from '@/components/Header';
+import InfoIcon from '@/components/InfoIcon';
 import PageContent from '@/components/PageContent';
 
 const Artists = () => {
@@ -61,24 +63,40 @@ const Artists = () => {
 
   return (
     <Box className='bg-dark rounded-md h-full flex flex-col overflow-y-auto overflow-x-hidden'>
-      <Header title='Followed Artists'>
-        <h4 className='self-end font-thin'>
+      <Header>
+        {/* TITLE */}
+        <div className='inline-flex items-center gap-x-2'>
+          <h1 className='text-brand-light w-fit text-lg sm:text-xl md:text-2xl'>
+            Followed Artists
+          </h1>
+
+          <InfoIcon
+            tooltipEnabled
+            tooltip={{
+              content:
+                'Your collection of artists followed on Spotify. Follow you favorite artists to enhance your Scilent Music experience.',
+            }}
+          />
+        </div>
+        <h4 className='self-end font-thin subtitle'>
           {artists?.pages.flatMap((page) => page.items).length} of{' '}
           {followedArtists?.artists?.total} total
         </h4>
-        {/* add top artist(s)? top 3?  */}
+        {/* add top artist(s)? top 3  */}
       </Header>
 
-      <div className='overflow-y-auto overflow-x-hidden px-6'>
-        <PageContent
-          artists={
-            artists?.pages
-              .flatMap((page) => page.items)
-              .sort((a, b) => a.name.localeCompare(b.name)) as Artist[]
-          }
-        />
-        <hr ref={ref} />
-      </div>
+      <ScrollShadow hideScrollBar>
+        <div className='overflow-y-auto overflow-x-hidden px-6'>
+          <PageContent
+            artists={
+              artists?.pages
+                .flatMap((page) => page.items)
+                .sort((a, b) => a.name.localeCompare(b.name)) as Artist[]
+            }
+          />
+          <hr ref={ref} />
+        </div>
+      </ScrollShadow>
     </Box>
   );
 };

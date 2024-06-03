@@ -5,6 +5,7 @@ import { FaMusic, FaSpotify } from 'react-icons/fa6';
 import { twMerge } from 'tailwind-merge';
 
 import {
+  FilterOption,
   ScilentExternalLink,
   ScilentStreamingLinkType,
   SUPPORTED_EXTERNAL_LINKS,
@@ -69,11 +70,7 @@ export const getDurationText = (durationMs: number): string => {
   return timeArray.join(':');
 };
 
-export const TOP_ITEMS_FILTER_OPTIONS: {
-  label: string;
-  value: 'short_term' | 'medium_term' | 'long_term' | undefined;
-  desc: string;
-}[] = [
+export const TOP_ITEMS_FILTER_OPTIONS: FilterOption[] = [
   {
     label: 'Weeks',
     value: 'short_term', // approximately last 4 weeks
@@ -85,9 +82,9 @@ export const TOP_ITEMS_FILTER_OPTIONS: {
     desc: 'Approximately last 6 months',
   },
   {
-    label: 'All-time',
+    label: '1 Year',
     value: 'long_term', // calculated from several years of data and including all new data as it becomes available
-    desc: 'Calculated from several years of data and including all new data as it becomes available',
+    desc: 'Calculated from ~1 year of data and including all new data as it becomes available',
   },
 ];
 
@@ -128,4 +125,46 @@ export const getSourceIcon = (source: string): IconType => {
     default:
       return FaMusic;
   }
+};
+
+export const generateColorScale = (
+  minValue: number,
+  maxValue: number,
+  currentValue: number,
+) => {
+  if (minValue >= maxValue) {
+    throw new Error('Invalid range: minValue must be less than maxValue');
+  }
+
+  const range = maxValue - minValue;
+  const segmentSize = range / 10; // Divide the range into 10 segments
+
+  if (currentValue < minValue || currentValue > maxValue) {
+    throw new Error(
+      'Invalid value: currentValue must be within the specified range',
+    );
+  }
+
+  // Determine the segment index of the current value
+  const segmentIndex = Math.floor((currentValue - minValue) / segmentSize);
+
+  // Define the color scale for each segment
+  const colorScale = [
+    '#FF0000', // Red
+    '#FF4500', // OrangeRed
+    '#FF8C00', // DarkOrange
+    '#FFA500', // Orange
+    '#FFD700', // Gold
+    '#FFFF00', // Yellow
+    '#ADFF2F', // GreenYellow
+    '#7FFF00', // Chartreuse
+    '#00FF00', // Lime
+    '#00FA9A', // MediumSpringGreen
+    '#00FFFF', // Cyan
+  ];
+
+  // Retrieve the color associated with the segment index
+  const color = colorScale[segmentIndex];
+
+  return color;
 };
