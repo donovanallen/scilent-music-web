@@ -63,8 +63,8 @@ const Releases: React.FC = () => {
         </div>
       </Header>
       <ScrollShadow hideScrollBar>
+        {/* FEATURED RELEASES */}
         <div className='overflow-y-auto overflow-x-hidden p-6'>
-          {/* FEATURED RELEASES */}
           <div className='inline-flex items-center gap-x-2'>
             <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>
               Featured Releases
@@ -78,8 +78,7 @@ const Releases: React.FC = () => {
           </div>
           <PageContent
             albums={featuredReleases}
-            // pageData={followedArtists.artists}
-            // history={recents}
+            albumContentProps={{ showArtist: true }}
           />
         </div>
       </ScrollShadow>

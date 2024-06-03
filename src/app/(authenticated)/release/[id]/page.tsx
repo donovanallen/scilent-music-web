@@ -1,6 +1,6 @@
 'use client';
 
-import { ScrollShadow } from '@nextui-org/react';
+import { ScrollShadow, Tooltip } from '@nextui-org/react';
 import { Album, SimplifiedTrack } from '@spotify/web-api-ts-sdk';
 import {
   formatDuration,
@@ -9,12 +9,16 @@ import {
   millisecondsToSeconds,
 } from 'date-fns';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { BiAlbum } from 'react-icons/bi';
+import { FaCheck, FaPlus } from 'react-icons/fa6';
 
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { cn, formatArtists, getReleaseDate, getSourceIcon } from '@/lib/utils';
 
+import ArtistLink from '@/components/ArtistLink';
 import Box from '@/components/Box';
+import IconButton from '@/components/buttons/IconButton';
 import Header from '@/components/Header';
 import IconLink from '@/components/links/IconLink';
 import NextImage from '@/components/NextImage';
@@ -39,6 +43,34 @@ const getAlbumDuration = (album: Album): string => {
 
 const Release = ({ params }: { params: { id: string } }) => {
   const [albumDetails, setAlbumDetails] = useState<Album>();
+  const [userFollows, setUserFollows] = useState<boolean>();
+
+  const followArtist = async (id: string) => {
+    return await sdk.currentUser
+      .followArtistsOrUsers([id], 'artist')
+      .catch((e) => {
+        toast.error('Error following artist: ', e);
+      })
+      .then(() => {
+        setUserFollows(true);
+      })
+      .finally(() => {
+        toast.success('Artist followed');
+      });
+  };
+
+  useEffect(() => {
+    (async () => {
+      if (albumDetails) {
+        const artistId = albumDetails.artists[0].id;
+        const follows = await sdk.currentUser.followsArtistsOrUsers(
+          [artistId],
+          'artist',
+        );
+        setUserFollows(() => follows[0]);
+      }
+    })();
+  }, [albumDetails]);
 
   // * SPOTIFY ALBUM DATA
   useEffect(() => {
@@ -88,9 +120,48 @@ const Release = ({ params }: { params: { id: string } }) => {
                   {albumDetails?.name}
                 </h1>
                 {albumDetails?.artists && (
-                  <h3 className='text-neutral-300 line-clamp-2 text-sm sm:text-base md:text-lg font-medium'>
-                    {formatArtists(albumDetails?.artists)}
-                  </h3>
+                  <div className='flex items-center text-neutral-500'>
+                    {albumDetails &&
+                      albumDetails?.artists &&
+                      albumDetails?.artists.map((artist, i, arr) => (
+                        <>
+                          <ArtistLink key={artist.id} artist={artist}>
+                            <h3 className='text-neutral-300 line-clamp-2 text-sm sm:text-base md:text-lg font-medium hover:text-dark active:text-brand-light transition'>
+                              {formatArtists(artist)}
+                            </h3>
+                          </ArtistLink>
+                          <span className='text-neutral-300 line-clamp-2 text-sm sm:text-base md:text-lg font-medium'>
+                            {`${i < arr.length - 1 ? ', ' : ' '}`}
+                          </span>
+                        </>
+                      ))}
+
+                    <Tooltip
+                      shadow='md'
+                      size='sm'
+                      content={
+                        userFollows
+                          ? 'Following'
+                          : `Follow ${formatArtists(albumDetails?.artists[0])}`
+                      }
+                      classNames={{
+                        content: 'text-dark bg-light',
+                        base: 'max-w-xs',
+                      }}
+                      delay={1200}
+                      showArrow
+                    >
+                      <IconButton
+                        onClick={() => followArtist(params.id)}
+                        icon={userFollows ? FaCheck : FaPlus}
+                        variant='ghost'
+                        className='bg-transparent hover:bg-transparent'
+                        classNames={{
+                          icon: userFollows ? 'text-brand-dark' : '',
+                        }}
+                      />
+                    </Tooltip>
+                  </div>
                 )}
               </div>
               <div className='w-fit'>

@@ -9,6 +9,8 @@ import {
 import { useRouter } from 'next/navigation';
 import React from 'react';
 
+import { formatArtists } from '@/lib/utils';
+
 import AlbumCard from '@/components/AlbumCard';
 import ArtistCard from '@/components/ArtistCard';
 import TrackItem from '@/components/TrackItem';
@@ -21,6 +23,9 @@ interface PageContentProps {
   albums?: Album[] | SimplifiedAlbum[] | ScilentAlbum[];
   tracks?: Track[] | SimplifiedTrack[];
   tracksNumbered?: boolean;
+  albumContentProps?: {
+    showArtist?: boolean;
+  };
 }
 
 // const renderGrid = (
@@ -44,8 +49,9 @@ const PageContent: React.FC<PageContentProps> = ({
   artists,
   history,
   albums,
+  albumContentProps,
   tracks,
-  tracksNumbered = false,
+  tracksNumbered,
 }) => {
   const router = useRouter();
   if (albums) {
@@ -61,6 +67,12 @@ const PageContent: React.FC<PageContentProps> = ({
               type={album.album_type || album.type}
               id={album.id}
               onClick={() => router.push(`/release/${album.id}`)}
+              artistName={
+                album.artists &&
+                albumContentProps &&
+                albumContentProps.showArtist &&
+                (formatArtists(album.artists) as string)
+              }
             />
           ))}
       </div>

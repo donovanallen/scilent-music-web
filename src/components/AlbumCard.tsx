@@ -16,6 +16,7 @@ interface AlbumCardProps {
   isDisabled?: boolean;
   className?: string;
   onClick?: () => void;
+  artistName?: string;
 }
 
 const AlbumCard: React.FC<AlbumCardProps> = ({
@@ -27,6 +28,7 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
   isDisabled = false,
   className,
   onClick,
+  artistName,
 }) => {
   const imagePath = image;
   const [isCardLoaded, setIsCardLoaded] = useState(false);
@@ -70,9 +72,16 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
         </CardBody>
         <CardFooter className='flex-col w-full overflow-clip text-left items-start'>
           <h4 className='subtitle font-normal line-clamp-1'>{name}</h4>
-          <p className='subtitle font-normal text-neutral-500 line-clamp-1'>
-            {timestamp && new Date(timestamp)?.getFullYear()}
-          </p>
+          {artistName && (
+            <p className='subtitle font-normal text-neutral-500 line-clamp-1'>
+              {artistName}
+            </p>
+          )}
+          {timestamp && (
+            <p className='subtitle font-normal text-neutral-500 line-clamp-1'>
+              {new Date(timestamp)?.getFullYear()}
+            </p>
+          )}
         </CardFooter>
       </Card>
     </Skeleton>

@@ -144,7 +144,6 @@ const Artist = ({ params }: { params: { id: string } }) => {
                 icon={userFollows ? FaCheck : FaPlus}
                 variant='ghost'
                 disabled={userFollows}
-                // className={userFollows ? 'text-brand-dark' : ''}
                 classNames={{ icon: userFollows ? 'text-brand-dark' : '' }}
               />
             </Tooltip>
