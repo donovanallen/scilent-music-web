@@ -10,6 +10,7 @@ type SidebarItemProps = {
   active?: boolean;
   href: string;
   disabled?: boolean;
+  pill?: React.ReactNode;
 };
 
 const SidebarItem: React.FC<SidebarItemProps> = ({
@@ -18,6 +19,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   active,
   href,
   disabled = false,
+  pill,
 }) => {
   return (
     <Link
@@ -32,6 +34,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
     >
       {Icon && <Icon size={26} />}
       <h4 className='truncate w-100'>{label}</h4>
+      {pill}
     </Link>
   );
 };

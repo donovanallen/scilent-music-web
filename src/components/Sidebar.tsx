@@ -7,7 +7,7 @@ import { useSession } from 'next-auth/react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { BiSearch } from 'react-icons/bi';
 import { HiHome } from 'react-icons/hi';
-import { TbUserHeart } from 'react-icons/tb';
+import { TbMusicStar, TbUserHeart } from 'react-icons/tb';
 
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 import useAuthModal from '@/hooks/useAuthModal';
@@ -15,6 +15,7 @@ import useAuthModal from '@/hooks/useAuthModal';
 import Box from '@/components/Box';
 import Button from '@/components/buttons/Button';
 import Feed from '@/components/Feed';
+import NextPill from '@/components/Pill';
 import SidebarItem from '@/components/SidebarItem';
 
 interface SidebarProps {
@@ -50,13 +51,14 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         active: pathname === '/artists',
         href: '/artists',
       },
-      // {
-      //   icon: TbMusicStar,
-      //   label: 'Releases',
-      //   active: pathname === '/releases',
-      //   href: '/releases',
-      //   disabled: true,
-      // },
+      {
+        icon: TbMusicStar,
+        label: 'Releases',
+        active: pathname === '/releases',
+        href: '/releases',
+        disabled: false,
+        pill: 'New',
+      },
     ],
     [pathname],
   );
@@ -84,10 +86,28 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
       <div className='hidden md:flex flex-col gap-y-2 bg-black h-full w-[300px] p-2'>
         {session ? (
           <>
-            <Box>
-              <div className='flex flex-col gap-y-4 px-5 py-4'>
+            <Box className='px-4 py-2'>
+              <div className='flex flex-col gap-y-4 w-fit'>
                 {routes.map((item) => (
-                  <SidebarItem key={item.label} {...item} />
+                  <SidebarItem
+                    key={item.label}
+                    {...item}
+                    pill={
+                      item.pill && (
+                        <NextPill
+                          text={item.pill}
+                          radius='sm'
+                          variant='bordered'
+                          size='sm'
+                          classNames={{
+                            base: 'border-brand-dark',
+                            content: 'font-medium text-brand-primary',
+                          }}
+                          disabled={item.disabled}
+                        />
+                      )
+                    }
+                  />
                 ))}
               </div>
             </Box>
