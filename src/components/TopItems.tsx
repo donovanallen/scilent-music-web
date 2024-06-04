@@ -3,7 +3,7 @@
 import { Album, Artist, Track } from '@spotify/web-api-ts-sdk';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { Suspense, useState } from 'react';
+import React, { useState } from 'react';
 import { IconType } from 'react-icons';
 import { BiAlbum } from 'react-icons/bi';
 import { FaChevronUp, FaMinus, FaPlus } from 'react-icons/fa6';
@@ -12,9 +12,10 @@ import { TbMusicHeart, TbUserHeart } from 'react-icons/tb';
 import { cn, formatArtists } from '@/lib/utils';
 import { useTopMusic } from '@/hooks/useTopMusic';
 
-import TextButton from '@/components/buttons/TextButton';
+import FilterOptions from '@/components/FilterOptions';
 import HeaderItem from '@/components/HeaderItem';
-import Skeleton from '@/components/Skeleton';
+import InfoIcon from '@/components/InfoIcon';
+import LoadingIndicator from '@/components/LoadingIndicator';
 
 interface ExpandedTopItemProps {
   items: (Artist | Track | Album)[];
@@ -172,35 +173,39 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
   return (
     <div className={cn('w-full h-auto py-6 border-b-2')}>
       {/* HEADER */}
-      <div
-        className='flex items-center justify-between text-light mb-4 cursor-pointer gap-x-1'
-        onClick={() => setExpanded(!expanded)}
-      >
+      <div className='flex items-center justify-between text-light mb-4 cursor-pointer gap-x-1'>
         {/* TITLE */}
-        <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>Top Music</h3>
+        <div className='inline-flex items-center gap-x-2'>
+          <h3
+            onClick={() => setExpanded(!expanded)}
+            className='w-fit text-lg sm:text-xl md:text-2xl'
+          >
+            Top Music
+          </h3>
+          <div
+            onClick={() => setExpanded(!expanded)}
+            className='text-lg md:text-xl'
+          >
+            {expanded ? <FaMinus /> : <FaPlus />}
+          </div>
+          <InfoIcon
+            tooltipEnabled
+            tooltip={{
+              content:
+                'These are your top artists and tracks over the selected time period. Expand to see your full Top 20 for each category. Adjust the time filter to see more. Top Albums and Genres coming soon.',
+            }}
+          />
+        </div>
 
         {/* TOP ITEMS FILTER OPTIONS */}
         {filterOptions && (topArtists || topAlbums || topTracks) && (
-          // TODO: Refactor to FilterOptions component
-          <div className='flex items-center w-fit gap-x-2 sm:gap-x-4 lg:gap-x-6'>
-            {filterOptions.map((option) => (
-              <TextButton
-                key={option.value}
-                className={cn(
-                  'subtitle text-neutral-800 hover:text-brand-dark',
-                  'bg-transparent transition',
-                  'flex',
-                  selectedFilter == option.value ? 'text-brand-primary' : '',
-                )}
-                variant='basic'
-                onClick={() => setSelectedFilter(option.value)}
-              >
-                {option.label}
-              </TextButton>
-            ))}
-            <div className='text-lg md:text-xl'>
-              {expanded ? <FaMinus /> : <FaPlus />}
-            </div>
+          <div className='inline-flex items-center gap-x-4'>
+            <FilterOptions
+              filterOptions={filterOptions}
+              selectedFilter={selectedFilter}
+              onFilterSelect={setSelectedFilter as () => void}
+              tooltipsEnabled
+            />
           </div>
         )}
       </div>
@@ -208,7 +213,9 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
       {/* CONTAINER */}
       <div className='flex flex-col items-center'>
         {/* TOP ITEMS */}
-        <Suspense fallback={<Skeleton />}>
+        {isLoading ? (
+          <LoadingIndicator />
+        ) : (
           <div className={cn('flex w-full flex-col md:flex-row gap-4')}>
             {/* TOP ARTISTS */}
             <div className='w-full flex-1'>
@@ -271,18 +278,16 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
                 ))}
             </div>
           </div>
-        </Suspense>
+        )}
 
         {/* SHOW MORE BUTTON */}
-        {expanded &&
-          filterOptions &&
-          (topArtists || topAlbums || topTracks) && (
-            <FaChevronUp
-              onClick={() => setExpanded(!expanded)}
-              size={24}
-              className='my-4 text-neutral-500 hover:text-light cursor-pointer transition'
-            />
-          )}
+        {!isLoading && expanded && (topArtists || topAlbums || topTracks) && (
+          <FaChevronUp
+            onClick={() => setExpanded(!expanded)}
+            size={24}
+            className='my-4 text-neutral-500 hover:text-light cursor-pointer transition'
+          />
+        )}
       </div>
     </div>
   );

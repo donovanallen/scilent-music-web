@@ -1,31 +1,31 @@
 'use client';
 
 import { ScrollShadow } from '@nextui-org/react';
-import { ItemTypes } from '@spotify/web-api-ts-sdk';
 import React, { useState } from 'react';
 
-import { cn } from '@/lib/utils';
-
 import Box from '@/components/Box';
-import TextButton from '@/components/buttons/TextButton';
+import FilterOptions from '@/components/FilterOptions';
 import Header from '@/components/Header';
+import InfoIcon from '@/components/InfoIcon';
+
+import { FilterOption, SearchFilterValue } from '@/constant/types';
 
 import SearchContent from './components/SearchContent';
 
-const SearchFilters = [
+const SearchFilters: FilterOption[] = [
   {
     value: 'artist',
-    desc: 'Show artists in search results',
+    desc: 'Show only artists in search results',
     label: 'Artists',
   },
   {
     value: 'album',
-    desc: 'Show albums in search results',
+    desc: 'Show only albums in search results',
     label: 'Albums',
   },
   {
     value: 'track',
-    desc: 'Show tracks in search results',
+    desc: 'Show only tracks in search results',
     label: 'Tracks',
   },
 ];
@@ -34,36 +34,34 @@ const SearchFilters = [
 const Search = () => {
   const [searchInput, setSearchInput] = useState('');
   const [selectedFilter, setSelectedFilter] = useState<
-    ItemTypes | string | undefined
+    SearchFilterValue | undefined
   >();
 
   return (
     <Box className='bg-dark rounded-md h-full flex flex-col overflow-y-auto overflow-x-hidden'>
       <Header>
         <div className='flex items-center justify-between text-light mb-4 cursor-pointer gap-x-4 md:justify-start'>
-          <h1 className='text-brand-light w-fit text-lg sm:text-xl md:text-2xl'>
-            Search
-          </h1>
+          {/* TITLE */}
+          <div className='inline-flex items-center gap-x-2'>
+            <h1 className='text-brand-light w-fit text-lg sm:text-xl md:text-2xl'>
+              Search
+            </h1>
+            <InfoIcon
+              tooltipEnabled
+              tooltip={{
+                content:
+                  'Search for any and all music. Use the filters to see a specific type of result. Support for playlists, users, genres and extended album types (mixtapes, compilations, etc.) coming soon. Undecided on support for podcasts, sorry 🤷',
+              }}
+            />
+          </div>
           <div className='flex items-center w-fit gap-x-2 sm:gap-x-4 lg:gap-x-6'>
-            {SearchFilters.map((option) => (
-              <TextButton
-                key={option.value}
-                className={cn(
-                  'subtitle text-neutral-800 hover:text-brand-dark',
-                  'bg-transparent transition',
-                  'flex',
-                  selectedFilter == option.value ? 'text-brand-primary' : '',
-                )}
-                variant='basic'
-                onClick={() =>
-                  setSelectedFilter(
-                    selectedFilter == option.value ? undefined : option.value,
-                  )
-                }
-              >
-                {option.label}
-              </TextButton>
-            ))}
+            <FilterOptions
+              filterOptions={SearchFilters}
+              selectedFilter={selectedFilter}
+              onFilterSelect={setSelectedFilter as () => void}
+              tooltipsEnabled
+              isNullable
+            />
           </div>
         </div>
         <input

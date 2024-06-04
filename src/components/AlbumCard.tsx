@@ -63,7 +63,8 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
               text={type}
               variant='solid'
               size='sm'
-              className='absolute bottom-1.5 right-1.5'
+              radius='sm'
+              className='absolute bottom-1.5 right-1.5 text-dark'
             />
           )}
         </CardBody>

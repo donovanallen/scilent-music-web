@@ -1,17 +1,18 @@
 'use client';
 
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { cn } from '@/lib/utils';
 import { useTopMusic } from '@/hooks/useTopMusic';
 
-import TextButton from '@/components/buttons/TextButton';
 import MultiRadialChart from '@/components/charts/MultiRadialChart';
 import PropertiesChart from '@/components/charts/PropertiesChart';
 import RadarChart from '@/components/charts/RadarChart';
+import FilterOptions from '@/components/FilterOptions';
 import HeaderItem from '@/components/HeaderItem';
-import Skeleton from '@/components/Skeleton';
+import InfoIcon from '@/components/InfoIcon';
+import LoadingIndicator from '@/components/LoadingIndicator';
 
 import {
   analyzeAudioFeatures,
@@ -20,7 +21,7 @@ import {
 } from '@/actions/getProfileAura';
 
 const ProfileAura: React.FC = () => {
-  const [expanded, setExpanded] = useState(false);
+  // const [expanded, setExpanded] = useState(false);
 
   const {
     tracks: topTracks,
@@ -69,44 +70,50 @@ const ProfileAura: React.FC = () => {
 
   return (
     <div className={cn('w-full h-auto border-b py-6')}>
-      {/* TITLE */}
-      <div
-        className='flex items-center justify-between text-light mb-4 cursor-pointer gap-x-1'
-        onClick={() => setExpanded(!expanded)}
-      >
-        <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>Aura</h3>
+      {/* HEADER */}
+      <div className='flex items-center justify-between text-light mb-4 cursor-pointer gap-x-1'>
+        {/* TITLE */}
+        <div className='inline-flex items-center'>
+          <h3
+            className='w-fit text-lg sm:text-xl md:text-2xl'
+            // onClick={() => setExpanded(!expanded)}
+          >
+            Aura
+          </h3>
+          {/* <div
+            onClick={() => setExpanded(!expanded)}
+            className='text-lg md:text-xl'
+          >
+            {expanded ? <FaMinus /> : <FaPlus />}
+          </div> */}
+          <InfoIcon
+            tooltipEnabled
+            tooltip={{
+              content:
+                'Your Aura consists of live insights from your listening data. For the given time periods, you can see how different aspects of your music preferences have changed. In future versions, this data will be much more extensive and you will be able to compare with friends and share socially.',
+            }}
+          />
+        </div>
+
         {/* AURA ITEMS FILTER OPTIONS */}
-        <>
-          {filterOptions && topTracks && (
-            // TODO: Refactor to FilterOptions component
-            <div className='flex items-center w-fit gap-x-2 sm:gap-x-4 lg:gap-x-6'>
-              {filterOptions.map((option) => (
-                <TextButton
-                  key={option.value}
-                  className={cn(
-                    'subtitle text-neutral-800 hover:text-brand-dark',
-                    'bg-transparent transition',
-                    'flex',
-                    selectedFilter == option.value ? 'text-brand-primary' : '',
-                  )}
-                  variant='basic'
-                  onClick={() => setSelectedFilter(option.value)}
-                >
-                  {option.label}
-                </TextButton>
-              ))}
-              {/* <div className='text-lg md:text-xl'>
-                {expanded ? <FaMinus /> : <FaPlus />}
-              </div> */}
-            </div>
-          )}
-        </>
+        {filterOptions && topTracks && (
+          <div className='inline-flex items-center gap-x-4'>
+            <FilterOptions
+              filterOptions={filterOptions}
+              selectedFilter={selectedFilter}
+              onFilterSelect={setSelectedFilter as () => void}
+              tooltipsEnabled
+            />
+          </div>
+        )}
       </div>
 
       {/* CONTAINER */}
-      <div className='flex items-center'>
+      <div className='flex flex-col items-center'>
         {/* AURA ITEMS */}
-        <Suspense fallback={<Skeleton />}>
+        {isLoading ? (
+          <LoadingIndicator />
+        ) : (
           <div
             className={cn('flex w-full flex-col lg:flex-row gap-4 flex-wrap')}
           >
@@ -149,7 +156,7 @@ const ProfileAura: React.FC = () => {
               )}
             </div>
           </div>
-        </Suspense>
+        )}
       </div>
     </div>
   );

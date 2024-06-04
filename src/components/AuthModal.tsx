@@ -44,17 +44,20 @@ const AuthModal = () => {
           })
         }
         rightIcon={status === 'loading' ? FaSpinner : FaSpotify}
-        variant='ghost'
+        variant='outline'
         size='base'
         aria-label='Log in with Spotify'
         className={cn(
-          'bg-spotify-primary rounded-lg min-w-fit w-1/2 mt-6',
-          'self-center justify-center gap-x-4',
-          'text-sm md:text-base',
+          'w-fit mt-6',
+          'self-center justify-between gap-x-4',
+          'text-base md:text-base',
+          'border-light animated-underline',
+          'active:text-brand-dark active:border-brand-dark',
           'hover:shadow-md transition',
         )}
         isLoading={status === 'loading'}
         name='Log in'
+        classNames={{ rightIcon: 'text-spotify-primary text-lg' }}
       >
         Log in
       </Button>

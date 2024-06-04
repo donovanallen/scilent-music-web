@@ -1,6 +1,6 @@
 'use client';
 
-import { ScrollShadow } from '@nextui-org/react';
+import { ScrollShadow, Tooltip } from '@nextui-org/react';
 import { Artist, SimplifiedAlbum, Track } from '@spotify/web-api-ts-sdk';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
@@ -11,24 +11,18 @@ import { FaCheck, FaPlus, FaUser } from 'react-icons/fa6';
 import { TbMusicHeart } from 'react-icons/tb';
 
 import sdk from '@/lib/spotify-sdk/ClientInstance';
-import { cn } from '@/lib/utils';
 
 import Box from '@/components/Box';
 import IconButton from '@/components/buttons/IconButton';
-import TextButton from '@/components/buttons/TextButton';
 import ExternalLinks from '@/components/ExternalLinks';
 import Header from '@/components/Header';
 import HeaderImage from '@/components/HeaderImage';
 import HeaderItem from '@/components/HeaderItem';
+import InfoIcon from '@/components/InfoIcon';
 import PageContent from '@/components/PageContent';
 import NextPill from '@/components/Pill';
 
-import {
-  ReleaseFilters,
-  ReleaseTypes,
-  ScilentAlbum,
-  ScilentExternalLink,
-} from '@/constant/types';
+import { ScilentAlbum, ScilentExternalLink } from '@/constant/types';
 // import { getArtistDiscography } from '@/actions/getArtistDiscography';
 
 // TODO: style header and metadata
@@ -41,8 +35,8 @@ const Artist = ({ params }: { params: { id: string } }) => {
   >();
   const [topItems, setTopItems] = useState<Track[]>();
   const [links, setLinks] = useState<ScilentExternalLink[] | undefined>();
-  const [selectedReleaseFilter, setSelectedReleaseFilter] =
-    useState<ReleaseTypes>();
+  // const [selectedReleaseFilter, setSelectedReleaseFilter] =
+  //   useState<ReleaseTypes>();
   // const [credits, setCredits] = useState();
 
   const [userFollows, setUserFollows] = useState<boolean>();
@@ -131,17 +125,29 @@ const Artist = ({ params }: { params: { id: string } }) => {
       <Header>
         {/* ARTIST METADATA */}
         <div className='flex w-full items-center justify-between'>
-          <div className='flex items-center gap-x-2 text-neutral-500'>
+          <div className='flex items-center text-neutral-500'>
             <h4>{metadata?.type}</h4>
-            {userFollows ? (
-              <FaCheck className='text-brand-dark' />
-            ) : (
+
+            <Tooltip
+              shadow='md'
+              size='sm'
+              content={userFollows ? 'Artist followed' : 'Follow artist'}
+              classNames={{
+                content: 'text-dark bg-light',
+                base: 'max-w-xs',
+              }}
+              delay={1200}
+              showArrow
+            >
               <IconButton
                 onClick={() => followArtist(params.id)}
-                icon={FaPlus}
+                icon={userFollows ? FaCheck : FaPlus}
                 variant='ghost'
+                disabled={userFollows}
+                // className={userFollows ? 'text-brand-dark' : ''}
+                classNames={{ icon: userFollows ? 'text-brand-dark' : '' }}
               />
-            )}
+            </Tooltip>
           </div>
           <ExternalLinks links={links} />
         </div>
@@ -166,18 +172,34 @@ const Artist = ({ params }: { params: { id: string } }) => {
               </p>
             )}
             {metadata?.popularity && metadata.popularity > 0 && (
-              <p className='subtitle text-neutral-500'>
-                Popularity Score: {metadata?.popularity}
-              </p>
+              <div className='inline-flex items-center'>
+                <p className='subtitle text-neutral-500'>
+                  Popularity Score: {metadata?.popularity}
+                </p>
+                <InfoIcon
+                  tooltipEnabled
+                  tooltip={{
+                    content:
+                      "The popularity of the artist. The value will be between 0 and 100, with 100 being the most popular. The artist's popularity is calculated from the popularity of all the artist's tracks.",
+                  }}
+                />
+              </div>
             )}
           </div>
         </div>
 
         {/* ARTIST GENRES */}
-        {metadata?.genres && (
-          <div className='w-full flex gap-x-2 mt-4'>
+        {metadata?.genres && metadata?.genres.length > 0 && (
+          <div className='w-full flex gap-x-2 mt-4 items-center'>
+            <span className='subtitle text-xs font-medium'>Genres</span>
             {metadata.genres.map((genre) => (
-              <NextPill text={genre} variant='solid' size='sm' key={genre} />
+              <NextPill
+                text={genre}
+                variant='bordered'
+                size='sm'
+                radius='sm'
+                key={genre}
+              />
             ))}
           </div>
         )}
@@ -204,7 +226,7 @@ const Artist = ({ params }: { params: { id: string } }) => {
           <div className='mt-2 mb-7'>
             <div className='w-full flex items-center gap-x-2'>
               <h3 className='text-neutral-500'>Releases</h3>
-              {ReleaseFilters.map((option) => (
+              {/* {ReleaseFilters.map((option) => (
                 <TextButton
                   variant='basic'
                   key={option.value}
@@ -224,7 +246,7 @@ const Artist = ({ params }: { params: { id: string } }) => {
                 >
                   {option.label}
                 </TextButton>
-              ))}
+              ))} */}
             </div>
             <PageContent albums={releases} />
           </div>

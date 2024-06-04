@@ -7,9 +7,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 
 import PageContent from '@/components/PageContent';
+
+import { SearchFilterValue } from '../../../../constant/types';
 interface SearchContentProps {
   searchInput?: string;
-  searchType?: ItemTypes | string | undefined;
+  searchType?: SearchFilterValue | ItemTypes | string | undefined;
 }
 
 const SearchContent: React.FC<SearchContentProps> = ({
