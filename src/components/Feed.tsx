@@ -4,10 +4,10 @@ import { ScrollShadow } from '@nextui-org/react';
 import { PlayHistory, Track } from '@spotify/web-api-ts-sdk';
 import React from 'react';
 import { GiBackwardTime } from 'react-icons/gi';
-import { IoPlay } from 'react-icons/io5';
 import { TbPlaylist } from 'react-icons/tb';
 
 import Box from '@/components/Box';
+import CurrentlyPlaying from '@/components/CurrentlyPlaying';
 import FeedItem from '@/components/FeedItem';
 import InfoIcon from '@/components/InfoIcon';
 
@@ -39,16 +39,7 @@ const Feed: React.FC<FeedProps> = ({ title, cpTrack, history }) => {
         )}
 
         {/* LIVE/CP TRACK */}
-        {cpTrack && (
-          <div className='p-2 -mx-2 gap-y-2 border-b-2 border-light'>
-            <div className='flex items-center gap-x-1 text-brand-primary mb-2'>
-              <IoPlay className='text-brand-primary' />
-              <h4 className='subtitle'>Currently Playing</h4>
-            </div>
-
-            <FeedItem data={cpTrack as Track} />
-          </div>
-        )}
+        <>{cpTrack && <CurrentlyPlaying />}</>
       </div>
 
       {/* LISTEN HISTORY */}
