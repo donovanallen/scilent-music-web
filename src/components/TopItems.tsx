@@ -3,7 +3,7 @@
 import { Album, Artist, Track } from '@spotify/web-api-ts-sdk';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { Suspense, useState } from 'react';
+import React, { useState } from 'react';
 import { IconType } from 'react-icons';
 import { BiAlbum } from 'react-icons/bi';
 import { FaChevronUp, FaMinus, FaPlus } from 'react-icons/fa6';
@@ -15,7 +15,7 @@ import { useTopMusic } from '@/hooks/useTopMusic';
 import FilterOptions from '@/components/FilterOptions';
 import HeaderItem from '@/components/HeaderItem';
 import InfoIcon from '@/components/InfoIcon';
-import Skeleton from '@/components/Skeleton';
+import LoadingIndicator from '@/components/LoadingIndicator';
 
 interface ExpandedTopItemProps {
   items: (Artist | Track | Album)[];
@@ -213,7 +213,9 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
       {/* CONTAINER */}
       <div className='flex flex-col items-center'>
         {/* TOP ITEMS */}
-        <Suspense fallback={<Skeleton />}>
+        {isLoading ? (
+          <LoadingIndicator />
+        ) : (
           <div className={cn('flex w-full flex-col md:flex-row gap-4')}>
             {/* TOP ARTISTS */}
             <div className='w-full flex-1'>
@@ -276,10 +278,10 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
                 ))}
             </div>
           </div>
-        </Suspense>
+        )}
 
         {/* SHOW MORE BUTTON */}
-        {expanded && (topArtists || topAlbums || topTracks) && (
+        {!isLoading && expanded && (topArtists || topAlbums || topTracks) && (
           <FaChevronUp
             onClick={() => setExpanded(!expanded)}
             size={24}
