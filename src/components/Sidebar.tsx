@@ -91,13 +91,12 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                 ))}
               </div>
             </Box>
-            <Box className='h-full overflow-y-scroll no-scrollbar'>
-              <Feed
-                title='Live Mix'
-                cpTrack={liveTrack as Track}
-                history={history as PlayHistory[]}
-              />
-            </Box>
+            <Feed
+              title='Live Mix'
+              cpTrack={liveTrack as Track}
+              history={history as PlayHistory[]}
+              className='h-full overflow-y-scroll no-scrollbar'
+            />
           </>
         ) : (
           <Box className='h-full flex items-center justify-center '>
