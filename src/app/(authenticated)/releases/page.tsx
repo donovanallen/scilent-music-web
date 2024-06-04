@@ -49,10 +49,9 @@ const Releases: React.FC = () => {
     <Box className='bg-dark rounded-md h-full flex flex-col overflow-y-auto overflow-x-hidden'>
       <Header>
         <div className='inline-flex items-center gap-x-2'>
-          <h1 className='text-brand-light w-fit text-lg sm:text-xl md:text-2xl'>
+          <h1 className='text-brand-light line-clamp-1 text-2xl sm:text-3xl md:h1'>
             Release Hub
           </h1>
-
           <InfoIcon
             tooltipEnabled
             tooltip={{
