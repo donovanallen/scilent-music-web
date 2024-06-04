@@ -5,7 +5,7 @@ import * as React from 'react';
 
 import logger from '@/lib/logger';
 
-import Button from '@/components/Button';
+import Button from '@/components/buttons/Button';
 
 import authOptions from '@/app/api/auth/[...nextauth]/authOptions';
 
@@ -21,7 +21,7 @@ export default async function NotFound() {
       <section>
         <div className='layout flex min-h-screen flex-col items-center justify-center text-center text-white'>
           <h1 className='h0'>Page Not Found</h1>
-          <Button>
+          <Button className='animated-underline'>
             <Link className='mt-4' href='/'>
               Back to home
             </Link>

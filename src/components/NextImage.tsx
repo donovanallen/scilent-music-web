@@ -1,3 +1,4 @@
+import { Skeleton } from '@nextui-org/react';
 import Image, { ImageProps } from 'next/image';
 import * as React from 'react';
 
@@ -33,31 +34,33 @@ export default function NextImage({
   classNames,
   ...rest
 }: NextImageProps) {
-  const [status, setStatus] = React.useState(
+  const [isImageLoaded, setIsImageLoaded] = React.useState(false);
+  const [_status, _setStatus] = React.useState(
     useSkeleton ? 'loading' : 'complete',
   );
   const widthIsSet = className?.includes('w-') ?? false;
 
   return (
-    <div
-      style={!widthIsSet ? { width: `${width}px` } : undefined}
-      className={className}
-    >
-      <Image
-        className={cn(
-          'aspect-square object-cover',
-          classNames?.image,
-          status === 'loading' && cn('animate-pulse', classNames?.blur),
-        )}
-        src={src}
-        width={width}
-        height={height}
-        fill={fill}
-        alt={alt}
-        onLoad={() => setStatus('complete')}
-        sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
-        {...rest}
-      />
-    </div>
+    <Skeleton className='rounded-md' isLoaded={isImageLoaded}>
+      <div
+        style={!widthIsSet ? { width: `${width}px` } : undefined}
+        className={className}
+      >
+        <Image
+          className={cn(
+            'relative aspect-square object-cover',
+            classNames?.image,
+          )}
+          src={src}
+          width={width}
+          height={height}
+          fill={fill}
+          alt={alt}
+          onLoad={() => setIsImageLoaded(true)}
+          sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+          {...rest}
+        />
+      </div>
+    </Skeleton>
   );
 }

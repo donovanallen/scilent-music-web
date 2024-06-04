@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 
 import logger from '@/lib/logger';
 
-import Button from '@/components/Button';
+import Button from '@/components/buttons/Button';
 
 export default function Error({
   error,
@@ -35,7 +35,7 @@ export default function Error({
       <section>
         <div className='layout flex min-h-screen flex-col items-center justify-center text-center'>
           <h1 className='mt-8 h0'>Oops, something went wrong!</h1>
-          <Button onClick={reset} className='mt-4'>
+          <Button onClick={reset} className='mt-4 animated-underline'>
             Try again
           </Button>
         </div>

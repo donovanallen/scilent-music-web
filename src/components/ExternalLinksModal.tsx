@@ -4,7 +4,7 @@ import React from 'react';
 import { IconType } from 'react-icons';
 
 import ButtonLink from '@/components/links/ButtonLink';
-import Modal from '@/components/Modal';
+import NextModal from '@/components/Modal';
 
 import { SupportedExternalLink } from '@/constant/types';
 
@@ -20,7 +20,7 @@ const ExternalLinksModal: React.FC<{
   };
 
   return (
-    <Modal title='Links' isOpen={isOpen} onChange={onChange}>
+    <NextModal title='Links' isOpen={isOpen} onChange={onChange}>
       <div className='flex flex-col items-center gap-y-4 text-center my-4'>
         {links.map(
           (link, i) =>
@@ -38,7 +38,7 @@ const ExternalLinksModal: React.FC<{
             ),
         )}
       </div>
-    </Modal>
+    </NextModal>
   );
 };
 
