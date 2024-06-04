@@ -19,19 +19,21 @@ import Feed from '@/components/Feed';
 import SidebarItem from '@/components/SidebarItem';
 
 import Logo from '~/svg/Logo_Wordmark_Gray.svg';
+import { useStore } from '@/providers/zustand';
+
 
 interface SidebarProps {
   children: React.ReactNode;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ children }) => {
+  const { currentTrack, setCurrentTrack } = useStore();
+
   const pathname = usePathname();
   const { data: session } = useSession();
   const authModal = useAuthModal();
   const queryClient = new QueryClient();
-
   const [history, setHistory] = useState<PlayHistory[] | null>();
-  const [liveTrack, setLiveTrack] = useState<TrackItem | null>();
 
   const routes = useMemo(
     () => [
@@ -77,10 +79,10 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
     if (session) {
       (async () => {
         const result = await sdk.player.getUsersQueue();
-        setLiveTrack(() => result.currently_playing);
+        setCurrentTrack(result.currently_playing as TrackItem);
       })();
     }
-  }, [session]);
+  }, [session, setCurrentTrack]);
 
   return (
     <div className='flex h-[100vh]'>
@@ -108,7 +110,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
             </Box> */}
             <Feed
               title='Live Mix'
-              cpTrack={liveTrack as Track}
+              cpTrack={currentTrack as Track}
               history={history as PlayHistory[]}
               className='hidden md:flex h-full overflow-y-scroll no-scrollbar'
             />
