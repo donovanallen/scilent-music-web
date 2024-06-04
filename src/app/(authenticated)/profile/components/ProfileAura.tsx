@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { cn } from '@/lib/utils';
@@ -12,7 +12,7 @@ import RadarChart from '@/components/charts/RadarChart';
 import FilterOptions from '@/components/FilterOptions';
 import HeaderItem from '@/components/HeaderItem';
 import InfoIcon from '@/components/InfoIcon';
-import Skeleton from '@/components/Skeleton';
+import LoadingIndicator from '@/components/LoadingIndicator';
 
 import {
   analyzeAudioFeatures,
@@ -109,9 +109,11 @@ const ProfileAura: React.FC = () => {
       </div>
 
       {/* CONTAINER */}
-      <div className='flex items-center'>
+      <div className='flex flex-col items-center'>
         {/* AURA ITEMS */}
-        <Suspense fallback={<Skeleton />}>
+        {isLoading ? (
+          <LoadingIndicator />
+        ) : (
           <div
             className={cn('flex w-full flex-col lg:flex-row gap-4 flex-wrap')}
           >
@@ -154,7 +156,7 @@ const ProfileAura: React.FC = () => {
               )}
             </div>
           </div>
-        </Suspense>
+        )}
       </div>
     </div>
   );
