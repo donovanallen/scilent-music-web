@@ -17,18 +17,20 @@ import Button from '@/components/buttons/Button';
 import Feed from '@/components/Feed';
 import SidebarItem from '@/components/SidebarItem';
 
+import { useStore } from '@/providers/zustand';
+
 interface SidebarProps {
   children: React.ReactNode;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ children }) => {
+  const { currentTrack, setCurrentTrack } = useStore();
+
   const pathname = usePathname();
   const { data: session } = useSession();
   const authModal = useAuthModal();
   const queryClient = new QueryClient();
-
   const [history, setHistory] = useState<PlayHistory[] | null>();
-  const [liveTrack, setLiveTrack] = useState<TrackItem | null>();
 
   const routes = useMemo(
     () => [
@@ -74,10 +76,10 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
     if (session) {
       (async () => {
         const result = await sdk.player.getUsersQueue();
-        setLiveTrack(() => result.currently_playing);
+        setCurrentTrack(result.currently_playing as TrackItem);
       })();
     }
-  }, [session]);
+  }, [session, setCurrentTrack]);
 
   return (
     <div className='flex h-full'>
@@ -94,7 +96,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
             <Box className='h-full overflow-y-scroll no-scrollbar'>
               <Feed
                 title='Live Mix'
-                cpTrack={liveTrack as Track}
+                cpTrack={currentTrack as Track}
                 history={history as PlayHistory[]}
               />
             </Box>
