@@ -18,9 +18,9 @@ import Button from '@/components/buttons/Button';
 import Feed from '@/components/Feed';
 import SidebarItem from '@/components/SidebarItem';
 
-import Logo from '~/svg/Logo_Wordmark_Gray.svg';
 import { useStore } from '@/providers/zustand';
 
+import Logo from '~/svg/Logo_Wordmark_Gray.svg';
 
 interface SidebarProps {
   children: React.ReactNode;
