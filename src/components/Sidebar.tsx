@@ -1,5 +1,6 @@
 'use client';
 
+// import { Avatar, Tooltip } from '@nextui-org/react';
 import { PlayHistory, Track, TrackItem } from '@spotify/web-api-ts-sdk';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { usePathname } from 'next/navigation';
@@ -18,6 +19,8 @@ import Feed from '@/components/Feed';
 import SidebarItem from '@/components/SidebarItem';
 
 import { useStore } from '@/providers/zustand';
+
+import Logo from '~/svg/Logo_Wordmark_Gray.svg';
 
 interface SidebarProps {
   children: React.ReactNode;
@@ -82,23 +85,37 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   }, [session, setCurrentTrack]);
 
   return (
-    <div className='flex h-full'>
-      <div className='hidden md:flex flex-col gap-y-2 bg-black h-full w-[300px] p-2'>
+    <div className='flex h-[100vh]'>
+      <div className='flex flex-col w-fit md:w-[300px] xl:w-[350px] gap-y-2 bg-black h-full p-2'>
         {session ? (
           <>
             <Box>
-              <div className='flex flex-col gap-y-4 px-5 py-4'>
+              <div className='flex flex-col items-center gap-y-4 px-5 py-4'>
                 {routes.map((item) => (
                   <SidebarItem key={item.label} {...item} />
                 ))}
               </div>
             </Box>
-            <Box className='h-full overflow-y-scroll no-scrollbar'>
-              <Feed
-                title='Live Mix'
-                cpTrack={currentTrack as Track}
-                history={history as PlayHistory[]}
-              />
+            {/* <Box className='md:hidden'>
+              <Tooltip content='Currently Playing'>
+                <Avatar
+                  imgProps={{
+                    src:
+                      liveTrack && 'album' in liveTrack
+                        ? liveTrack.album.images[0].url
+                        : undefined,
+                  }}
+                />
+              </Tooltip>
+            </Box> */}
+            <Feed
+              title='Live Mix'
+              cpTrack={currentTrack as Track}
+              history={history as PlayHistory[]}
+              className='hidden md:flex h-full overflow-y-scroll no-scrollbar'
+            />
+            <Box className='md:hidden flex flex-col h-[100%] w-full'>
+              <Logo className='transform -rotate-90 align-middle origin-center my-auto' />
             </Box>
           </>
         ) : (

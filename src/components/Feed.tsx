@@ -6,6 +6,8 @@ import React from 'react';
 import { GiBackwardTime } from 'react-icons/gi';
 import { TbPlaylist } from 'react-icons/tb';
 
+import { cn } from '@/lib/utils';
+
 import Box from '@/components/Box';
 import CurrentlyPlaying from '@/components/CurrentlyPlaying';
 import FeedItem from '@/components/FeedItem';
@@ -15,11 +17,12 @@ interface FeedProps {
   title?: string;
   cpTrack?: Track;
   history?: PlayHistory[];
+  className?: string;
 }
 
-const Feed: React.FC<FeedProps> = ({ title, cpTrack, history }) => {
+const Feed: React.FC<FeedProps> = ({ title, cpTrack, history, className }) => {
   return (
-    <Box className='flex flex-col px-6 py-6 relative'>
+    <Box className={cn('flex flex-col px-6 py-6 relative', className)}>
       <div className='sticky top-0 bg-dark z-10'>
         {/* HEADING/TITLE */}
         {title && (
