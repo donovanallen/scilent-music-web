@@ -2,19 +2,19 @@
 
 import { ScrollShadow, Tooltip } from '@nextui-org/react';
 import { Album, SimplifiedTrack } from '@spotify/web-api-ts-sdk';
-import {
-  formatDuration,
-  millisecondsToHours,
-  millisecondsToMinutes,
-  millisecondsToSeconds,
-} from 'date-fns';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { BiAlbum } from 'react-icons/bi';
 import { FaCheck, FaPlus } from 'react-icons/fa6';
 
 import sdk from '@/lib/spotify-sdk/ClientInstance';
-import { cn, formatArtists, getReleaseDate, getSourceIcon } from '@/lib/utils';
+import {
+  cn,
+  formatArtists,
+  getAlbumDuration,
+  getReleaseDate,
+  getSourceIcon,
+} from '@/lib/utils';
 
 import ArtistLink from '@/components/ArtistLink';
 import Box from '@/components/Box';
@@ -24,22 +24,6 @@ import IconLink from '@/components/links/IconLink';
 import NextImage from '@/components/NextImage';
 import PageContent from '@/components/PageContent';
 import NextPill from '@/components/Pill';
-
-const getAlbumDuration = (album: Album): string => {
-  let totalDuration = 0;
-  album.tracks?.items.forEach((track) => {
-    totalDuration += track.duration_ms || 0;
-  });
-  const fDuration = formatDuration(
-    {
-      hours: millisecondsToHours(totalDuration),
-      minutes: millisecondsToMinutes(totalDuration),
-      seconds: millisecondsToSeconds(totalDuration),
-    },
-    { format: ['hours', 'minutes'] },
-  );
-  return fDuration;
-};
 
 const Release = ({ params }: { params: { id: string } }) => {
   const [albumDetails, setAlbumDetails] = useState<Album>();
@@ -93,7 +77,7 @@ const Release = ({ params }: { params: { id: string } }) => {
       >
         <div
           className={cn(
-            'bg-dark/25',
+            'bg-dark/45',
             'rounded-2xl',
             'bg-clip-padding backdrop-filter backdrop-blur-3xl',
             'shadow-2xl',
@@ -104,13 +88,22 @@ const Release = ({ params }: { params: { id: string } }) => {
           {/* RELEASE TYPE */}
           <div className='flex w-full items-center justify-between mb-4'>
             <h4 className='text-brand-light'>{albumDetails?.album_type}</h4>
-            <IconLink
-              href={albumDetails?.external_urls.spotify || ''}
-              target='_blank'
-              rel='noopener noreferrer'
-              icon={getSourceIcon('spotify')}
-              variant='ghost'
-            />
+            <Tooltip
+              content='Open in Spotify'
+              delay={1000}
+              classNames={{
+                content: 'text-dark bg-light',
+                base: 'max-w-xs',
+              }}
+            >
+              <IconLink
+                href={albumDetails?.external_urls.spotify || ''}
+                target='_blank'
+                rel='noopener noreferrer'
+                icon={getSourceIcon('spotify')}
+                variant='ghost'
+              />
+            </Tooltip>
           </div>
           <div className='flex w-full justify-between'>
             {/* text */}
@@ -148,7 +141,7 @@ const Release = ({ params }: { params: { id: string } }) => {
                         content: 'text-dark bg-light',
                         base: 'max-w-xs',
                       }}
-                      delay={1200}
+                      delay={1000}
                       showArrow
                     >
                       <IconButton
@@ -172,12 +165,12 @@ const Release = ({ params }: { params: { id: string } }) => {
                   </h4>
                 )}
                 {albumDetails?.release_date && (
-                  <h4 className='w-full subtitle text-neutral-500 font-normal line-clamp-1 mt-1'>
+                  <h4 className='w-full subtitle text-light font-normal line-clamp-1 mt-1'>
                     {`Released: ${getReleaseDate(albumDetails?.release_date)}`}
                   </h4>
                 )}
                 {albumDetails?.label && (
-                  <h4 className='w-full subtitle text-neutral-500 font-normal line-clamp-1 mt-1'>{`Label: ${albumDetails?.label}`}</h4>
+                  <h4 className='w-full subtitle text-light font-normal line-clamp-1 mt-1'>{`Label: ${albumDetails?.label}`}</h4>
                 )}
               </div>
             </div>

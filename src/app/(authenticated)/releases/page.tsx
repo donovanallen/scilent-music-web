@@ -64,7 +64,7 @@ const Releases: React.FC = () => {
       </Header>
       <ScrollShadow hideScrollBar>
         {/* FEATURED RELEASES */}
-        <div className='overflow-y-auto overflow-x-hidden p-6'>
+        <div className='overflow-y-auto overflow-x-hidden py-4 px-6'>
           <div className='inline-flex items-center gap-x-2'>
             <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>
               Featured Releases
