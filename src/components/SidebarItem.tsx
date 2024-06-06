@@ -50,7 +50,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
         aria-disabled={disabled}
       >
         {Icon && <Icon size={26} />}
-        <div className='hidden md:flex items-center w-100'>
+        <div className='hidden md:flex items-center w-100 gap-x-2'>
           <h4 className='truncate'>{label}</h4>
           {pill}
         </div>
