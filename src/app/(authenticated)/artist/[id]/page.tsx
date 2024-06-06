@@ -16,6 +16,7 @@ import sdk from '@/lib/spotify-sdk/ClientInstance';
 import Box from '@/components/Box';
 import IconButton from '@/components/buttons/IconButton';
 import ExternalLinks from '@/components/ExternalLinks';
+import FilterOptions from '@/components/FilterOptions';
 import Header from '@/components/Header';
 import HeaderImage from '@/components/HeaderImage';
 import HeaderItem from '@/components/HeaderItem';
@@ -24,7 +25,11 @@ import PageContent from '@/components/PageContent';
 import NextPill from '@/components/Pill';
 
 import { getArtistDiscography } from '@/actions/getArtistDiscography';
-import { ScilentExternalLink } from '@/constant/types';
+import {
+  ReleaseFilters,
+  ReleaseTypes,
+  ScilentExternalLink,
+} from '@/constant/types';
 
 // TODO: style header and metadata
 // TODO: add MB fetch for credits, etc
@@ -35,8 +40,9 @@ const ArtistPage = ({ params }: { params: { id: string } }) => {
   const [releases, setReleases] = useState<SimplifiedAlbum[] | Album[]>();
   const [topItems, setTopItems] = useState<Track[]>();
   const [links, setLinks] = useState<ScilentExternalLink[] | undefined>();
-  // const [selectedReleaseFilter, setSelectedReleaseFilter] =
-  //   useState<ReleaseTypes>();
+  const [selectedReleaseFilter, setSelectedReleaseFilter] = useState<
+    ReleaseTypes | undefined
+  >();
   // const [credits, setCredits] = useState();
 
   const [userFollows, setUserFollows] = useState<boolean>();
@@ -235,8 +241,23 @@ const ArtistPage = ({ params }: { params: { id: string } }) => {
           <div className='mt-2 mb-7'>
             <div className='w-full flex items-center gap-x-2'>
               <h3 className='text-neutral-500'>Releases</h3>
+              <FilterOptions
+                filterOptions={ReleaseFilters}
+                onFilterSelect={setSelectedReleaseFilter as () => void}
+                selectedFilter={selectedReleaseFilter}
+                tooltipsEnabled
+                isNullable
+              />
             </div>
-            <PageContent albums={releases} />
+            <PageContent
+              albums={
+                selectedReleaseFilter
+                  ? (releases?.filter(
+                      (r) => r.album_type === selectedReleaseFilter,
+                    ) as SimplifiedAlbum[])
+                  : releases
+              }
+            />
           </div>
 
           {/* RELATED ARTISTS */}
