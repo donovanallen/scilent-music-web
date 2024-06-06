@@ -6,9 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
 import React from 'react';
 import toast from 'react-hot-toast';
-import { BiSearch } from 'react-icons/bi';
 import { FaSpotify } from 'react-icons/fa6';
-import { HiHome } from 'react-icons/hi';
 import { RxCaretLeft, RxCaretRight } from 'react-icons/rx';
 
 import { cn } from '@/lib/utils';
@@ -16,7 +14,6 @@ import useAuthModal from '@/hooks/useAuthModal';
 
 import Button from '@/components/buttons/Button';
 import IconButton from '@/components/buttons/IconButton';
-import IconLink from '@/components/links/IconLink';
 
 const NavigationBar: React.FC = () => {
   const authModal = useAuthModal();
@@ -39,7 +36,7 @@ const NavigationBar: React.FC = () => {
       {status === 'authenticated' ? (
         <>
           {/* NAVIGATION ARROWS */}
-          <div className={cn('hidden md:flex gap-x-2 items-center')}>
+          <div className={cn('flex gap-x-2 items-center')}>
             <IconButton
               variant='outline'
               icon={RxCaretLeft}
@@ -52,12 +49,6 @@ const NavigationBar: React.FC = () => {
               onClick={goForward}
               className='text-xl'
             />
-          </div>
-
-          {/* HOME/SEARCH */}
-          <div className='flex md:hidden gap-x-2 items-center'>
-            <IconLink href='/' icon={HiHome} />
-            <IconLink href='/search' icon={BiSearch} />
           </div>
           {/* LOG IN/LOG OUT/SIGN UP */}
           <div className='flex gap-x-4 items-center justify-end flex-1'>
