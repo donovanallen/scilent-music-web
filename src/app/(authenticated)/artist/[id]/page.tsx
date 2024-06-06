@@ -28,7 +28,7 @@ import { ScilentAlbum, ScilentExternalLink } from '@/constant/types';
 // TODO: style header and metadata
 // TODO: add MB fetch for credits, etc
 
-const Artist = ({ params }: { params: { id: string } }) => {
+const ArtistPage = ({ params }: { params: { id: string } }) => {
   const [metadata, setMetadata] = useState<Artist>();
   const [releases, setReleases] = useState<
     ScilentAlbum[] | SimplifiedAlbum[]
@@ -189,18 +189,24 @@ const Artist = ({ params }: { params: { id: string } }) => {
 
         {/* ARTIST GENRES */}
         {metadata?.genres && metadata?.genres.length > 0 && (
-          <div className='w-full flex gap-x-2 mt-4 items-center'>
-            <span className='subtitle text-xs font-medium'>Genres</span>
-            {metadata.genres.map((genre) => (
-              <NextPill
-                text={genre}
-                variant='bordered'
-                size='sm'
-                radius='sm'
-                key={genre}
-              />
-            ))}
-          </div>
+          <ScrollShadow
+            hideScrollBar
+            orientation='horizontal'
+            className='w-full'
+          >
+            <div className='w-fit flex gap-x-2 mt-2 pr-4 items-center'>
+              <span className='subtitle text-xs font-medium'>Genres</span>
+              {metadata.genres.map((genre) => (
+                <NextPill
+                  text={genre}
+                  variant='bordered'
+                  size='sm'
+                  radius='sm'
+                  key={genre}
+                />
+              ))}
+            </div>
+          </ScrollShadow>
         )}
       </Header>
 
@@ -257,4 +263,4 @@ const Artist = ({ params }: { params: { id: string } }) => {
   );
 };
 
-export default Artist;
+export default ArtistPage;
