@@ -7,34 +7,39 @@ export const useFollowedArtists = () => {
   const [artists, setArtists] = useState<Artist[]>([] as Artist[]);
   const [total, setTotal] = useState<number>(0);
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+
   useEffect(() => {
     (async () => {
-      const { artists } = await sdk.currentUser.followedArtists();
-      setArtists(() => artists.items);
-      setTotal(() => artists.total);
-    })();
+      setIsLoading(true);
+      let allArtists: Artist[] = [];
+      const batchSize = 50;
+      let after;
+      let next = false;
+
+      do {
+        const { artists } = await sdk.currentUser.followedArtists(
+          after,
+          batchSize,
+        );
+        setTotal(artists.total);
+        allArtists = [...allArtists, ...artists.items];
+        after = allArtists[allArtists.length - 1].id;
+        next = !!artists.next;
+      } while (next);
+
+      setArtists(allArtists);
+    })()
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error(err);
+        setError(true);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, []);
-
-  // const getFollowedArtistsData = async () => {
-  //   try {
-  //     const allArtists: Artist[] = [];
-  //     const totalArtists = artists?.length || 0;
-  //     const batchSize = 50;
-  //     let offset = 0;
-
-  //     while (offset < totalArtists) {
-  //       const batchArtists = await sdk.currentUser.followedArtists(
-  //         artists?.slice(offset, offset + batchSize),
-  //       );
-  //       allArtists.push(...batchArtists.artists.items);
-  //       offset += batchSize;
-  //     }
-
-  //     return allArtists;
-  //   } catch (error) {
-  //     console.error('Error fetching artist data:', error);
-  //   }
-  // };
 
   return {
     // Data
@@ -42,8 +47,7 @@ export const useFollowedArtists = () => {
     total,
 
     // Status
-    // isLoading: isLoading && !error && !data,
-    // isError: error,
-    // isValidating,
+    isLoading: isLoading && !error,
+    isError: error,
   };
 };

@@ -14,6 +14,7 @@ type SidebarItemProps = {
   active?: boolean;
   href: string;
   disabled?: boolean;
+  pill?: React.ReactNode;
 };
 
 const SidebarItem: React.FC<SidebarItemProps> = ({
@@ -22,6 +23,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   active,
   href,
   disabled = false,
+  pill,
 }) => {
   const isMediumDevice = useMediaQuery('only screen and (min-width : 769px)');
 
@@ -48,7 +50,10 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
         aria-disabled={disabled}
       >
         {Icon && <Icon size={26} />}
-        <h4 className='hidden md:flex truncate w-100'>{label}</h4>
+        <div className='hidden md:flex items-center w-100 gap-x-2'>
+          <h4 className='truncate'>{label}</h4>
+          {pill}
+        </div>
       </Link>
     </Tooltip>
   );

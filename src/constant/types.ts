@@ -88,7 +88,7 @@ export type AuthUser = {
 export type FilterValue = 'short_term' | 'medium_term' | 'long_term';
 export type SearchFilterValue = 'artist' | 'album' | 'track' | null;
 export type FilterOption = {
-  value?: FilterValue | SearchFilterValue;
+  value?: FilterValue | SearchFilterValue | ReleaseTypes;
   label: string;
   desc: string;
 };
@@ -112,7 +112,12 @@ export const SearchFilters = [
   },
 ];
 
-export type ReleaseTypes = 'album' | 'single' | 'ep';
+export type ReleaseTypes =
+  | 'album'
+  | 'single'
+  | 'compilation'
+  | 'appears_on'
+  | 'ep';
 export const ReleaseFilters: {
   value: ReleaseTypes;
   desc: string;
@@ -129,10 +134,20 @@ export const ReleaseFilters: {
     label: 'Singles',
   },
   {
-    value: 'ep',
-    desc: 'Show EP releases',
-    label: 'EP',
+    value: 'compilation',
+    desc: 'Show compilations',
+    label: 'Compilations',
   },
+  {
+    value: 'appears_on',
+    desc: 'Show artist features/appearances',
+    label: 'Appears On',
+  },
+  // {
+  //   value: 'ep',
+  //   desc: 'Show EP releases',
+  //   label: 'EP',
+  // },
 ];
 
 export const ReleaseSubTypes = [
