@@ -146,7 +146,7 @@ const ArtistPage = ({ params }: { params: { id: string } }) => {
                 content: 'text-dark bg-light',
                 base: 'max-w-xs',
               }}
-              delay={1200}
+              delay={1000}
               showArrow
             >
               <IconButton
