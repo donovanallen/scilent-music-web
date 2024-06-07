@@ -32,7 +32,6 @@ export default function CurrentlyPlaying() {
   }
 
   return (
-    // <Link href={currentTrack.external_urls.spotify}>
     <div className='py-2 -mx-2 gap-y-2 border-b-2 border-light'>
       <div className='flex items-center text-brand-primary mb-2 w-full justify-between'>
         <div className='flex items-center gap-x-1'>
@@ -65,6 +64,5 @@ export default function CurrentlyPlaying() {
 
       <FeedItem data={currentTrack as Track} />
     </div>
-    // </Link>
   );
 }

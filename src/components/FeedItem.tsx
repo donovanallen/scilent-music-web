@@ -1,9 +1,9 @@
 'use client';
 
 import { Skeleton } from '@nextui-org/react';
-import { Track } from '@spotify/web-api-ts-sdk';
+import { TrackItem } from '@spotify/web-api-ts-sdk';
 import React, { useState } from 'react';
-import { BiAlbum } from 'react-icons/bi';
+import { BiAlbum, BiMicrophone } from 'react-icons/bi';
 import { GiBackwardTime } from 'react-icons/gi';
 
 import { cn, formatArtists, getTimestampText } from '@/lib/utils';
@@ -11,7 +11,7 @@ import { cn, formatArtists, getTimestampText } from '@/lib/utils';
 import NextImage from '@/components/NextImage';
 
 interface FeedItemProps {
-  data: Track;
+  data: TrackItem;
   timestamp?: Date;
   onClick?: (id: string) => void;
   className?: string;
@@ -31,6 +31,19 @@ const FeedItem: React.FC<FeedItemProps> = ({
     }
   };
 
+  const image =
+    'album' in data
+      ? data.album?.images[0].url
+      : data.type === 'episode'
+        ? data.images[0].url
+        : null;
+  const artists =
+    'artists' in data
+      ? formatArtists(data.artists)
+      : 'show' in data
+        ? `${data.show.name} - ${data.show.publisher}`
+        : null;
+
   return (
     <Skeleton className='rounded-md bg-neutral-500' isLoaded={isItemLoaded}>
       <div
@@ -42,14 +55,16 @@ const FeedItem: React.FC<FeedItemProps> = ({
         )}
       >
         <div className='relative rounded-md min-h-[48px] min-w-[48px] overflow-hidden aspect-square m-1 bg-neutral-700'>
-          {data.album?.images ? (
+          {image ? (
             <NextImage
-              src={data.album?.images[0].url}
-              alt={`Album image: ${data.name}`}
+              src={image}
+              alt={`Currently playing artwork: ${data.name}`}
               fill
               className='aspect-square object-cover'
               useSkeleton
             />
+          ) : data.type === 'episode' ? (
+            <BiMicrophone size={24} className='m-auto h-full text-dark' />
           ) : (
             <BiAlbum size={24} className='m-auto h-full text-dark' />
           )}
@@ -57,10 +72,8 @@ const FeedItem: React.FC<FeedItemProps> = ({
         <div className='flex flex-col overflow-hidden'>
           <p className='text-light truncate'>{data.name}</p>
 
-          {data.artists && (
-            <p className='text-neutral-400 subtitle truncate'>
-              {formatArtists(data.artists)}
-            </p>
+          {artists && (
+            <p className='text-neutral-400 subtitle truncate'>{artists}</p>
           )}
 
           {timestamp && (
