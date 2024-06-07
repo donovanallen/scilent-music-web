@@ -34,7 +34,7 @@ const Profile: React.FC = () => {
           {profile && (
             <Tooltip
               content='Anywhere you see the Spotify icon, click to go directly to the app for any profile, artist, album, track, or playlist.'
-              delay={1200}
+              delay={1000}
               classNames={{
                 content: 'text-dark bg-light p-4',
                 base: 'max-w-xs',

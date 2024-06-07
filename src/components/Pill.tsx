@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 type NextPillProps = {
   text: string;
   className?: string;
+  classNames?: { base?: string; content?: string };
   variant?:
     | 'solid'
     | 'bordered'
@@ -22,6 +23,7 @@ type NextPillProps = {
 const NextPill: React.FC<NextPillProps> = ({
   text,
   className,
+  classNames,
   variant,
   disabled = false,
   size = 'md',
@@ -35,9 +37,14 @@ const NextPill: React.FC<NextPillProps> = ({
       isDisabled={disabled}
       className={cn(className)}
       classNames={{
-        base: cn('z-10 bg-opacity-90', variant === 'bordered' ? 'border' : ''),
+        base: cn(
+          'z-10 bg-opacity-90',
+          classNames?.base,
+          variant === 'bordered' ? 'border' : '',
+        ),
         content: cn(
           'drop-shadow shadow-black subtitle font-thin text-2xs lg:text-xs line-clamp-1',
+          classNames?.content,
         ),
       }}
     >

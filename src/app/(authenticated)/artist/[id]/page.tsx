@@ -1,7 +1,7 @@
 'use client';
 
 import { ScrollShadow, Tooltip } from '@nextui-org/react';
-import { Artist, SimplifiedAlbum, Track } from '@spotify/web-api-ts-sdk';
+import { Album, Artist, SimplifiedAlbum, Track } from '@spotify/web-api-ts-sdk';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import numbro from 'numbro';
@@ -12,9 +12,11 @@ import { TbMusicHeart } from 'react-icons/tb';
 
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 
+// import { getUpcomingReleases } from '@/lib/utils';
 import Box from '@/components/Box';
 import IconButton from '@/components/buttons/IconButton';
 import ExternalLinks from '@/components/ExternalLinks';
+import FilterOptions from '@/components/FilterOptions';
 import Header from '@/components/Header';
 import HeaderImage from '@/components/HeaderImage';
 import HeaderItem from '@/components/HeaderItem';
@@ -22,21 +24,25 @@ import InfoIcon from '@/components/InfoIcon';
 import PageContent from '@/components/PageContent';
 import NextPill from '@/components/Pill';
 
-import { ScilentAlbum, ScilentExternalLink } from '@/constant/types';
-// import { getArtistDiscography } from '@/actions/getArtistDiscography';
+import { getArtistDiscography } from '@/actions/getArtistDiscography';
+import {
+  ReleaseFilters,
+  ReleaseTypes,
+  ScilentExternalLink,
+} from '@/constant/types';
 
 // TODO: style header and metadata
 // TODO: add MB fetch for credits, etc
 
-const Artist = ({ params }: { params: { id: string } }) => {
+const ArtistPage = ({ params }: { params: { id: string } }) => {
   const [metadata, setMetadata] = useState<Artist>();
-  const [releases, setReleases] = useState<
-    ScilentAlbum[] | SimplifiedAlbum[]
-  >();
+  const [relatedArtists, setRelatedArtists] = useState<Artist[]>();
+  const [releases, setReleases] = useState<SimplifiedAlbum[] | Album[]>();
   const [topItems, setTopItems] = useState<Track[]>();
   const [links, setLinks] = useState<ScilentExternalLink[] | undefined>();
-  // const [selectedReleaseFilter, setSelectedReleaseFilter] =
-  //   useState<ReleaseTypes>();
+  const [selectedReleaseFilter, setSelectedReleaseFilter] = useState<
+    ReleaseTypes | undefined
+  >();
   // const [credits, setCredits] = useState();
 
   const [userFollows, setUserFollows] = useState<boolean>();
@@ -44,28 +50,21 @@ const Artist = ({ params }: { params: { id: string } }) => {
   const session = useSession();
   const router = useRouter();
 
-  // const [artist, artistTopTracks, artistAlbums, relatedArtists] =
-  //   await getArtistDiscography(params.id);
-  // console.log({ artist, artistTopTracks, artistAlbums, relatedArtists });
-
+  // SPOTIFY ARTIST DATA
   useEffect(() => {
     if (session) {
       (async () => {
-        const artist = await sdk.artists.get(params.id);
+        const [artist, artistTopTracks, artistAlbums, relatedArtists] =
+          await getArtistDiscography(params.id);
+        setTopItems(() => artistTopTracks.tracks);
         setMetadata(() => artist);
+        setReleases(() => artistAlbums.items);
+        setRelatedArtists(() => relatedArtists.artists);
       })();
     }
   }, [session, params.id]);
 
-  useEffect(() => {
-    if (session) {
-      (async () => {
-        const { tracks } = await sdk.artists.topTracks(params.id, 'US');
-        setTopItems(() => tracks);
-      })();
-    }
-  }, [session, params.id]);
-
+  // SPOTIFY ARTIST/USER FOLLOW
   useEffect(() => {
     if (session.status === 'authenticated') {
       (async () => {
@@ -78,6 +77,17 @@ const Artist = ({ params }: { params: { id: string } }) => {
     }
   }, [session, params.id]);
 
+  // UPCOMING RELEASES
+  // useEffect(() => {
+  //   if (releases) {
+  //     (async () => {
+  //       const upcoming = await getUpcomingReleases(releases as Album[]);
+  //       console.log('Upcoming Releases', upcoming);
+  //     })();
+  //   }
+  // }, [releases]);
+
+  // SCILENT ARTIST DATA
   useEffect(() => {
     if (metadata) {
       const link: ScilentExternalLink = {
@@ -88,21 +98,21 @@ const Artist = ({ params }: { params: { id: string } }) => {
       };
       setLinks(() => [link]);
 
-      (async () => {
-        const results = await sdk.artists.albums(metadata.id);
-        if (results) {
-          setReleases(() => results.items);
-        }
+      // (async () => {
+      //   const results = await sdk.artists.albums(metadata.id);
+      //   if (results) {
+      //     setReleases(() => results.items);
+      //   }
 
-        // const apiEnabled = await getAPIStatus();
-        // if (apiEnabled) {
-        //   const results = await getArtistData(metadata.name);
-        //   if (results) {
-        //     setLinks(() => results.externalLinks);
-        //     setReleases(() => results.releases);
-        //   }
-        // }
-      })();
+      // })();
+      // const apiEnabled = await getAPIStatus();
+      // if (apiEnabled) {
+      //   const results = await getArtistData(metadata.name);
+      //   if (results) {
+      //     setLinks(() => results.externalLinks);
+      //     setReleases(() => results.releases);
+      //   }
+      // }
     }
   }, [metadata]);
 
@@ -136,7 +146,7 @@ const Artist = ({ params }: { params: { id: string } }) => {
                 content: 'text-dark bg-light',
                 base: 'max-w-xs',
               }}
-              delay={1200}
+              delay={1000}
               showArrow
             >
               <IconButton
@@ -144,7 +154,6 @@ const Artist = ({ params }: { params: { id: string } }) => {
                 icon={userFollows ? FaCheck : FaPlus}
                 variant='ghost'
                 disabled={userFollows}
-                // className={userFollows ? 'text-brand-dark' : ''}
                 classNames={{ icon: userFollows ? 'text-brand-dark' : '' }}
               />
             </Tooltip>
@@ -190,18 +199,24 @@ const Artist = ({ params }: { params: { id: string } }) => {
 
         {/* ARTIST GENRES */}
         {metadata?.genres && metadata?.genres.length > 0 && (
-          <div className='w-full flex gap-x-2 mt-4 items-center'>
-            <span className='subtitle text-xs font-medium'>Genres</span>
-            {metadata.genres.map((genre) => (
-              <NextPill
-                text={genre}
-                variant='bordered'
-                size='sm'
-                radius='sm'
-                key={genre}
-              />
-            ))}
-          </div>
+          <ScrollShadow
+            hideScrollBar
+            orientation='horizontal'
+            className='w-full'
+          >
+            <div className='w-fit flex gap-x-2 mt-2 pr-4 items-center'>
+              <span className='subtitle text-xs font-medium'>Genres</span>
+              {metadata.genres.map((genre) => (
+                <NextPill
+                  text={genre}
+                  variant='bordered'
+                  size='sm'
+                  radius='sm'
+                  key={genre}
+                />
+              ))}
+            </div>
+          </ScrollShadow>
         )}
       </Header>
 
@@ -226,29 +241,31 @@ const Artist = ({ params }: { params: { id: string } }) => {
           <div className='mt-2 mb-7'>
             <div className='w-full flex items-center gap-x-2'>
               <h3 className='text-neutral-500'>Releases</h3>
-              {/* {ReleaseFilters.map((option) => (
-                <TextButton
-                  variant='basic'
-                  key={option.value}
-                  className={cn(
-                    'subtitle text-neutral-800 bg-transparent hover:text-brand-dark transition',
-                    selectedReleaseFilter == option.value
-                      ? 'text-brand-primary'
-                      : '',
-                  )}
-                  onClick={() =>
-                    setSelectedReleaseFilter(
-                      selectedReleaseFilter == option.value
-                        ? undefined
-                        : option.value,
-                    )
-                  }
-                >
-                  {option.label}
-                </TextButton>
-              ))} */}
+              <FilterOptions
+                filterOptions={ReleaseFilters}
+                onFilterSelect={setSelectedReleaseFilter as () => void}
+                selectedFilter={selectedReleaseFilter}
+                tooltipsEnabled
+                isNullable
+              />
             </div>
-            <PageContent albums={releases} />
+            <PageContent
+              albums={
+                selectedReleaseFilter
+                  ? (releases?.filter(
+                      (r) => r.album_type === selectedReleaseFilter,
+                    ) as SimplifiedAlbum[])
+                  : releases
+              }
+            />
+          </div>
+
+          {/* RELATED ARTISTS */}
+          <div className='mt-2 mb-7'>
+            <div className='w-full flex items-center gap-x-2'>
+              <h3 className='text-neutral-500'>Related Artists</h3>
+            </div>
+            <PageContent artists={relatedArtists} />
           </div>
 
           {/* Credits */}
@@ -258,4 +275,4 @@ const Artist = ({ params }: { params: { id: string } }) => {
   );
 };
 
-export default Artist;
+export default ArtistPage;

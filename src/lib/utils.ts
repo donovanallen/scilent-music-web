@@ -1,3 +1,4 @@
+import { Album } from '@spotify/web-api-ts-sdk';
 import clsx, { ClassValue } from 'clsx';
 import { format, formatDistanceToNow } from 'date-fns';
 import { IconType } from 'react-icons';
@@ -53,6 +54,40 @@ export const getTimestampText = (timestamp: string): string => {
       includeSeconds: true,
     }) + ' ago' || '0 hours ago'
   );
+};
+
+export const msToDurationString = (
+  milliseconds: number,
+  showSeconds = true,
+) => {
+  const hours = Math.floor(milliseconds / (1000 * 60 * 60));
+  const minutes =
+    hours > 0
+      ? Math.floor(milliseconds / 60000 - 60 * hours)
+      : Math.floor(milliseconds / 60000);
+  const seconds = parseInt(((milliseconds % 60000) / 1000).toFixed(0));
+
+  const hourString =
+    hours > 0 ? hours + `${' '}${hours > 1 ? 'hours' : 'hour'}${' '}` : '';
+  const minString =
+    minutes > 0
+      ? minutes + `${' '}${minutes > 1 ? 'minutes' : 'minute'}${' '}`
+      : '';
+  const secString =
+    minutes > 0
+      ? seconds + `${' '}${seconds > 1 ? 'seconds' : 'second'}${' '}`
+      : '';
+
+  return hourString + minString + (showSeconds && secString);
+};
+
+export const getAlbumDuration = (album: Album): string => {
+  let totalDuration = 0;
+  album.tracks?.items.forEach((track) => {
+    totalDuration += track.duration_ms || 0;
+  });
+  const durationString = msToDurationString(totalDuration);
+  return durationString;
 };
 
 export const getDurationText = (durationMs: number): string => {

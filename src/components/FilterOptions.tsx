@@ -7,14 +7,16 @@ import { cn } from '@/lib/utils';
 import IconButton from '@/components/buttons/IconButton';
 import TextButton from '@/components/buttons/TextButton';
 
-import { FilterOption, FilterValue } from '@/constant/types';
+import { FilterOption, FilterValue, ReleaseTypes } from '@/constant/types';
 
 import { SearchFilterValue } from '../constant/types';
 
 interface FilterOptionsProps {
   filterOptions: FilterOption[];
-  selectedFilter?: FilterValue | SearchFilterValue;
-  onFilterSelect: (filterValue?: FilterValue | SearchFilterValue) => void;
+  selectedFilter?: FilterValue | SearchFilterValue | ReleaseTypes;
+  onFilterSelect: (
+    filterValue?: FilterValue | SearchFilterValue | ReleaseTypes,
+  ) => void;
   isNullable?: boolean;
   tooltipsEnabled?: boolean;
   className?: string;
