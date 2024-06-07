@@ -1,6 +1,7 @@
 'use client';
 
 // import { Avatar, Tooltip } from '@nextui-org/react';
+import { Tooltip } from '@nextui-org/react';
 import { PlayHistory, Track, TrackItem } from '@spotify/web-api-ts-sdk';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useMediaQuery } from '@uidotdev/usehooks';
@@ -8,6 +9,7 @@ import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { BiSearch } from 'react-icons/bi';
+import { FaPlay } from 'react-icons/fa6';
 import { HiHome } from 'react-icons/hi';
 import { RxCaretLeft, RxCaretRight } from 'react-icons/rx';
 import { TbMusicStar, TbUserHeart } from 'react-icons/tb';
@@ -19,6 +21,7 @@ import useAuthModal from '@/hooks/useAuthModal';
 import Box from '@/components/Box';
 import Button from '@/components/buttons/Button';
 import IconButton from '@/components/buttons/IconButton';
+import CurrentlyPlaying from '@/components/CurrentlyPlaying';
 import Feed from '@/components/Feed';
 import NextPill from '@/components/Pill';
 import SidebarItem from '@/components/SidebarItem';
@@ -126,20 +129,29 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                     }
                   />
                 ))}
+                <div className='flex md:hidden'>
+                  <Tooltip
+                    classNames={{
+                      base: 'ring-2 ring-brand-light/10 rounded-md z-20',
+                      content: 'bg-dark/90 p-4 max-w-sm',
+                    }}
+                    shadow='lg'
+                    placement='right'
+                    content={
+                      <Box>
+                        <CurrentlyPlaying />
+                      </Box>
+                    }
+                  >
+                    <IconButton
+                      variant='ghost'
+                      icon={FaPlay}
+                      classNames={{ icon: 'text-xl hover:text-brand-primary' }}
+                    />
+                  </Tooltip>
+                </div>
               </div>
             </Box>
-            {/* <Box className='md:hidden'>
-              <Tooltip content='Currently Playing'>
-                <Avatar
-                  imgProps={{
-                    src:
-                      liveTrack && 'album' in liveTrack
-                        ? liveTrack.album.images[0].url
-                        : undefined,
-                  }}
-                />
-              </Tooltip>
-            </Box> */}
             <Feed
               title='Live Mix'
               cpTrack={currentTrack as Track}
