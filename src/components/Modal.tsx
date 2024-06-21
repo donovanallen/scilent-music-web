@@ -50,12 +50,13 @@ const NextModal: React.FC<NextModalProps> = ({
         className={cn(className)}
         classNames={{
           wrapper: '',
-          base: 'bg-dark/80 ring-2 ring-brand-light/10 max-w-5/6 m-12',
+          base: 'text-dark dark:text-light bg-light/90 dark:bg-dark/90 ring-2 ring-brand-light/10 max-w-5/6 m-12',
           backdrop: '',
           header: 'my-2',
           body: '',
           footer: 'my-2 self-center',
-          closeButton: 'hover:bg-transparent hover:text-brand-dark',
+          closeButton:
+            'hover:bg-transparent hover:text-brand-dark active:bg-brand-dark/10 dark:active:bg-brand-light/10 dark:active:text-brand-primary',
         }}
         size={size}
         radius='lg'

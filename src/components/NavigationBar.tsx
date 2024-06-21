@@ -90,7 +90,7 @@ const NavigationBar: React.FC = () => {
             {pathname !== '/profile' && (
               <Link
                 href='/profile'
-                className='rounded-full border p-0.5 border-light hover:border-brand-primary hover:border-2 transition'
+                className='rounded-full border-2 p-0.5 border-dark/80 dark:border-light/80 hover:border-brand-dark dark:hover:border-brand-primary transition'
               >
                 {session.user && (
                   <Avatar
@@ -114,6 +114,7 @@ const NavigationBar: React.FC = () => {
             {/* //   : (
             //   <IconLink href='/settings' icon={TbSettings2} />
             // )} */}
+            <ThemeSwitcher />
           </div>
         </>
       ) : (
@@ -122,7 +123,7 @@ const NavigationBar: React.FC = () => {
             onClick={authModal.onOpen}
             className='flex items-center gap-x-2 text-sm xl:text-base'
             rightIcon={FaSpotify}
-            variant='light'
+            variant='primary'
           >
             Log In
           </Button>

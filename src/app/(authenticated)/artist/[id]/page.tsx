@@ -131,13 +131,15 @@ const ArtistPage = ({ params }: { params: { id: string } }) => {
   };
 
   return (
-    <Box className='bg-dark rounded-md h-full flex flex-col overflow-y-auto overflow-x-hidden'>
+    <Box className='h-full flex flex-col overflow-y-auto overflow-x-hidden'>
       <Header>
         {/* ARTIST METADATA */}
         <div className='flex w-full items-center justify-between'>
-          <div className='flex items-center text-neutral-500'>
+          <div className='flex items-center text-dark/80 dark:text-light/80'>
+            {/* ARTIST TYPE */}
             <h4>{metadata?.type}</h4>
 
+            {/* ARTIST FOLLOW ICON */}
             <Tooltip
               shadow='md'
               size='sm'
@@ -158,6 +160,8 @@ const ArtistPage = ({ params }: { params: { id: string } }) => {
               />
             </Tooltip>
           </div>
+
+          {/* EXTERNAL LINKS */}
           <ExternalLinks links={links} />
         </div>
 
@@ -171,7 +175,7 @@ const ArtistPage = ({ params }: { params: { id: string } }) => {
           <div className='flex-1'>
             <h1 className='text-brand-primary truncate'>{metadata?.name}</h1>
             {metadata?.followers.total && (
-              <p className='subtitle text-neutral-500'>
+              <p className='subtitle text-dark/70 dark:text-light'>
                 {numbro(metadata?.followers.total).format({
                   spaceSeparated: false,
                   average: true,
@@ -182,7 +186,7 @@ const ArtistPage = ({ params }: { params: { id: string } }) => {
             )}
             {metadata?.popularity && metadata.popularity > 0 && (
               <div className='inline-flex items-center'>
-                <p className='subtitle text-neutral-500'>
+                <p className='subtitle text-dark/70 dark:text-light'>
                   Popularity Score: {metadata?.popularity}
                 </p>
                 <InfoIcon
@@ -205,7 +209,9 @@ const ArtistPage = ({ params }: { params: { id: string } }) => {
             className='w-full'
           >
             <div className='w-fit flex gap-x-2 mt-2 pr-4 items-center'>
-              <span className='subtitle text-xs font-medium'>Genres</span>
+              <span className='text-dark/50 dark:text-light/50 subtitle text-xs font-medium'>
+                Genres
+              </span>
               {metadata.genres.map((genre) => (
                 <NextPill
                   text={genre}
@@ -213,6 +219,7 @@ const ArtistPage = ({ params }: { params: { id: string } }) => {
                   size='sm'
                   radius='sm'
                   key={genre}
+                  classNames={{ content: 'text-dark dark:text-light' }}
                 />
               ))}
             </div>
@@ -225,7 +232,7 @@ const ArtistPage = ({ params }: { params: { id: string } }) => {
           {/* ARTIST TOP ITEMS */}
           {topItems && (
             <div className='flex flex-col my-4 gap-y-4'>
-              <h3 className='text-neutral-500'>Top Music</h3>
+              <h3 className='text-dark/80 dark:text-light/80'>Top Music</h3>
               <HeaderItem
                 title='Top Track'
                 name={topItems[0].name}
@@ -238,9 +245,9 @@ const ArtistPage = ({ params }: { params: { id: string } }) => {
           )}
 
           {/* ARTIST RELEASES */}
-          <div className='mt-2 mb-7'>
+          <div className='mb-8'>
             <div className='w-full flex items-center gap-x-2'>
-              <h3 className='text-neutral-500'>Releases</h3>
+              <h3 className='text-dark/80 dark:text-light/80'>Releases</h3>
               <FilterOptions
                 filterOptions={ReleaseFilters}
                 onFilterSelect={setSelectedReleaseFilter as () => void}
@@ -263,7 +270,9 @@ const ArtistPage = ({ params }: { params: { id: string } }) => {
           {/* RELATED ARTISTS */}
           <div className='mt-2 mb-7'>
             <div className='w-full flex items-center gap-x-2'>
-              <h3 className='text-neutral-500'>Related Artists</h3>
+              <h3 className='text-dark/80 dark:text-light/80'>
+                Related Artists
+              </h3>
             </div>
             <PageContent artists={relatedArtists} />
           </div>

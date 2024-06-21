@@ -9,7 +9,13 @@ type BoxProps = {
 
 const Box: React.FC<BoxProps> = ({ children, className }) => {
   return (
-    <div className={cn(`bg-dark rounded-lg h-fit w-full`, className)}>
+    <div
+      className={cn(
+        `rounded-lg h-fit w-full`,
+        'bg-light dark:bg-dark',
+        className,
+      )}
+    >
       {children}
     </div>
   );

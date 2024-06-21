@@ -67,7 +67,7 @@ const Release = ({ params }: { params: { id: string } }) => {
   const image = albumDetails?.images[0].url;
 
   return (
-    <Box className='bg-dark rounded-md h-full flex flex-col overflow-y-auto overflow-x-hidden'>
+    <Box className='h-full flex flex-col overflow-y-auto overflow-x-hidden'>
       <Header
         className={cn(
           'bg-cover bg-center bg-no-repeat',
@@ -77,22 +77,24 @@ const Release = ({ params }: { params: { id: string } }) => {
       >
         <div
           className={cn(
-            'bg-dark/45',
+            'bg-light/55 dark:bg-dark/45',
             'rounded-2xl',
             'bg-clip-padding backdrop-filter backdrop-blur-3xl',
             'shadow-2xl',
-            'ring-2 ring-black/5',
+            'ring-2 ring-white/5 dark:ring-black/5',
             'p-4',
           )}
         >
           {/* RELEASE TYPE */}
           <div className='flex w-full items-center justify-between mb-4'>
-            <h4 className='text-brand-light'>{albumDetails?.album_type}</h4>
+            <h4 className='text-dark dark:text-light'>
+              {albumDetails?.album_type}
+            </h4>
             <Tooltip
               content='Open in Spotify'
               delay={1000}
               classNames={{
-                content: 'text-dark bg-light',
+                content: 'text-dark bg-light dark:bg-dark dark:text-light',
                 base: 'max-w-xs',
               }}
             >
@@ -102,6 +104,7 @@ const Release = ({ params }: { params: { id: string } }) => {
                 rel='noopener noreferrer'
                 icon={getSourceIcon('spotify')}
                 variant='ghost'
+                classNames={{ icon: 'text-dark/50 dark:text-light/50' }}
               />
             </Tooltip>
           </div>
@@ -119,11 +122,11 @@ const Release = ({ params }: { params: { id: string } }) => {
                       albumDetails?.artists.map((artist, i, arr) => (
                         <>
                           <ArtistLink key={artist.id} artist={artist}>
-                            <h3 className='text-neutral-300 line-clamp-2 text-sm sm:text-base md:text-lg font-medium hover:text-dark active:text-brand-light transition'>
+                            <h3 className='text-dark/50 dark:text-light/50 line-clamp-2 text-sm sm:text-base md:text-lg font-medium hover:text-dark active:text-brand-dark transition'>
                               {formatArtists(artist)}
                             </h3>
                           </ArtistLink>
-                          <span className='text-neutral-300 line-clamp-2 text-sm sm:text-base md:text-lg font-medium'>
+                          <span className='text-dark/50 dark:text-light/50 line-clamp-2 text-sm sm:text-base md:text-lg font-medium'>
                             {`${i < arr.length - 1 ? ', ' : ' '}`}
                           </span>
                         </>
@@ -138,7 +141,8 @@ const Release = ({ params }: { params: { id: string } }) => {
                           : `Follow ${formatArtists(albumDetails?.artists[0])}`
                       }
                       classNames={{
-                        content: 'text-dark bg-light',
+                        content:
+                          'text-dark bg-light dark:bg-dark dark:text-light',
                         base: 'max-w-xs',
                       }}
                       delay={1000}
@@ -148,7 +152,7 @@ const Release = ({ params }: { params: { id: string } }) => {
                         onClick={() => followArtist(params.id)}
                         icon={userFollows ? FaCheck : FaPlus}
                         variant='ghost'
-                        className='bg-transparent hover:bg-transparent'
+                        // className='bg-transparent hover:bg-transparent'
                         classNames={{
                           icon: userFollows ? 'text-brand-dark' : '',
                         }}
@@ -160,22 +164,22 @@ const Release = ({ params }: { params: { id: string } }) => {
               <div className='w-fit'>
                 {/* RELEASE DATA */}
                 {albumDetails?.tracks && albumDetails.tracks.total > 1 && (
-                  <h4 className='subtitle text-light my-4 font-normal'>
+                  <h4 className='subtitle dark:text-light/60 text-dark/60 my-4 font-normal'>
                     {`${albumDetails.tracks.total} tracks - ${getAlbumDuration(albumDetails)}`}
                   </h4>
                 )}
                 {albumDetails?.release_date && (
-                  <h4 className='w-full subtitle text-light font-normal line-clamp-1 mt-1'>
+                  <h4 className='w-full subtitle dark:text-light/60 text-dark/60 font-normal line-clamp-1 mt-1'>
                     {`Released: ${getReleaseDate(albumDetails?.release_date)}`}
                   </h4>
                 )}
                 {albumDetails?.label && (
-                  <h4 className='w-full subtitle text-light font-normal line-clamp-1 mt-1'>{`Label: ${albumDetails?.label}`}</h4>
+                  <h4 className='w-full subtitle dark:text-light/60 text-dark/60 font-normal line-clamp-1 mt-1'>{`Label: ${albumDetails?.label}`}</h4>
                 )}
               </div>
             </div>
             {/* image */}
-            <div className='border self-end relative aspect-square h-full min-w-20 sm:min-w-28 lg:min-w-40 xl:min-w-48 rounded-md overflow-hidden bg-neutral-700 m-1 ring-1 ring-black/5'>
+            <div className='border self-end relative aspect-square h-full min-w-20 sm:min-w-28 lg:min-w-40 xl:min-w-48 rounded-md overflow-hidden bg-light/10 dark:bg-dark/10 m-1 ring-1 ring-white/5 dark:ring-black/5'>
               {image ? (
                 <NextImage
                   src={image || ''}
@@ -186,7 +190,10 @@ const Release = ({ params }: { params: { id: string } }) => {
                   className='aspect-square object-cover'
                 />
               ) : (
-                <BiAlbum size={36} className='m-auto h-full text-dark' />
+                <BiAlbum
+                  size={36}
+                  className='m-auto h-full text-light dark:text-dark'
+                />
               )}
             </div>
           </div>
@@ -205,7 +212,9 @@ const Release = ({ params }: { params: { id: string } }) => {
         <div className='overflow-y-auto overflow-x-hidden no-scrollbar px-6'>
           {albumDetails?.tracks && (
             <>
-              <h3 className='text-neutral-400 my-4'>Tracklist </h3>
+              <h3 className='text-dark/80 dark:text-light/80 my-4'>
+                Tracklist{' '}
+              </h3>
               <PageContent
                 tracks={albumDetails.tracks.items as SimplifiedTrack[]}
                 tracksNumbered
@@ -214,7 +223,7 @@ const Release = ({ params }: { params: { id: string } }) => {
           )}
           <div className='flex w-full m-6'>
             {albumDetails?.copyrights && (
-              <h4 className='subtitle text-xs font-normal text-neutral-500'>
+              <h4 className='subtitle text-xs font-normal text-dark/50 dark:text-light/50'>
                 Copyright: {albumDetails?.copyrights[0].text}
               </h4>
             )}

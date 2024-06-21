@@ -45,17 +45,19 @@ const FilterOptions: React.FC<FilterOptionsProps> = ({
           size='sm'
           content={option.desc}
           classNames={{
-            content: 'text-dark bg-light',
+            content: 'text-dark bg-light dark:text-light dark:bg-dark',
             base: 'max-w-xs',
           }}
           delay={1000}
         >
           <TextButton
             className={cn(
-              'subtitle text-neutral-800 hover:text-brand-dark',
+              'subtitle hover:text-dark/70 text-dark/50 dark:text-light/50 dark:hover:text-brand-dark/70',
               'bg-transparent transition',
               'flex',
-              selectedFilter == option.value ? 'text-brand-primary' : '',
+              selectedFilter == option.value
+                ? 'dark:text-brand-primary text-brand-dark'
+                : '',
             )}
             variant='basic'
             onClick={() => onFilterSelect(option.value)}

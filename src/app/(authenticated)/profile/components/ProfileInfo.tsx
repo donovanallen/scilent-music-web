@@ -21,17 +21,21 @@ const ProfileInfo: React.FC<UserProfile> = (profile) => {
             className='flex gap-x-1 items-center cursor-pointer'
             onClick={() => router.push('/artists')}
           >
-            <TbUserHeart className='text-neutral-500' />
+            <TbUserHeart className='text-dark/50 dark:text-light/50' />
             <p>{followedCount.toFixed(0)}</p>
-            <p className='subtitle text-neutral-500'>Following</p>
+            <p className='subtitle text-dark/50 dark:text-light/50'>
+              Following
+            </p>
           </div>
           <div className='flex gap-x-1 items-center'>
-            <TbUserCheck className='text-neutral-500' />
+            <TbUserCheck className='text-dark/50 dark:text-light/50' />
             <p>{profile.followers.total}</p>
-            <p className='subtitle text-neutral-500'>Followers</p>
+            <p className='subtitle text-dark/50 dark:text-light/50'>
+              Followers
+            </p>
           </div>
           <div className='flex gap-x-1 items-center'>
-            <TbMapPin className='text-neutral-500' />
+            <TbMapPin className='text-dark/50 dark:text-light/50' />
             <p>{profile.country}</p>
           </div>
         </>
@@ -43,7 +47,7 @@ const ProfileInfo: React.FC<UserProfile> = (profile) => {
         size: 'lg',
       }}
       classNames={{
-        name: 'text-brand-primary w-full line-clamp-1 text-lg sm:h2',
+        name: 'text-brand-dark dark:text-brand-primary w-full line-clamp-1 text-lg sm:h2',
         description: '',
         base: 'justify-start',
         wrapper: '',

@@ -35,15 +35,20 @@ const InfoIcon: React.FC<InfoIconProps> = ({
       size='md'
       content={tooltip?.content}
       classNames={{
-        content: 'text-dark bg-light p-4',
         base: 'max-w-xs',
+        content: 'py-2 text-dark bg-light dark:bg-dark/90 dark:text-light',
+        arrow: 'bg-light dark:bg-dark/90',
       }}
       delay={1000}
       showArrow
     >
       <IconButton
         className={cn(className)}
-        classNames={{ icon: 'text-neutral-600 hover:text-light' }}
+        classNames={
+          {
+            // icon: 'text-dark/50 hover:text-dark/80 dark:text-light/50 dark:hover:text-light',
+          }
+        }
         icon={icon}
         onMouseOver={onHover}
         onClick={onClick}

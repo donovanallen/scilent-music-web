@@ -50,11 +50,11 @@ const FeedItem: React.FC<FeedItemProps> = ({
         onLoad={() => setIsItemLoaded(true)}
         onClick={handleClick}
         className={cn(
-          'flex items-start gap-x-2 cursor-pointer w-full rounded-md hover:bg-neutral-800/50',
+          'flex items-start gap-x-2 cursor-pointer w-full rounded-md hover:bg-dark/10 dark:hover:bg-light/10',
           className,
         )}
       >
-        <div className='relative rounded-md min-h-[48px] min-w-[48px] overflow-hidden aspect-square m-1 bg-neutral-700'>
+        <div className='relative rounded-md min-h-[48px] min-w-[48px] overflow-hidden aspect-square m-1 bg-light/50 dark:bg-dark/50'>
           {image ? (
             <NextImage
               src={image}
@@ -64,20 +64,28 @@ const FeedItem: React.FC<FeedItemProps> = ({
               useSkeleton
             />
           ) : data.type === 'episode' ? (
-            <BiMicrophone size={24} className='m-auto h-full text-dark' />
+            <BiMicrophone
+              size={24}
+              className='m-auto h-full text-dark dark:text-light'
+            />
           ) : (
-            <BiAlbum size={24} className='m-auto h-full text-dark' />
+            <BiAlbum
+              size={24}
+              className='m-auto h-full text-dark dark:text-light'
+            />
           )}
         </div>
         <div className='flex flex-col overflow-hidden'>
-          <p className='text-light truncate'>{data.name}</p>
+          <p className='text-dark dark:text-light truncate'>{data.name}</p>
 
           {artists && (
-            <p className='text-neutral-400 subtitle truncate'>{artists}</p>
+            <p className='text-dark/70 dark:text-light/70 subtitle truncate'>
+              {artists}
+            </p>
           )}
 
           {timestamp && (
-            <div className='inline-flex gap-x-1 items-center text-neutral-500 truncate'>
+            <div className='inline-flex gap-x-1 items-center text-dark/50 dark:text-light/50 truncate'>
               <GiBackwardTime fontSize='small' />
               <span className='subtitle text-xs'>
                 {getTimestampText(timestamp.toString())}

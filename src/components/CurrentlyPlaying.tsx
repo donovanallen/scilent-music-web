@@ -32,18 +32,20 @@ export default function CurrentlyPlaying() {
   }
 
   return (
-    <div className='py-2 -mx-2 gap-y-2 border-b-2 border-light'>
-      <div className='flex items-center text-brand-primary mb-2 w-full justify-between'>
+    <div className='py-2 -mx-2 gap-y-2 border-b-2 border-dark dark:border-light'>
+      <div className='flex items-center text-brand-dark dark:text-brand-primary mb-2 w-full justify-between'>
         <div className='flex items-center gap-x-1'>
-          <IoPlay className='text-brand-primary' />
+          <IoPlay className='animate-pulse' />
           <h4 className='subtitle'>Currently Playing</h4>
         </div>
         {currentTrack.external_urls.spotify && (
           <Tooltip
             content='Open in Spotify'
-            delay={1200}
+            delay={1000}
             classNames={{
-              content: 'text-dark bg-light py-2',
+              content:
+                'py-2 text-dark bg-light dark:bg-dark/90 dark:text-light',
+              arrow: 'bg-light dark:bg-dark/90',
               base: 'max-w-xs',
             }}
           >
@@ -56,7 +58,6 @@ export default function CurrentlyPlaying() {
               classNames={{
                 icon: 'hover:text-spotify-primary transition',
               }}
-              className='hover:text-spotify-primary transition'
             />
           </Tooltip>
         )}

@@ -24,13 +24,13 @@ const Header: React.FC<HeaderProps> = ({
       className={cn(
         'h-fit p-6 gap-y-6',
         'flex flex-col w-full sticky top-0 z-10',
-        'border-b-2 border-b-brand-dark',
+        'border-b-2 border-b-dark dark:border-b-brand-dark',
         className,
       )}
     >
       <NavigationBar />
       {title && (
-        <h1 className='text-brand-light line-clamp-1 text-2xl sm:text-3xl md:h1'>
+        <h1 className='text-brand-dark dark:text-light line-clamp-1 text-2xl sm:text-3xl md:h1'>
           {title}
         </h1>
       )}

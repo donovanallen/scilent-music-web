@@ -49,7 +49,7 @@ const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
         ref={ref}
         {...rest}
         className={cn(
-          'inline-flex items-center rounded-lg font-medium subtitle cursor-pointer',
+          'inline-flex items-center justify-between rounded-lg font-medium subtitle cursor-pointer',
           'focus-visible:ring-light focus:outline-none focus-visible:ring',
           'shadow-sm',
           'transition-colors duration-75',
@@ -97,28 +97,30 @@ const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
           className,
         )}
       >
-        {LeftIcon && (
-          <div
-            className={cn([
-              size === 'lg' && 'mr-1.2',
-              size === 'base' && 'mr-1',
-              size === 'sm' && 'mr-1.5',
-            ])}
-          >
-            <LeftIcon
-              size='1em'
-              className={cn(
-                [
-                  size === 'lg' && 'text-lg',
-                  size === 'base' && 'text-base',
-                  size === 'sm' && 'text-sm',
-                ],
-                classNames?.leftIcon,
-              )}
-            />
-          </div>
-        )}
-        {children}
+        <div className='inline-flex items-center gap-x-2'>
+          {LeftIcon && (
+            <div
+              className={cn([
+                size === 'lg' && 'mr-1.2',
+                size === 'base' && 'mr-1',
+                size === 'sm' && 'mr-1.5',
+              ])}
+            >
+              <LeftIcon
+                size='1em'
+                className={cn(
+                  [
+                    size === 'lg' && 'text-lg',
+                    size === 'base' && 'text-base',
+                    size === 'sm' && 'text-sm',
+                  ],
+                  classNames?.leftIcon,
+                )}
+              />
+            </div>
+          )}
+          {children}
+        </div>
         {RightIcon && (
           <div
             className={cn([

@@ -38,12 +38,12 @@ const Search = () => {
   >();
 
   return (
-    <Box className='bg-dark rounded-md h-full flex flex-col overflow-y-auto overflow-x-hidden'>
+    <Box className='h-full flex flex-col overflow-y-auto overflow-x-hidden'>
       <Header>
-        <div className='flex items-center justify-between text-light mb-4 cursor-pointer gap-x-4 md:justify-start'>
+        <div className='flex items-center justify-between text-dark dark:text-light mb-4 cursor-pointer gap-x-4 md:justify-start'>
           {/* TITLE */}
           <div className='inline-flex items-center gap-x-2'>
-            <h1 className='text-brand-light w-fit text-lg sm:text-xl md:text-2xl'>
+            <h1 className='text-dark dark:text-brand-light w-fit text-lg sm:text-xl md:text-2xl'>
               Search
             </h1>
             <InfoIcon
@@ -68,7 +68,7 @@ const Search = () => {
           type='search'
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          className='w-full subtitle p-2 placeholder:text-neutral-700 outline-none my-4 caret-brand-light rounded-sm'
+          className='w-full subtitle p-2 placeholder:text-neutral-700 outline-none my-4 dark:caret-brand-light caret-dark bg-light dark:bg-dark rounded-sm'
           placeholder='Search music...'
         />
       </Header>

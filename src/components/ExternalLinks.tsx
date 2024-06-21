@@ -1,3 +1,5 @@
+'use client';
+
 import { Tooltip } from '@nextui-org/react';
 import React, { useState } from 'react';
 import { FaPlus } from 'react-icons/fa6';
@@ -22,7 +24,7 @@ const ExternalLinks: React.FC<LinksProps> = ({
   children,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [tooltip, setTooltip] = useState<string | null>();
+  // const [linksLoaded, setLinksLoaded] = useState(false);
 
   const validLinks: SupportedExternalLink[] | undefined =
     links && getSupportedLinks(links);
@@ -84,11 +86,21 @@ const ExternalLinks: React.FC<LinksProps> = ({
               )}
 
           {validLinks && validLinks.length > 1 && (
-            <FaPlus
-              onClick={() => setModalOpen(true)}
-              className='cursor-pointer text-neutral-500 hover:text-brand-dark transition ml-2'
-              size={20}
-            />
+            <Tooltip
+              content='See more links'
+              classNames={{
+                content: 'text-dark bg-light',
+                base: 'max-w-xs',
+              }}
+            >
+              <div>
+                <FaPlus
+                  onClick={() => setModalOpen(true)}
+                  className='cursor-pointer text-neutral-500 hover:text-brand-dark transition ml-2'
+                  size={20}
+                />
+              </div>
+            </Tooltip>
           )}
           {modalOpen && validLinks && openExternalLinksModal(validLinks)}
         </div>

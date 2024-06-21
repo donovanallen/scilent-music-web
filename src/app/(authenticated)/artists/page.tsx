@@ -65,7 +65,7 @@ const Artists = () => {
       <Header>
         {/* TITLE */}
         <div className='inline-flex items-center gap-x-2'>
-          <h1 className='text-brand-light w-fit text-lg sm:text-xl md:text-2xl'>
+          <h1 className='text-brand-dark dark:text-brand-light w-fit text-lg sm:text-xl md:text-2xl'>
             Followed Artists
           </h1>
 
@@ -77,7 +77,7 @@ const Artists = () => {
             }}
           />
         </div>
-        <h4 className='self-end font-thin subtitle'>
+        <h4 className='text-dark dark:text-light self-end font-thin subtitle'>
           {followedCount} total
           {/* {followedArtists.length} of {followedCount} total */}
         </h4>

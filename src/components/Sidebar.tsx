@@ -1,6 +1,7 @@
 'use client';
 
 // import { Avatar, Tooltip } from '@nextui-org/react';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { Tooltip } from '@nextui-org/react';
 import { PlayHistory, Track, TrackItem } from '@spotify/web-api-ts-sdk';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -45,6 +46,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const queryClient = new QueryClient();
   const [history, setHistory] = useState<PlayHistory[] | null>();
   const [sidebarOpen, setSidebarOpen] = useState<boolean>();
+  const [parent] = useAutoAnimate(/* optional config */);
 
   const routes = useMemo(
     () => [
@@ -97,10 +99,11 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   }, [session, setCurrentTrack]);
 
   return (
-    <div className='flex h-[100vh]'>
+    <div ref={parent} className='flex h-[100vh]'>
       <div
         className={cn(
-          'flex flex-col w-fit md:w-[300px] xl:w-[350px] gap-y-2 bg-black h-full p-2 transition',
+          'flex flex-col w-fit md:w-[300px] xl:w-[350px] gap-y-2 h-full p-2 transition',
+          'bg-white dark:bg-black',
           isSmallDevice ? (!sidebarOpen ? 'hidden' : '') : '',
         )}
       >
@@ -120,8 +123,9 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                           variant='bordered'
                           size='sm'
                           classNames={{
-                            base: 'border-brand-dark',
-                            content: 'font-medium text-brand-primary',
+                            base: 'border-2 border-brand-dark',
+                            content:
+                              'font-medium text-dark dark:text-brand-primary',
                           }}
                           disabled={item.disabled}
                         />
@@ -133,7 +137,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                   <Tooltip
                     classNames={{
                       base: 'ring-2 ring-brand-light/10 rounded-md z-20',
-                      content: 'bg-dark/90 p-4 max-w-sm',
+                      content: 'bg-light dark:bg-dark/90 p-4 max-w-sm',
                     }}
                     shadow='lg'
                     placement='right'
@@ -146,7 +150,9 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                     <IconButton
                       variant='ghost'
                       icon={FaPlay}
-                      classNames={{ icon: 'text-xl hover:text-brand-primary' }}
+                      classNames={{
+                        icon: 'text-xl hover:text-brand-primary animate-pulse',
+                      }}
                     />
                   </Tooltip>
                 </div>
@@ -203,6 +209,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         className={cn(
           'h-full flex-1 overflow-y-auto py-2',
           !sidebarOpen ? 'relative' : '',
+          'bg-white dark:bg-black',
         )}
       >
         <QueryClientProvider client={queryClient}>
