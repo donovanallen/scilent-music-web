@@ -25,7 +25,7 @@ import InfoIcon from '@/components/InfoIcon';
 import PageContent from '@/components/PageContent';
 import NextPill from '@/components/Pill';
 
-// import getArtistData from '@/actions/getArtistData';
+import getArtistData from '@/actions/getArtistData';
 import { getArtistDiscography } from '@/actions/getArtistDiscography';
 import { getUpcomingReleases } from '@/actions/getUpcomingReleases';
 import {
@@ -94,10 +94,10 @@ const ArtistPage = ({ params }: { params: { id: string; name?: string } }) => {
   useEffect(() => {
     if (apiEnabled && artistName) {
       (async () => {
-        // const results = await getArtistData(metadata.name);
-        // if (results) {
-        //   setLinks(() => results.externalLinks);
-        // }
+        const results = await getArtistData(artistName);
+        if (results) {
+          setLinks(() => results.externalLinks);
+        }
 
         const fr = await getUpcomingReleases(artistName);
         if (fr) {
@@ -291,7 +291,7 @@ const ArtistPage = ({ params }: { params: { id: string; name?: string } }) => {
 
           {/* ARTIST RELEASES */}
           <div className='mb-8'>
-            <div className='w-full flex items-center gap-x-2'>
+            <div className='inline-flex items-center justify-between w-full'>
               <h3 className='text-dark/80 dark:text-light/80'>Releases</h3>
               <FilterOptions
                 filterOptions={ReleaseFilters}
