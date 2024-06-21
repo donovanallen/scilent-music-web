@@ -10,9 +10,7 @@ import Box from '@/components/Box';
 import Button from '@/components/buttons/Button';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 
-import LogoBlack from '~/svg/Logo_Full_Black.svg';
 import LogoGray from '~/svg/Logo_Full_Gray.svg';
-import LogoWhite from '~/svg/Logo_Full_White.svg';
 
 const Login = () => {
   const authModal = useAuthModal();
