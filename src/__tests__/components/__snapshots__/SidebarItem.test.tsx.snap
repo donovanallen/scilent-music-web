@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SidebarItem renders correctly 1`] = `
+<DocumentFragment>
+  <a
+    aria-disabled="false"
+    class="flex flex-row h-auto items-center w-full gap-x-4 cursor-pointer hover:text-brand-primary transition text-light py-1"
+    href=""
+  >
+    <h4
+      class="truncate w-100"
+    >
+      Test
+    </h4>
+  </a>
+</DocumentFragment>
+`;

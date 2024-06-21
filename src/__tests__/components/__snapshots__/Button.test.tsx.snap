@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Button renders correctly 1`] = `
+<DocumentFragment>
+  <button
+    class="w-fit rounded-md border border-transparent p-3 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 hover:opacity-75 transition text-dark bg-light subtitle"
+    type="button"
+  />
+</DocumentFragment>
+`;

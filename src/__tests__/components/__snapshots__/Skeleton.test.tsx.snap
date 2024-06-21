@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Skeleton renders correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="animate-shimmer bg-[#f6f7f8]"
+    style="background-size: 700px 100%; background-repeat: no-repeat;"
+  />
+</DocumentFragment>
+`;
