@@ -1,13 +1,11 @@
 import logger from '@/lib/logger';
 
-const BASE_URL = 'http://localhost:5001/mb'; // ! TODO: add env's
+// const BASE_URL = 'http://localhost:5001/mb'; // ! TODO: add env's
+const NEXT_API = '/api/mb';
 
 const getAPIStatus = async (): Promise<boolean> => {
-  const response = await fetch(`${BASE_URL}/ping`);
-  if (!response) {
-    return false;
-  }
-  logger({ response }, 'getAPIStatus.ts line 8');
+  const response = await fetch(`${NEXT_API}/ping`);
+  logger({ response });
   return response.ok;
 };
 
