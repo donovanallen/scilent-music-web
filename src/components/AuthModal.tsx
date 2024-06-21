@@ -53,6 +53,8 @@ const AuthModal = () => {
           'text-base md:text-base',
           'border-light animated-underline',
           'active:text-brand-dark active:border-brand-dark',
+          'grayscale',
+          'hover:filter-none',
           'hover:shadow-md transition',
         )}
         isLoading={status === 'loading'}

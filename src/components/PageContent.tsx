@@ -57,6 +57,7 @@ const PageContent: React.FC<PageContentProps> = ({
   loading = false,
 }) => {
   const router = useRouter();
+
   if (loading) {
     return (
       <div className='flex h-full w-full items-center justify-center'>
