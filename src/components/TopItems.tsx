@@ -38,7 +38,7 @@ const ExpandedTopItem: React.FC<ExpandedTopItemProps> = ({
   return (
     <div className={cn('w-full', className)}>
       {title && (
-        <div className='flex gap-x-2 mb-4 text-brand-dark items-center'>
+        <div className='flex gap-x-2 mb-4 text-dark dark:text-brand-dark items-center'>
           {Icon && <Icon />}
           <h4 className='subtitle text-lg md:text-sm lg:text-base'>{title}</h4>
         </div>
@@ -89,11 +89,11 @@ const ExpandedTopItem: React.FC<ExpandedTopItemProps> = ({
                     {index + 1}
                   </h4>
                   <div>
-                    <h4 className='font-normal text-2xl md:text-xl lg:text-2xl xl:text-3xl line-clamp-1'>
+                    <h4 className='text-light font-normal text-2xl md:text-xl lg:text-2xl xl:text-3xl line-clamp-1'>
                       {item.name}
                     </h4>
                     {'artists' in item && (
-                      <p className='subtitle text-neutral-400 text-xs lg:text-sm line-clamp-1'>
+                      <p className='subtitle text-light/80 text-xs lg:text-sm line-clamp-1'>
                         {formatArtists(item.artists)}
                       </p>
                     )}
@@ -104,14 +104,14 @@ const ExpandedTopItem: React.FC<ExpandedTopItemProps> = ({
               <li
                 key={index}
                 className={cn(
-                  'border border-neutral-500 rounded-md py-4 px-2 overflow-hidden cursor-pointer hover:opacity-75 transition',
+                  'border border-dark/60 dark:border-light/60 rounded-md py-4 px-2 overflow-hidden cursor-pointer hover:opacity-75 transition',
                 )}
               >
                 {item.type === 'artist' ? (
                   <Link href={`/artist/${item.id}`}>
                     <div className='flex items-start gap-x-2'>
                       <h4 className='text-brand-dark subtitle'>{index + 1}</h4>
-                      <h4 className='font-normal text-base md:text-sm lg:text-lg line-clamp-1'>
+                      <h4 className='text-dark dark:text-light font-normal text-base md:text-sm lg:text-lg line-clamp-1'>
                         {item.name}
                       </h4>
                     </div>
@@ -121,11 +121,11 @@ const ExpandedTopItem: React.FC<ExpandedTopItemProps> = ({
                     <div className='flex items-start gap-x-2'>
                       <h4 className='text-brand-dark subtitle'>{index + 1}</h4>
                       <div>
-                        <h4 className='subtitle font-normal text-base md:text-sm lg:text-lg line-clamp-1'>
+                        <h4 className='text-dark dark:text-light subtitle font-normal text-base md:text-sm lg:text-lg line-clamp-1'>
                           {item.name}
                         </h4>
                         {'artists' in item && (
-                          <p className='text-neutral-400 subtitle text-xs lg:text-sm line-clamp-1'>
+                          <p className='text-dark/80 dark:text-light/80 subtitle text-xs lg:text-sm line-clamp-1'>
                             {formatArtists(item.artists)}
                           </p>
                         )}
@@ -173,7 +173,7 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
   return (
     <div className={cn('w-full h-auto py-6 border-b-2')}>
       {/* HEADER */}
-      <div className='flex items-center justify-between text-light mb-4 cursor-pointer gap-x-1'>
+      <div className='flex items-center justify-between text-dark dark:text-light mb-4 cursor-pointer gap-x-1'>
         {/* TITLE */}
         <div className='inline-flex items-center gap-x-2'>
           <h3
@@ -285,7 +285,7 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
           <FaChevronUp
             onClick={() => setExpanded(!expanded)}
             size={24}
-            className='my-4 text-neutral-500 hover:text-light cursor-pointer transition'
+            className='my-4 text-neutral-500 hover:text-dark dark:hover:text-light cursor-pointer transition'
           />
         )}
       </div>

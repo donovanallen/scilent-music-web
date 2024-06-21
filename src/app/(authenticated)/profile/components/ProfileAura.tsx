@@ -71,7 +71,7 @@ const ProfileAura: React.FC = () => {
   return (
     <div className={cn('w-full h-auto border-b py-6')}>
       {/* HEADER */}
-      <div className='flex items-center justify-between text-light mb-4 cursor-pointer gap-x-1'>
+      <div className='flex items-center justify-between text-dark dark:text-light mb-4 cursor-pointer gap-x-1'>
         {/* TITLE */}
         <div className='inline-flex items-center'>
           <h3

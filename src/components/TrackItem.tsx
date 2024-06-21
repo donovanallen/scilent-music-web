@@ -68,7 +68,9 @@ const TrackItem: React.FC<TrackItemProps> = ({
         )}
         <div className='flex flex-col h-full items-start justify-between flex-1'>
           <div className='w-full'>
-            <h4 className='font-normal line-clamp-1'>{track.name}</h4>
+            <h4 className='text-dark dark:text-light font-normal line-clamp-1'>
+              {track.name}
+            </h4>
             <p className='subtitle font-normal text-neutral-500 line-clamp-1'>
               {formatArtists(track.artists)}
             </p>

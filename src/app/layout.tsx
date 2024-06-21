@@ -1,4 +1,3 @@
-import { NextUIProvider } from '@nextui-org/react';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Metadata } from 'next';
@@ -11,6 +10,7 @@ import logger from '@/lib/logger';
 
 import Sidebar from '@/components/Sidebar';
 
+import { Providers } from '@/app/providers';
 import { siteConfig } from '@/constant/config';
 import AuthSessionProvider from '@/providers/AuthSessionProvider';
 import ModalProvider from '@/providers/ModalProvider';
@@ -41,9 +41,9 @@ export default async function RootLayout({
   logger({ session }, 'layout.tsx line 38');
 
   return (
-    <html>
+    <html suppressHydrationWarning>
       <body>
-        <NextUIProvider className='h-full'>
+        <Providers>
           <AuthSessionProvider session={session}>
             <ToastProvider />
             <ModalProvider />
@@ -55,7 +55,7 @@ export default async function RootLayout({
               {/* </main> */}
             </TrackPlayerProvider>
           </AuthSessionProvider>
-        </NextUIProvider>
+        </Providers>
       </body>
     </html>
   );

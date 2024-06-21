@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { IconType } from 'react-icons';
+import { FaArrowRight } from 'react-icons/fa6';
 
 import ButtonLink from '@/components/links/ButtonLink';
 import NextModal from '@/components/Modal';
@@ -20,18 +21,25 @@ const ExternalLinksModal: React.FC<{
   };
 
   return (
-    <NextModal title='Links' isOpen={isOpen} onChange={onChange}>
-      <div className='flex flex-col items-center gap-y-4 text-center my-4'>
+    <NextModal
+      title='Links'
+      isOpen={isOpen}
+      onChange={onChange}
+      className='min-w-fit'
+    >
+      <div className='flex flex-col gap-y-4'>
         {links.map(
           (link, i) =>
             link && (
               <ButtonLink
                 key={i}
-                className='flex items-center w-full justify-between animated-underline'
-                rightIcon={link.icon as IconType}
+                className='animated-underline hover:text-brand-primary'
+                leftIcon={link.icon as IconType}
+                rightIcon={FaArrowRight}
                 variant='primary'
                 href={link.url || ''}
-                size='lg'
+                size='base'
+                classNames={{ rightIcon: 'ml-4' }}
               >
                 {link.label && <h4 className='subtitle'>{link.label}</h4>}
               </ButtonLink>

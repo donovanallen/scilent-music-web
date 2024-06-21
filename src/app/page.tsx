@@ -18,9 +18,9 @@ export default async function HomePage() {
   }
 
   return (
-    <Box className='flex flex-col h-full bg-dark overflow-y-auto overflow-x-hidden'>
+    <Box className='flex flex-col h-full overflow-y-auto overflow-x-hidden'>
       <Header
-        title={`Welcome ${session?.user ? firstName(session.user.name || '') : ''}`}
+        title={`Welcome ${session?.user ? ', ' + firstName(session.user.name || '') : ''}`}
       ></Header>
 
       <ScrollShadow hideScrollBar>

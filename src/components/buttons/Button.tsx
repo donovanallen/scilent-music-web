@@ -60,36 +60,66 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           //#region  //*=========== Variants ===========
           [
             variant === 'primary' && [
-              'bg-brand-dark/80 text-light',
-              'border-dark border',
-              'hover:bg-brand-primary/50 hover:text-dark transition',
-              'active:bg-brand-primary',
-              'disabled:bg-brand-dark/70',
+              // BACKGROUND
+              'bg-brand-dark dark:bg-brand-dark/80',
+              // BORDER
+              'border border-brand-dark',
+              // TEXT
+              'text-light',
+              // STATES
+              'hover:bg-brand-dark/70',
+              'dark:hover:bg-brand-primary/60',
+              'active:bg-brand-dark/60 active:text-dark',
+              'dark:active:bg-brand-primary/50 dark:active:text-dark',
+              'disabled:bg-brand-dark/70 disabled:text-dark/70',
             ],
             variant === 'outline' && [
-              'text-light',
-              'border-brand-dark border',
-              'hover:text-brand-light hover:border-brand-primary active:text-brand-light disabled:bg-brand-dark/70 transition',
+              // BACKGROUND
+              'bg-transparent',
+              // BORDER
+              'border-2 border-dark dark:border-brand-dark/80',
+              // TEXT
+              'text-dark dark:text-brand-light',
+              // STATES
+              'hover:text-brand-dark hover:border-brand-dark',
+              'dark:hover:text-brand-light dark:hover:border-brand-primary',
+              'active:text-brand-dark/80',
+              'dark:active:text-brand-dark/80',
+              'disabled:border-brand-dark/80 disabled:text-dark/70',
+              'dark:disabled:border-brand-dark/70 dark:disabled:text-light/70',
               isDarkBg &&
                 'hover:bg-gray-900 active:bg-gray-800 disabled:bg-gray-800',
             ],
             variant === 'ghost' && [
-              'text-brand-dark',
+              'bg-transparent',
+              'border-none',
               'shadow-none',
-              'hover:text-brand-primary hover:bg-dark/70 active:text-brand-light disabled:text-neutral-700',
+              // LIGHT
+              'text-dark',
+              'hover:text-brand-dark',
+              'active:text-brand-light',
+              'disabled:text-dark/60',
+              // DARK
+              'dark:text-light',
+              'dark:hover:text-brand-dark',
+              'dark:active:text-brand-dark/70',
+              'dark:disabled:text-light/70',
               isDarkBg &&
                 'hover:bg-gray-900 active:bg-gray-800 disabled:bg-gray-800',
             ],
             variant === 'light' && [
               'bg-light text-dark',
-              'border border-dark',
-              'hover:text-dark hover:bg-neutral-700',
-              'active:bg-light/80 disabled:bg-neutral-700',
+              'hover:text-dark hover:bg-brand-dark/40',
+              'dark:hover:bg-brand-primary/70',
+              'dark:active:bg-brand-primary',
+              'active:bg-brand-dark/80',
+              'disabled:bg-light/60',
             ],
             variant === 'dark' && [
               'bg-dark text-light',
-              'border border-light',
-              'hover:bg-light/70 active:bg-dark/80 disabled:bg-neutral-600',
+              'hover:bg-brand-dark',
+              'active:bg-brand-dark/70',
+              'disabled:bg-dark/60',
             ],
           ],
           //#endregion  //*======== Variants ===========
