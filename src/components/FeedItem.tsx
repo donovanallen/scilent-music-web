@@ -2,13 +2,15 @@
 
 import { Skeleton } from '@nextui-org/react';
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
-import { TrackItem } from '@spotify/web-api-ts-sdk';
+import { Track, TrackItem } from '@spotify/web-api-ts-sdk';
 import React, { useState } from 'react';
 import { BiAlbum, BiMicrophone } from 'react-icons/bi';
+import { FaChevronRight } from 'react-icons/fa6';
 import { GiBackwardTime } from 'react-icons/gi';
 
 import { cn, formatArtists, getTimestampText } from '@/lib/utils';
 
+import IconButton from '@/components/buttons/IconButton';
 import NextImage from '@/components/NextImage';
 import ReactionToolbar from '@/components/ReactionToolbar';
 
@@ -26,6 +28,7 @@ const FeedItem: React.FC<FeedItemProps> = ({
   className,
 }) => {
   const [isItemLoaded, setIsItemLoaded] = useState(false);
+  const [showArrow, setShowArrow] = useState(false);
 
   const handleClick = () => {
     if (onClick) {
@@ -39,6 +42,7 @@ const FeedItem: React.FC<FeedItemProps> = ({
       : data.type === 'episode'
         ? data.images[0].url
         : null;
+
   const artists =
     'artists' in data
       ? formatArtists(data.artists)
@@ -48,11 +52,12 @@ const FeedItem: React.FC<FeedItemProps> = ({
 
   return (
     <Skeleton className='rounded-md bg-neutral-500' isLoaded={isItemLoaded}>
-      <Popover placement='bottom-end' triggerType='grid' radius='full'>
+      <Popover placement='bottom-end' triggerType='dialog' isDismissable>
         <PopoverTrigger>
           <div
             onLoad={() => setIsItemLoaded(true)}
-            onClick={handleClick}
+            onMouseEnter={() => setShowArrow(true)}
+            onMouseLeave={() => setShowArrow(false)}
             className={cn(
               'flex items-start gap-x-2 cursor-pointer w-full rounded-md hover:bg-dark/10 dark:hover:bg-light/10',
               className,
@@ -79,7 +84,7 @@ const FeedItem: React.FC<FeedItemProps> = ({
                 />
               )}
             </div>
-            <div className='flex flex-col overflow-hidden'>
+            <div className='flex flex-col overflow-hidden flex-auto'>
               <p className='text-dark dark:text-light truncate'>{data.name}</p>
 
               {artists && (
@@ -97,10 +102,25 @@ const FeedItem: React.FC<FeedItemProps> = ({
                 </div>
               )}
             </div>
+            {onClick && (
+              <IconButton
+                className={cn(showArrow ? 'self-center' : 'hidden')}
+                variant='ghost'
+                icon={FaChevronRight}
+                onClick={handleClick}
+              />
+            )}
           </div>
         </PopoverTrigger>
         <PopoverContent>
-          <ReactionToolbar id={data.id} type={data.type} name={data.name} />
+          {'album' in data && (
+            <ReactionToolbar
+              subject={data as Track}
+              id={data.id}
+              type={data.type}
+              name={data.name}
+            />
+          )}
         </PopoverContent>
       </Popover>
     </Skeleton>

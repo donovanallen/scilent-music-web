@@ -121,6 +121,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
               <div className='flex flex-col items-center gap-y-4 px-5 py-4'>
                 {routes.map((item) => (
                   <SidebarItem
+                    disabled={item.disabled}
                     key={item.label}
                     {...item}
                     pill={

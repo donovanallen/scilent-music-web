@@ -12,6 +12,7 @@ import Box from '@/components/Box';
 import CurrentlyPlaying from '@/components/CurrentlyPlaying';
 import FeedItem from '@/components/FeedItem';
 import InfoIcon from '@/components/InfoIcon';
+import { useRouter } from 'next/navigation';
 
 interface FeedProps {
   title?: string;
@@ -21,6 +22,7 @@ interface FeedProps {
 }
 
 const Feed: React.FC<FeedProps> = ({ title, cpTrack, history, className }) => {
+  const router = useRouter();
   return (
     <Box className={cn('flex flex-col px-6 py-6 relative', className)}>
       <div className='sticky top-0 bg-light dark:bg-dark z-10'>
@@ -59,6 +61,7 @@ const Feed: React.FC<FeedProps> = ({ title, cpTrack, history, className }) => {
                 key={i}
                 data={h.track}
                 timestamp={new Date(h.played_at)}
+                onClick={() => router.push(`release/${h.track.album.id}`)}
               />
             ))}
           </div>
