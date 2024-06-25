@@ -1,57 +1,37 @@
+'use client';
+
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import {
+  Avatar,
   Badge,
   Divider,
   Image,
+  Tab,
+  Tabs,
   Textarea,
   Tooltip,
-  Tabs,
-  Tab,
-  Avatar,
 } from '@nextui-org/react';
-import React, { ReactNode, useState } from 'react';
+import { Album, Track, TrackItem } from '@spotify/web-api-ts-sdk';
+import React, { useState } from 'react';
 import toast from 'react-hot-toast';
+import { IconType } from 'react-icons';
+import { BiAlbum } from 'react-icons/bi';
 import {
   FaArrowRight,
-  FaArrowTrendUp,
   FaArrowUpRightFromSquare,
   FaChevronLeft,
   FaChevronRight,
-  FaFireFlameCurved,
   FaMusic,
   FaRegEye,
   FaRegEyeSlash,
-  FaRegFaceLaugh,
-  FaRegFaceMeh,
-  FaRegFaceSadCry,
-  FaRegFaceSurprise,
-  FaRegHeart,
-  FaRegThumbsDown,
-  FaTrophy,
 } from 'react-icons/fa6';
-import { MdCancel, MdOutlinePostAdd } from 'react-icons/md';
+import { MdCancel } from 'react-icons/md';
 
 import { cn, formatArtists } from '@/lib/utils';
 
-import AlbumCard from '@/components/AlbumCard';
+import { Reaction, ReactionOptions } from '@/constant/types';
 
 import IconButton from './buttons/IconButton';
-import ReviewModal from '@/components/modals/ReviewModal';
-import { Album, Track, TrackItem } from '@spotify/web-api-ts-sdk';
-import { useRouter } from 'next/navigation';
-import { FaRegCommentAlt } from 'react-icons/fa';
-import { BiAlbum } from 'react-icons/bi';
-import { IconType } from 'react-icons';
-
-type Reaction = {
-  id: string;
-  type: 'reaction' | 'review';
-  icon: IconType;
-  label: string;
-  disabled: boolean;
-  success?: (subject: string) => string;
-  onClick?: () => void;
-};
 interface ReactionToolbarProps {
   id: string;
   type: string;
@@ -65,83 +45,6 @@ const ReactionToolbar: React.FC<ReactionToolbarProps> = ({
   name,
   subject,
 }) => {
-  const options: Reaction[] = [
-    {
-      id: 'post',
-      type: 'review',
-      icon: FaRegCommentAlt,
-      label: 'Quick Post',
-      disabled: false,
-      onClick: () => {
-        console.log('quick post onclick');
-      },
-    },
-    {
-      id: 'heart',
-      type: 'reaction',
-      icon: FaRegHeart,
-      label: 'Love',
-      disabled: false,
-      success: (subject: string) => `Loving ${subject}`,
-    },
-    {
-      id: 'thumbsDown',
-      type: 'reaction',
-      icon: FaRegThumbsDown,
-      label: 'Dislike',
-      disabled: false,
-      success: (subject: string) => `Not feeling ${subject}`,
-    },
-    {
-      id: 'fire',
-      type: 'reaction',
-      icon: FaFireFlameCurved,
-      label: 'Fire',
-      disabled: false,
-      success: (subject: string) => `${subject} is FIREEEE!`,
-    },
-    {
-      id: 'trophy',
-      type: 'reaction',
-      icon: FaTrophy,
-      label: 'Classic',
-      disabled: false,
-      success: (subject: string) => `${subject} is a certified classic`,
-    },
-    {
-      id: 'laugh',
-      type: 'reaction',
-      icon: FaRegFaceLaugh,
-      label: 'Funny',
-      disabled: false,
-      success: (subject: string) => `LMAO @ ${subject}`,
-    },
-    {
-      id: 'sad',
-      type: 'reaction',
-      icon: FaRegFaceSadCry,
-      label: 'Sad',
-      disabled: false,
-      success: (subject: string) => `${subject}, tissues please?`,
-    },
-    {
-      id: 'surprise',
-      type: 'reaction',
-      icon: FaRegFaceSurprise,
-      label: 'Shocked',
-      disabled: false,
-      success: (subject: string) => `!!!!! ${subject}`,
-    },
-    {
-      id: 'meh',
-      type: 'reaction',
-      icon: FaRegFaceMeh,
-      label: 'Meh',
-      disabled: false,
-      success: (subject: string) => `ZZZzzzzz ${subject}`,
-    },
-  ];
-
   console.log('Reaction subject :: ', subject);
 
   const album = subject && 'album' in subject ? subject.album : undefined;
@@ -171,8 +74,8 @@ const ReactionToolbar: React.FC<ReactionToolbarProps> = ({
     }
   };
 
-  const reactionOptions = options.filter((o) => o.type === 'reaction');
-  const reviewOptions = options.filter((o) => o.type === 'review');
+  const reactionOptions = ReactionOptions.filter((o) => o.type === 'reaction');
+  const reviewOptions = ReactionOptions.filter((o) => o.type === 'review');
   const [showAllReactions, setShowAllReactions] = useState(false);
   const [showTextArea, setShowTextArea] = useState(false);
   const [isReactionPrivate, setIsReactionPrivate] = useState(false);
@@ -181,24 +84,19 @@ const ReactionToolbar: React.FC<ReactionToolbarProps> = ({
     'album' | 'track' | string
   >('track');
   const [selectedReaction, setSelectedReaction] = useState<Reaction | null>();
-  const router = useRouter();
-  // const [modalOpen, setModalOpen] = useState(false);
+  // const router = useRouter();
   // const Icon = selectedReaction?.icon;
 
-  // const openReviewModal = (subject: {
-  //   id: string;
-  //   type: string;
-  //   name: string;
-  // }) => {
-  //   console.log(subject);
-
-  //   return (
-  //     <ReviewModal
-  //       isOpen
-  //       onClose={() => setModalOpen(false)}
-  //       subject={subject as Track}
-  //     ></ReviewModal>
-  //   );
+  // const openNewReview = () => {
+  //   router &&
+  //     router.push({
+  //       pathname: '/reviews/new',
+  //       query: {
+  //         id: subject?.id,
+  //         subject: JSON.stringify(subject),
+  //         text: reactionText,
+  //       },
+  //     });
   // };
 
   return (
@@ -268,8 +166,8 @@ const ReactionToolbar: React.FC<ReactionToolbarProps> = ({
                 icon={FaArrowUpRightFromSquare}
                 variant='ghost'
                 classNames={{ icon: 'text-dark/50 dark:text-light/50' }}
-                onClick={() => router.push('/reviews/new')} // TODO update w/ params (reactionText, subject, etc)
-                // onClick={() => setModalOpen(true)}
+                // onClick={() => openNewReview()}
+                // onClick={() => router.push('/reviews/new')} // TODO update w/ params (reactionText, subject, etc)
               />
               <IconButton
                 icon={isReactionPrivate ? FaRegEyeSlash : FaRegEye}

@@ -2,7 +2,21 @@ import { DiscoBall, Lectern } from '@phosphor-icons/react/dist/ssr';
 import { DefaultSession } from 'next-auth';
 import { IconType } from 'react-icons';
 import { BiPulse } from 'react-icons/bi';
-import { FaApple, FaMusic, FaSoundcloud, FaSpotify } from 'react-icons/fa6';
+import { FaRegCommentAlt } from 'react-icons/fa';
+import {
+  FaApple,
+  FaFireFlameCurved,
+  FaMusic,
+  FaRegFaceLaugh,
+  FaRegFaceMeh,
+  FaRegFaceSadCry,
+  FaRegFaceSurprise,
+  FaRegHeart,
+  FaRegThumbsDown,
+  FaSoundcloud,
+  FaSpotify,
+  FaTrophy,
+} from 'react-icons/fa6';
 import { GiAcousticMegaphone, GiRoundKnob } from 'react-icons/gi';
 import { LuUnplug } from 'react-icons/lu';
 import {
@@ -85,15 +99,15 @@ export type AuthUser = {
   id: string;
 };
 
-export type FilterValue = 'short_term' | 'medium_term' | 'long_term';
-export type SearchFilterValue = 'artist' | 'album' | 'track' | null;
 export type FilterOption = {
-  value?: FilterValue | SearchFilterValue | ReleaseTypes;
+  value?: FilterValue | SearchFilterValue | ReleaseTypes | ReviewSubjectTypes;
   label: string;
   desc: string;
 };
 
-export type SearchTypes = 'artist' | 'album' | 'track';
+export type FilterValue = 'short_term' | 'medium_term' | 'long_term';
+
+export type SearchFilterValue = 'artist' | 'album' | 'track' | null;
 export const SearchFilters = [
   {
     value: 'artist',
@@ -108,6 +122,22 @@ export const SearchFilters = [
   {
     value: 'track',
     desc: 'Show tracks in search results',
+    label: 'Tracks',
+  },
+];
+
+export type SearchTypes = 'artist' | 'album' | 'track';
+
+export type ReviewSubjectTypes = 'album' | 'track';
+export const ReviewSubjectSearchFilters: FilterOption[] = [
+  {
+    value: 'album',
+    desc: 'Search albums to review',
+    label: 'Albums',
+  },
+  {
+    value: 'track',
+    desc: 'Search tracks to review',
     label: 'Tracks',
   },
 ];
@@ -487,5 +517,92 @@ export const AUDIO_FEATURES: ScilentAudioFeatures[] = [
       min: 0,
       max: 1,
     },
+  },
+];
+
+export type Reaction = {
+  id: string;
+  type: 'reaction' | 'review';
+  icon: IconType;
+  label: string;
+  disabled: boolean;
+  success?: (subject: string) => string;
+  onClick?: () => void;
+};
+
+export const ReactionOptions: Reaction[] = [
+  {
+    id: 'post',
+    type: 'review',
+    icon: FaRegCommentAlt,
+    label: 'Quick Post',
+    disabled: false,
+    onClick: () => {
+      console.log('quick post onclick');
+    },
+  },
+  {
+    id: 'heart',
+    type: 'reaction',
+    icon: FaRegHeart,
+    label: 'Love',
+    disabled: false,
+    success: (subject: string) => `Loving ${subject}`,
+  },
+  {
+    id: 'thumbsDown',
+    type: 'reaction',
+    icon: FaRegThumbsDown,
+    label: 'Dislike',
+    disabled: false,
+    success: (subject: string) => `Not feeling ${subject}`,
+  },
+  {
+    id: 'fire',
+    type: 'reaction',
+    icon: FaFireFlameCurved,
+    label: 'Fire',
+    disabled: false,
+    success: (subject: string) => `${subject} is FIREEEE!`,
+  },
+  {
+    id: 'trophy',
+    type: 'reaction',
+    icon: FaTrophy,
+    label: 'Classic',
+    disabled: false,
+    success: (subject: string) => `${subject} is a certified classic`,
+  },
+  {
+    id: 'laugh',
+    type: 'reaction',
+    icon: FaRegFaceLaugh,
+    label: 'Funny',
+    disabled: false,
+    success: (subject: string) => `LMAO @ ${subject}`,
+  },
+  {
+    id: 'sad',
+    type: 'reaction',
+    icon: FaRegFaceSadCry,
+    label: 'Sad',
+    disabled: false,
+    success: (subject: string) => `${subject}, tissues please?`,
+  },
+  {
+    id: 'surprise',
+    type: 'reaction',
+    icon: FaRegFaceSurprise,
+    label: 'Shocked',
+    disabled: false,
+    success: (subject: string) => `!!!!! ${subject}`,
+  },
+  {
+    id: 'meh',
+    type: 'reaction',
+    icon: FaRegFaceMeh,
+    label: 'Meh',
+    disabled: false,
+    success: (subject: string) => `ZZZzzzzz ${subject}`,
   },
 ];
