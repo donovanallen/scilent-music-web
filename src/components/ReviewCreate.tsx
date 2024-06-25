@@ -6,7 +6,7 @@ import { IconType } from 'react-icons';
 import { BiAlbum } from 'react-icons/bi';
 import { FaMusic, FaSpotify } from 'react-icons/fa6';
 
-import { cn, formatArtists } from '@/lib/utils';
+import { cn, formatArtists, getTimestampText } from '@/lib/utils';
 
 import AlbumCard from '@/components/AlbumCard';
 import Button from '@/components/buttons/Button';
@@ -21,16 +21,27 @@ import {
 
 type ReviewCreateProps = {
   subject: Album | Track;
+  content?: string;
+  defaultReaction?: Reaction;
+  timestamp?: Date;
+  // source?: string;
+  // type: string;
 };
 
-const ReviewCreate: React.FC<ReviewCreateProps> = ({ subject }) => {
+const ReviewCreate: React.FC<ReviewCreateProps> = ({
+  subject,
+  content,
+  defaultReaction,
+  timestamp = new Date(),
+}) => {
   const validReviewTypes: { type: ReviewSubjectTypes; icon: IconType }[] = [
     { type: 'album', icon: BiAlbum },
     { type: 'track', icon: FaMusic },
   ];
-  const [selectedReaction, setSelectedReaction] = useState<Reaction | null>();
-
-  const [reviewText, setReviewText] = useState<string | undefined>();
+  const [selectedReaction, setSelectedReaction] = useState<
+    Reaction | undefined
+  >(defaultReaction);
+  const [reviewText, setReviewText] = useState<string | undefined>(content);
 
   const [reviewSubjectType, setReviewSubjectType] =
     useState<ReviewSubjectTypes | null>();
@@ -72,9 +83,14 @@ const ReviewCreate: React.FC<ReviewCreateProps> = ({ subject }) => {
           </div>
         }
         placeholder='Enter your review here'
-        description={`Reviewing ${reviewSubjectType}: ${subject.name}`} // TODO update to reviewSubjectType
+        description={
+          <div className='inline-flex w-full items-end justify-between px-2'>
+            <span>{`Reviewing ${reviewSubjectType}: ${subject.name}`}</span>
+            <span>{`${getTimestampText(timestamp.toLocaleString())}`}</span>
+          </div>
+        }
         labelPlacement='outside'
-        value={reviewText}
+        value={content || reviewText}
         onValueChange={setReviewText}
         variant='bordered'
         size='lg'
