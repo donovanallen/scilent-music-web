@@ -113,14 +113,7 @@ const FeedItem: React.FC<FeedItemProps> = ({
           </div>
         </PopoverTrigger>
         <PopoverContent>
-          {'album' in data && (
-            <ReactionToolbar
-              subject={data as Track}
-              id={data.id}
-              type={data.type}
-              name={data.name}
-            />
-          )}
+          {'album' in data && <ReactionToolbar subject={data as Track} />}
         </PopoverContent>
       </Popover>
     </Skeleton>

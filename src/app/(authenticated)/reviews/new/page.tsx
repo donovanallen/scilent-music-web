@@ -12,7 +12,7 @@ import Button from '@/components/buttons/Button';
 import FilterOptions from '@/components/FilterOptions';
 import Header from '@/components/Header';
 import HeaderItem from '@/components/HeaderItem';
-import ReviewCreate from '@/components/ReviewCreate';
+import ReviewCreate from '@/components/review/ReviewCreate';
 
 import {
   ReviewSubjectSearchFilters,
