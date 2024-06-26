@@ -1,10 +1,13 @@
 'use client';
 
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { Input, Skeleton } from '@nextui-org/react';
 import { Album, Track, TrackItem } from '@spotify/web-api-ts-sdk';
 import React, { useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
+import { FaMinus, FaPlus } from 'react-icons/fa6';
 
+import { cn } from '@/lib/utils';
 import { useTopMusic } from '@/hooks/useTopMusic';
 
 import Box from '@/components/Box';
@@ -12,6 +15,8 @@ import Button from '@/components/buttons/Button';
 import FilterOptions from '@/components/FilterOptions';
 import Header from '@/components/Header';
 import HeaderItem from '@/components/HeaderItem';
+import InfoIcon from '@/components/InfoIcon';
+import LoadingIndicator from '@/components/LoadingIndicator';
 import ReviewCreate from '@/components/review/ReviewCreate';
 
 import {
@@ -32,11 +37,14 @@ const NewReview = ({
     text?: string;
   };
 }) => {
+  console.log(params);
+  const [parent, enableAnimations] = useAutoAnimate(/* optional config */);
+
   const [searchInput, setSearchInput] = useState('');
   const [reviewSubject, setReviewSubject] = useState<Album | Track | null>();
   const [reviewSubjectSearchType, setReviewSubjectSearchType] =
     useState<ReviewSubjectTypes>();
-  console.log(params);
+  const [expanded, setExpanded] = useState(true);
 
   const { tracks: topTracks, isLoading } = useTopMusic('short_term');
   // const searchParams = useSearchParams();
@@ -120,31 +128,59 @@ const NewReview = ({
         )}
 
         {/* SUGGESTED REVIEW SUBJECTS */}
-        <h4 className='subtitle text-dark/60 dark:text-light/60'>
-          Suggested Review Subjects
-        </h4>
-        <Skeleton
-          className='rounded-md bg-neutral-500'
-          isLoaded={topTracks && !isLoading}
-        >
-          {topTracks && (
-            <div className='grid grid-flow-row gap-6 grid-cols-3'>
-              {topTracks.slice(0, 3).map((track, i) => (
+        {/* TITLE */}
+        <div ref={parent} className='inline-flex items-center'>
+          <Button
+            onClick={() => setExpanded(!expanded)}
+            variant='ghost'
+            rightIcon={expanded ? FaMinus : FaPlus}
+            className='text-dark/60 dark:text-light/60'
+          >
+            <h4>Suggested Review Subjects</h4>
+          </Button>
+          <InfoIcon
+            tooltipEnabled
+            tooltip={{
+              content: 'Get started with some of your recent favorites.',
+            }}
+          />
+        </div>
+        {isLoading && <LoadingIndicator />}
+        {topTracks && (
+          <div
+            className={cn(
+              expanded ? 'grid grid-flow-row gap-6 grid-cols-3' : 'hidden',
+            )}
+          >
+            {topTracks.slice(0, 3).map((track, i) => (
+              <Skeleton
+                className='rounded-md bg-neutral-500'
+                isLoaded={!!topTracks}
+                key={track.id}
+              >
                 <HeaderItem
                   key={track.id}
                   title={`#${i + 1}`}
                   name={track.name}
                   image={track.album.images[0].url}
-                  onClick={() => setReviewSubject(track)}
+                  onClick={() => {
+                    setReviewSubject(track);
+                    setExpanded(false);
+                  }}
                 />
-              ))}
-            </div>
-          )}
-        </Skeleton>
+              </Skeleton>
+            ))}
+          </div>
+        )}
       </Header>
 
-      <div className='flex w-full overflow-y-auto overflow-x-hidden p-10'>
-        {reviewSubject && <ReviewCreate subject={reviewSubject} />}
+      <div className='flex w-2/3 overflow-y-auto overflow-x-hidden self-center py-6'>
+        {reviewSubject && (
+          <ReviewCreate
+            subject={reviewSubject}
+            type={'album' in reviewSubject ? 'track' : 'album'}
+          />
+        )}
       </div>
     </Box>
   );

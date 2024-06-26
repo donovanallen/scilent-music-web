@@ -14,11 +14,6 @@ interface ReactionToolbarProps {
 }
 
 const ReactionToolbar: React.FC<ReactionToolbarProps> = ({ subject }) => {
-  console.log('Reaction subject :: ', subject);
-
-  const album = subject && 'album' in subject ? subject.album : undefined;
-  const image = album ? album.images[0].url : undefined;
-
   const [parent, enableAnimations] = useAutoAnimate(/* optional config */);
 
   const reactionOptions = ReactionOptions.filter((o) => o.type === 'reaction');
@@ -40,7 +35,7 @@ const ReactionToolbar: React.FC<ReactionToolbarProps> = ({ subject }) => {
 
         {/* TOOLBAR */}
         <Reactions
-          image={image} // TODO update to full subject
+          subject={subject}
           reviewOptions={reviewOptions}
           reactionOptions={reactionOptions}
           onReviewSelect={() => setShowTextArea(!showTextArea)}

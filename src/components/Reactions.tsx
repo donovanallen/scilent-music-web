@@ -1,4 +1,5 @@
 import { Avatar, Divider, Tooltip } from '@nextui-org/react';
+import { Album, Track } from '@spotify/web-api-ts-sdk';
 import React, { useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
 import { MdCancel } from 'react-icons/md';
@@ -10,7 +11,7 @@ import IconButton from '@/components/buttons/IconButton';
 import { Reaction } from '../constant/types';
 
 type ReactionsProps = {
-  image?: string;
+  subject: Album | Track;
   reviewOptions?: Reaction[];
   reactionOptions?: Reaction[];
   defaultReaction?: Reaction;
@@ -19,21 +20,25 @@ type ReactionsProps = {
 };
 
 const Reactions: React.FC<ReactionsProps> = ({
-  image,
+  subject,
   reviewOptions,
   reactionOptions,
   defaultReaction,
   onReactionSelect,
   onReviewSelect,
 }) => {
-  // const reactionOptions = ReactionOptions.filter((o) => o.type === 'reaction');
-  // const reviewOptions = ReactionOptions.filter((o) => o.type === 'review');
   const [reviewEnabled, setReviewEnabled] = useState(false);
   const [showAllReactions, setShowAllReactions] = useState(false);
-
   const [selectedReaction, setSelectedReaction] = useState<
     Reaction | undefined
   >(defaultReaction);
+
+  const image =
+    'album' in subject
+      ? subject.album.images[0].url
+      : 'images' in subject
+        ? subject.images[0].url
+        : undefined;
 
   const handleReviewClick = (option: Reaction) => {
     console.log('reaction :: ', option);
