@@ -1,5 +1,8 @@
+'use client';
+
 import { Badge, Image, Tab, Tabs, Textarea } from '@nextui-org/react';
 import { Album, Track } from '@spotify/web-api-ts-sdk';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { IconType } from 'react-icons';
@@ -39,6 +42,7 @@ const ReviewCreateMin: React.FC<ReviewCreateMinProps> = ({
   timestamp = new Date(),
   hidden = false,
 }) => {
+  const router = useRouter();
   const album = subject && 'album' in subject ? subject.album : undefined;
   const image = album ? album.images[0].url : undefined;
 
@@ -69,6 +73,34 @@ const ReviewCreateMin: React.FC<ReviewCreateMinProps> = ({
         toast(option.success(subject?.name), { icon: option.icon });
       }
     }
+  };
+
+  // Function to serialize the object into a query string
+  const serializeObjectToString = (obj: any) => {
+    return encodeURIComponent(JSON.stringify(obj));
+  };
+
+  const openNewReview = () => {
+    const queryString = new URLSearchParams();
+    // const queryString = new URLSearchParams(
+    //   `subject=${serializeObjectToString(subject)}` +
+    //     `&content=${encodeURIComponent(reviewText ? reviewText : '')}` +
+    //     `&reaction=${selectedReaction ? serializeObjectToString(selectedReaction) : ''}`,
+    // );
+    queryString.append('subjectId', subject.id);
+    queryString.append('subjectType', subject.type);
+    queryString.append(
+      'content',
+      encodeURIComponent(reviewText ? reviewText : ''),
+    );
+    queryString.append(
+      'reaction',
+      selectedReaction ? serializeObjectToString(selectedReaction) : '',
+    );
+
+    console.log(queryString.toString());
+
+    router.push(`/reviews/new?${queryString}`);
   };
 
   return (
@@ -135,7 +167,7 @@ const ReviewCreateMin: React.FC<ReviewCreateMinProps> = ({
             icon={FaArrowUpRightFromSquare}
             variant='ghost'
             classNames={{ icon: 'text-dark/50 dark:text-light/50' }}
-            // onClick={() => openNewReview()}
+            onClick={() => openNewReview()}
             // onClick={() => router.push('/reviews/new')} // TODO update w/ params (reactionText, subject, etc)
           />
           <IconButton

@@ -2,11 +2,13 @@
 
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { Input, Skeleton } from '@nextui-org/react';
-import { Album, Track, TrackItem } from '@spotify/web-api-ts-sdk';
-import React, { useState } from 'react';
+import { Album, Track } from '@spotify/web-api-ts-sdk';
+import { useSearchParams } from 'next/navigation';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { FaMinus, FaPlus } from 'react-icons/fa6';
 
+import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { cn } from '@/lib/utils';
 import { useTopMusic } from '@/hooks/useTopMusic';
 
@@ -24,47 +26,43 @@ import {
   ReviewSubjectTypes,
 } from '@/constant/types';
 
-const NewReview = ({
-  params,
-}: {
-  params: {
-    id: string;
-    subject:
-      | { id: string; type: string; name: string }
-      | Track
-      | Album
-      | TrackItem;
-    text?: string;
-  };
-}) => {
-  console.log(params);
+const NewReview = () => {
+  const params = useSearchParams();
+  const content = params.get('content');
+  const subjectId = params.get('subjectId');
+  const subjectType = params.get('subjectType');
+  const reaction = params.get('reaction');
+  console.log({ subjectId, subjectType, content, reaction });
+
   const [parent, enableAnimations] = useAutoAnimate(/* optional config */);
 
   const [searchInput, setSearchInput] = useState('');
+  const [reviewContent, setReviewContent] = useState<string>(
+    content ? decodeURIComponent(content) : '',
+  );
   const [reviewSubject, setReviewSubject] = useState<Album | Track | null>();
   const [reviewSubjectSearchType, setReviewSubjectSearchType] =
-    useState<ReviewSubjectTypes>();
-  const [expanded, setExpanded] = useState(true);
+    useState<ReviewSubjectTypes | null>(subjectType as ReviewSubjectTypes);
+  const [expanded, setExpanded] = useState(!reviewSubject);
 
   const { tracks: topTracks, isLoading } = useTopMusic('short_term');
-  // const searchParams = useSearchParams();
 
-  // const router = useRouter();
-  // const qParams = router.query; // Destructure the query parameters
-  // console.log(qParams);
-  // console.log(searchParams);
+  const getSubject = useCallback(async () => {
+    if (subjectId) {
+      return subjectType === 'track'
+        ? await sdk.tracks.get(subjectId)
+        : await sdk.albums.get(subjectId);
+    } else return null;
+  }, [subjectId, subjectType]);
 
-  // console.log('Reaction subject :: ', subject);
-  // const album = subject && 'album' in subject ? subject.album : undefined;
-  // const image = album ? album.images[0].url : undefined;
+  useEffect(() => {
+    const fetchSubject = async () => {
+      const subject = await getSubject();
+      setReviewSubject(subject);
+    };
 
-  // useEffect(() => {
-  //   first
-
-  //   return () => {
-  //     second
-  //   }
-  // }, [topTracks])
+    fetchSubject();
+  }, [getSubject]);
 
   return (
     <Box className='h-full flex flex-col'>
@@ -179,6 +177,7 @@ const NewReview = ({
           <ReviewCreate
             subject={reviewSubject}
             type={'album' in reviewSubject ? 'track' : 'album'}
+            content={reviewContent}
           />
         )}
       </div>

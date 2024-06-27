@@ -176,7 +176,7 @@ const ReviewCreate: React.FC<ReviewCreateProps> = ({
                     key={t.type}
                     title={
                       <div className='flex items-center space-x-2'>
-                        <>{t.icon}</>
+                        <t.icon />
                         <span>{t.type}</span>
                       </div>
                     }
