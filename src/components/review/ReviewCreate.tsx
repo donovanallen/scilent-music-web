@@ -1,5 +1,10 @@
 import { Tab, Tabs, Textarea } from '@nextui-org/react';
-import { Album, SimplifiedAlbum, Track } from '@spotify/web-api-ts-sdk';
+import {
+  Album,
+  SimplifiedAlbum,
+  SimplifiedTrack,
+  Track,
+} from '@spotify/web-api-ts-sdk';
 import React, { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { IconType } from 'react-icons';
@@ -13,19 +18,15 @@ import Button from '@/components/buttons/Button';
 import IconButton from '@/components/buttons/IconButton';
 import NextPill from '@/components/Pill';
 
-import {
-  Reaction,
-  ReactionOptions,
-  ReviewSubjectTypes,
-} from '@/constant/types';
+import { Reaction, ReactionOptions, ReviewSubject } from '@/constant/types';
 
 type ReviewCreateProps = {
-  subject: Album | Track;
+  subject: Track | Album | SimplifiedAlbum | SimplifiedTrack;
   content?: string;
   defaultReaction?: Reaction;
   timestamp?: Date;
   // source?: string;
-  type: ReviewSubjectTypes;
+  type: ReviewSubject;
 };
 
 const ReviewCreate: React.FC<ReviewCreateProps> = ({
@@ -36,7 +37,7 @@ const ReviewCreate: React.FC<ReviewCreateProps> = ({
   type,
 }) => {
   const reactionOptions = ReactionOptions.filter((o) => o.type === 'reaction');
-  const validReviewTypes: { type: ReviewSubjectTypes; icon: IconType }[] = [
+  const validReviewTypes: { type: ReviewSubject; icon: IconType }[] = [
     { type: 'album', icon: BiAlbum },
     { type: 'track', icon: FaMusic },
   ];
@@ -45,10 +46,11 @@ const ReviewCreate: React.FC<ReviewCreateProps> = ({
   >(defaultReaction);
   const [reviewText, setReviewText] = useState<string | undefined>(content);
   const [reviewSubject, setReviewSubject] = useState<
-    Album | Track | SimplifiedAlbum
+    Track | Album | SimplifiedAlbum | SimplifiedTrack
   >(subject);
-  const [reviewSubjectType, setReviewSubjectType] =
-    useState<ReviewSubjectTypes>(reviewSubject.type as ReviewSubjectTypes);
+  const [reviewSubjectType, setReviewSubjectType] = useState<ReviewSubject>(
+    reviewSubject.type as ReviewSubject,
+  );
 
   const subjectImage = useMemo(() => {
     return 'album' in subject
@@ -59,17 +61,17 @@ const ReviewCreate: React.FC<ReviewCreateProps> = ({
   }, [subject]);
 
   const handleReviewSubmit = () => {
-    console.log('Submitting review', reviewText);
+    // console.log('Submitting review', reviewText);
     toast.success('Submitting review');
   };
 
   const handleReviewPreview = () => {
-    console.log('Previewing review', reviewText);
+    // console.log('Previewing review', reviewText);
     toast.success('Previewing review');
   };
 
   const handleReactionClick = (option: any) => {
-    console.log('reaction :: ', option);
+    // console.log('reaction :: ', option);
 
     if (option.onClick) {
       option.onClick();
@@ -132,7 +134,7 @@ const ReviewCreate: React.FC<ReviewCreateProps> = ({
           </div>
         }
         labelPlacement='outside'
-        value={content || reviewText}
+        value={reviewText}
         onValueChange={setReviewText}
         variant='bordered'
         size='lg'
@@ -143,7 +145,7 @@ const ReviewCreate: React.FC<ReviewCreateProps> = ({
         endContent={
           <div
             className={cn(
-              'flex flex-col items-end gap-y-4',
+              'flex flex-col items-end gap-y-4 justify-center',
               // 'border border-yellow-400',
               // 'flex-1',
               // 'flex-grow',
@@ -162,7 +164,7 @@ const ReviewCreate: React.FC<ReviewCreateProps> = ({
                 keyboardActivation='manual'
                 selectedKey={reviewSubject.type}
                 onSelectionChange={(key) => {
-                  setReviewSubjectType(key as ReviewSubjectTypes);
+                  setReviewSubjectType(key as ReviewSubject);
                   key === 'album' && 'album' in subject
                     ? setReviewSubject(subject.album)
                     : setReviewSubject(subject);

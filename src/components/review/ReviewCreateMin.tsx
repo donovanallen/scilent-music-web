@@ -4,7 +4,6 @@ import { Badge, Image, Tab, Tabs, Textarea } from '@nextui-org/react';
 import { Album, Track } from '@spotify/web-api-ts-sdk';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
-import toast from 'react-hot-toast';
 import { IconType } from 'react-icons';
 import { BiAlbum } from 'react-icons/bi';
 import {
@@ -19,11 +18,7 @@ import { cn, formatArtists } from '@/lib/utils';
 
 import IconButton from '@/components/buttons/IconButton';
 
-import {
-  Reaction,
-  ReactionOptions,
-  ReviewSubjectTypes,
-} from '@/constant/types';
+import { Reaction, ReviewSubject } from '@/constant/types';
 
 type ReviewCreateMinProps = {
   subject: Album | Track;
@@ -46,7 +41,7 @@ const ReviewCreateMin: React.FC<ReviewCreateMinProps> = ({
   const album = subject && 'album' in subject ? subject.album : undefined;
   const image = album ? album.images[0].url : undefined;
 
-  const validReviewTypes: { type: ReviewSubjectTypes; icon: IconType }[] = [
+  const validReviewTypes: { type: ReviewSubject; icon: IconType }[] = [
     { type: 'album', icon: BiAlbum },
     { type: 'track', icon: FaMusic },
   ];
@@ -59,21 +54,6 @@ const ReviewCreateMin: React.FC<ReviewCreateMinProps> = ({
   const [reviewSubjectType, setReviewSubjectType] = useState<
     'album' | 'track' | string
   >('track');
-  const reactionOptions = ReactionOptions.filter((o) => o.type === 'reaction');
-  const handleReactionClick = (option: any) => {
-    console.log('reaction :: ', option);
-
-    if (option.onClick) {
-      option.onClick();
-    }
-
-    if (option.type === 'reaction') {
-      setSelectedReaction(option);
-      if (option.success) {
-        toast(option.success(subject?.name), { icon: option.icon });
-      }
-    }
-  };
 
   // Function to serialize the object into a query string
   const serializeObjectToString = (obj: any) => {
@@ -95,7 +75,7 @@ const ReviewCreateMin: React.FC<ReviewCreateMinProps> = ({
     );
     queryString.append(
       'reaction',
-      selectedReaction ? serializeObjectToString(selectedReaction) : '',
+      defaultReaction ? serializeObjectToString(defaultReaction) : '',
     );
 
     console.log(queryString.toString());
@@ -118,11 +98,11 @@ const ReviewCreateMin: React.FC<ReviewCreateMinProps> = ({
           <div className='flex flex-col items-center gap-y-1'>
             <Badge
               isOneChar
-              content={<>{selectedReaction?.icon}</>}
+              content={defaultReaction?.icon as React.ReactNode}
               shape='circle'
               placement='bottom-right'
               size='lg'
-              isInvisible={!selectedReaction}
+              isInvisible={!defaultReaction}
             >
               {image ? (
                 // <AlbumCard
@@ -147,7 +127,7 @@ const ReviewCreateMin: React.FC<ReviewCreateMinProps> = ({
               keyboardActivation='manual'
               selectedKey={reviewSubjectType}
               onSelectionChange={(key) =>
-                setReviewSubjectType(key.toString() as ReviewSubjectTypes)
+                setReviewSubjectType(key.toString() as ReviewSubject)
               }
               size='sm'
               radius='md'

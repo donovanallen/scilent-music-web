@@ -39,7 +39,7 @@ const ReactionToolbar: React.FC<ReactionToolbarProps> = ({ subject }) => {
           reviewOptions={reviewOptions}
           reactionOptions={reactionOptions}
           onReviewSelect={() => setShowTextArea(!showTextArea)}
-          onReactionSelect={setSelectedReaction}
+          onReactionSelect={(r) => setSelectedReaction(r)}
           defaultReaction={selectedReaction}
         />
       </div>

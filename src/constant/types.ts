@@ -100,7 +100,7 @@ export type AuthUser = {
 };
 
 export type FilterOption = {
-  value?: FilterValue | SearchFilterValue | ReleaseTypes | ReviewSubjectTypes;
+  value?: FilterValue | SearchFilterValue | ReleaseTypes | ReviewSubject;
   label: string;
   desc: string;
 };
@@ -128,7 +128,8 @@ export const SearchFilters = [
 
 export type SearchTypes = 'artist' | 'album' | 'track';
 
-export type ReviewSubjectTypes = 'album' | 'track';
+export type ReviewSubject = 'album' | 'track';
+export const ReviewSubjectTypes: ReviewSubject[] = ['album', 'track'];
 export const ReviewSubjectSearchFilters: FilterOption[] = [
   {
     value: 'album',
