@@ -6,7 +6,7 @@ import {
   SimplifiedTrack,
   Track,
 } from '@spotify/web-api-ts-sdk';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 import sdk from '@/lib/spotify-sdk/ClientInstance';
@@ -21,10 +21,18 @@ import SuggestedReviewSubjects from '@/app/(authenticated)/reviews/components/Su
 
 const NewReview = () => {
   const params = useSearchParams();
-  const content = params.get('content');
-  const subjectId = params.get('subjectId');
-  const subjectType = params.get('subjectType');
-  const reaction = params.get('reaction');
+  const [searchParams, setSearchParams] = useState(params);
+  const router = useRouter();
+
+  useEffect(() => {
+    setSearchParams(params);
+  }, [params]);
+
+  const content = searchParams.get('content');
+  const subjectId = searchParams.get('subjectId');
+  const subjectType = searchParams.get('subjectType');
+  const reaction = searchParams.get('reaction');
+
   console.log('NEW REVIEW PARAMS ::', {
     subjectId,
     subjectType,
@@ -60,6 +68,27 @@ const NewReview = () => {
     fetchSubject();
   }, [subjectId, subjectType, content]);
 
+  const handleSubjectSelect = (
+    subject: Track | Album | SimplifiedTrack | SimplifiedAlbum,
+  ) => {
+    // setSearchParams(
+    //   () => new URLSearchParams({
+    //     subjectId: subject.id,
+    //     subjectType: subject.type,
+    //   })
+    // );
+
+    // setParams(
+    //   new URLSearchParams({
+    //     subjectId: subject.id,
+    //     subjectType: subject.type,
+    //   }),
+    // );
+    router.replace(
+      `/reviews/new?subjectId=${subject.id}&subjectType=${subject.type}`,
+    );
+  };
+
   return (
     <Box className='h-full flex flex-col'>
       <Header>
@@ -74,13 +103,15 @@ const NewReview = () => {
 
         {/* SEARCH */}
         {!reviewSubject && (
-          <ReviewSubjectSearch onSubjectSelect={setReviewSubject} />
+          <ReviewSubjectSearch
+            onSubjectSelect={(s) => handleSubjectSelect(s)}
+          />
         )}
 
         {/* SUGGESTED REVIEW SUBJECTS */}
         <SuggestedReviewSubjects
           initExpanded={!reviewSubject}
-          onSubjectSelect={setReviewSubject}
+          onSubjectSelect={handleSubjectSelect}
         />
       </Header>
 

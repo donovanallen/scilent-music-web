@@ -5,7 +5,6 @@ import { Album, Track } from '@spotify/web-api-ts-sdk';
 import React, { useState } from 'react';
 
 import Reactions from '@/components/Reactions';
-import ReviewCreateMin from '@/components/review/ReviewCreateMin';
 
 import { Reaction, ReactionOptions } from '@/constant/types';
 
@@ -27,11 +26,11 @@ const ReactionToolbar: React.FC<ReactionToolbarProps> = ({ subject }) => {
     <>
       <div ref={parent} className='flex flex-col'>
         {/* QUICK POST */}
-        <ReviewCreateMin
+        {/* <ReviewCreateMin
           subject={subject}
           hidden={!showTextArea}
           defaultReaction={selectedReaction}
-        />
+        /> */}
 
         {/* TOOLBAR */}
         <Reactions
