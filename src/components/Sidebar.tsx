@@ -9,7 +9,7 @@ import { useMediaQuery } from '@uidotdev/usehooks';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useMemo, useState } from 'react';
-import { BiSearch } from 'react-icons/bi';
+import { BiEdit, BiSearch } from 'react-icons/bi';
 import { FaPlay } from 'react-icons/fa6';
 import { HiHome } from 'react-icons/hi';
 import { RxCaretLeft, RxCaretRight } from 'react-icons/rx';
@@ -76,6 +76,14 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         disabled: false,
         pill: 'New',
       },
+      {
+        icon: BiEdit,
+        label: 'Reviews',
+        active: pathname === '/reviews',
+        href: '/reviews',
+        disabled: true,
+        pill: 'Coming soon',
+      },
     ],
     [pathname],
   );
@@ -113,6 +121,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
               <div className='flex flex-col items-center gap-y-4 px-5 py-4'>
                 {routes.map((item) => (
                   <SidebarItem
+                    disabled={item.disabled}
                     key={item.label}
                     {...item}
                     pill={

@@ -2,6 +2,7 @@
 
 import { ScrollShadow } from '@nextui-org/react';
 import { PlayHistory, Track } from '@spotify/web-api-ts-sdk';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 import { GiBackwardTime } from 'react-icons/gi';
 import { TbPlaylist } from 'react-icons/tb';
@@ -21,6 +22,7 @@ interface FeedProps {
 }
 
 const Feed: React.FC<FeedProps> = ({ title, cpTrack, history, className }) => {
+  const router = useRouter();
   return (
     <Box className={cn('flex flex-col px-6 py-6 relative', className)}>
       <div className='sticky top-0 bg-light dark:bg-dark z-10'>
@@ -59,6 +61,7 @@ const Feed: React.FC<FeedProps> = ({ title, cpTrack, history, className }) => {
                 key={i}
                 data={h.track}
                 timestamp={new Date(h.played_at)}
+                onClick={() => router.push(`/release/${h.track.album.id}`)}
               />
             ))}
           </div>
