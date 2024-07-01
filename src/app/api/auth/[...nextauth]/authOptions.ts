@@ -1,5 +1,8 @@
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { Account, AuthOptions } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
+
+import prisma from '@/lib/prisma';
 
 import { AuthUser } from '@/constant/types';
 
@@ -7,6 +10,7 @@ import spotifyProfile, { refreshAccessToken } from './SpotifyProfile';
 
 const authOptions: AuthOptions = {
   providers: [spotifyProfile],
+  adapter: PrismaAdapter(prisma),
   session: {
     maxAge: 60 * 60, // 1hr
   },
