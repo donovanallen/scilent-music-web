@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DB_PRISMA_URL") // uses connection pooling
+  directUrl = env("DB_URL_NON_POOLING") // uses a direct connection
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  image     String?
+  accessToken String?
+  tokenType String?
+  expiresAt DateTime?
+  refreshToken String?
+  scope     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // profile   Profile?  @relation(fields: [id], references: [id])
+  // playlists Playlist[]
+}
+
+model Profile {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @unique
+  spotifyId    String   @unique
+  displayName  String?
+  profileImage String?
+  bio        String?
+  favoriteGenres Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  // user        User     @relation(fields: [userId], references: [id])
+}
+
