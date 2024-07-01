@@ -1,5 +1,3 @@
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Metadata } from 'next';
 import * as React from 'react';
 
@@ -13,9 +11,6 @@ import Sidebar from '@/components/Sidebar';
 import { Providers } from '@/app/providers';
 import { siteConfig } from '@/constant/config';
 import AuthSessionProvider from '@/providers/AuthSessionProvider';
-import ModalProvider from '@/providers/ModalProvider';
-import ToastProvider from '@/providers/ToastProvider';
-import TrackPlayerProvider from '@/providers/TrackPlayerProvider';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -43,19 +38,11 @@ export default async function RootLayout({
   return (
     <html suppressHydrationWarning>
       <body>
-        <Providers>
-          <AuthSessionProvider session={session}>
-            <ToastProvider />
-            <ModalProvider />
-            <SpeedInsights />
-            <Analytics />
-            <TrackPlayerProvider>
-              {/* <main className='h-full'> */}
-              {session ? <Sidebar>{children}</Sidebar> : children}
-              {/* </main> */}
-            </TrackPlayerProvider>
-          </AuthSessionProvider>
-        </Providers>
+        <AuthSessionProvider session={session}>
+          <Providers>
+            {session ? <Sidebar>{children}</Sidebar> : children}
+          </Providers>
+        </AuthSessionProvider>
       </body>
     </html>
   );

@@ -6,11 +6,16 @@ import { useRouter } from 'next/navigation';
 import { FaUser } from 'react-icons/fa6';
 import { TbMapPin, TbUserCheck, TbUserHeart } from 'react-icons/tb';
 
-import { useFollowedArtists } from '@/hooks/useFollowedArtists';
+interface ProfileInfoProps {
+  profile: UserProfile;
+  followedCount: number;
+}
 
-const ProfileInfo: React.FC<UserProfile> = (profile) => {
+const ProfileInfo: React.FC<ProfileInfoProps> = ({
+  profile,
+  followedCount,
+}) => {
   const router = useRouter();
-  const { total: followedCount } = useFollowedArtists();
 
   return (
     <User

@@ -6,6 +6,7 @@ import React, { Suspense, useEffect, useState } from 'react';
 
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { getSourceIcon } from '@/lib/utils';
+import { useFollowedArtists } from '@/hooks/useFollowedArtists';
 
 import Box from '@/components/Box';
 import Header from '@/components/Header';
@@ -17,7 +18,9 @@ import ProfileAura from '@/app/(authenticated)/profile/components/ProfileAura';
 
 import ProfileInfo from './components/ProfileInfo';
 
-const Profile: React.FC = () => {
+export default function Profile() {
+  const { total: followedCount } = useFollowedArtists();
+
   const [profile, setProfile] = useState<UserProfile>();
   useEffect(() => {
     (async () => {
@@ -52,7 +55,9 @@ const Profile: React.FC = () => {
         </div>
 
         <Suspense fallback={<Skeleton />}>
-          {profile && <ProfileInfo {...profile} />}
+          {profile && (
+            <ProfileInfo profile={profile} followedCount={followedCount} />
+          )}
         </Suspense>
       </Header>
       <ScrollShadow hideScrollBar>
@@ -67,6 +72,6 @@ const Profile: React.FC = () => {
       </ScrollShadow>
     </Box>
   );
-};
+}
 
-export default Profile;
+// export default Profile;
