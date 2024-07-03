@@ -8,6 +8,20 @@ import { z } from 'zod';
 
 const envVariables = z.object({
   NEXT_PUBLIC_SHOW_LOGGER: z.enum(['true', 'false']).optional(),
+  SPOTIFY_CLIENT_ID: z.string(),
+  SPOTIFY_CLIENT_SECRET: z.string(),
+  NODE_ENV: z.enum(['development', 'production']),
+  NEXT_PUBLIC_BASE_URL: z.string(),
+  NEXT_AUTH_URL: z.string(),
+  NEXT_AUTH_SECRET: z.string(),
+  DB_URL: z.string(),
+  DB_PRISMA_URL: z.string(),
+  DB_URL_NO_SSL: z.string(),
+  DB_URL_NON_POOLING: z.string(),
+  DB_USER: z.string(),
+  DB_HOST: z.string(),
+  DB_PASSWORD: z.string(),
+  DB_DATABASE: z.string(),
 });
 
 envVariables.parse(process.env);
