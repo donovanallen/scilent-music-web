@@ -15,6 +15,12 @@ async function main() {
           providerAccountId: 'example_spotify_id_123',
         },
       },
+      sessions: {
+        create: {
+          sessionToken: 'example_session_token_1',
+          expires: new Date(),
+        },
+      },
     },
   });
 
@@ -29,6 +35,12 @@ async function main() {
           type: 'oauth',
           provider: 'spotify',
           providerAccountId: 'example_spotify_id_456',
+        },
+      },
+      sessions: {
+        create: {
+          sessionToken: 'example_session_token_2',
+          expires: new Date(),
         },
       },
     },
