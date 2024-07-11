@@ -5,6 +5,7 @@ import {
   SimplifiedTrack,
   Track,
 } from '@spotify/web-api-ts-sdk';
+import { useRouter } from 'next/navigation';
 import React, { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { IconType } from 'react-icons';
@@ -14,11 +15,12 @@ import { FaMusic, FaSpotify } from 'react-icons/fa6';
 import { cn, formatArtists } from '@/lib/utils';
 
 import AlbumCard from '@/components/AlbumCard';
+import ArtistFollowIcon from '@/components/ArtistFollowIcon';
 import Button from '@/components/buttons/Button';
 import IconButton from '@/components/buttons/IconButton';
 import NextPill from '@/components/Pill';
 
-import { Reaction, ReactionOptions, ReviewSubject } from '@/constant/types';
+import { Reaction, ReviewSubject } from '@/constant/types';
 
 type ReviewCreateProps = {
   subject: Track | Album | SimplifiedAlbum | SimplifiedTrack;
@@ -32,18 +34,15 @@ type ReviewCreateProps = {
 const ReviewCreate: React.FC<ReviewCreateProps> = ({
   subject,
   content,
-  defaultReaction,
-  timestamp = new Date(),
-  type,
+  // defaultReaction,
+  // timestamp = new Date(),
+  // type,
 }) => {
-  const reactionOptions = ReactionOptions.filter((o) => o.type === 'reaction');
+  const router = useRouter();
   const validReviewTypes: { type: ReviewSubject; icon: IconType }[] = [
     { type: 'album', icon: BiAlbum },
     { type: 'track', icon: FaMusic },
   ];
-  const [selectedReaction, setSelectedReaction] = useState<
-    Reaction | undefined
-  >(defaultReaction);
   const [reviewText, setReviewText] = useState<string | undefined>(content);
   const [reviewSubject, setReviewSubject] = useState<
     Track | Album | SimplifiedAlbum | SimplifiedTrack
@@ -70,156 +69,131 @@ const ReviewCreate: React.FC<ReviewCreateProps> = ({
     toast.success('Previewing review');
   };
 
-  const handleReactionClick = (option: any) => {
-    // console.log('reaction :: ', option);
+  const ReviewLabel = () => (
+    <div className={cn('inline-flex w-full items-end justify-between')}>
+      <div className={cn('flex flex-col')}>
+        <h4 className='subtitle text-xs'>Let's talk about</h4>
+        <h3 className='text-brand-dark dark:text-brand-primary line-clamp-2'>{`${reviewSubject.name}`}</h3>
 
-    if (option.onClick) {
-      option.onClick();
-    }
+        <div className='flex items-center text-dark/80 dark:text-light/80 subtitle'>
+          <h4 className='opacity-50 line-clamp-1'>
+            {`${formatArtists(reviewSubject.artists)}`}
+          </h4>
+          <ArtistFollowIcon
+            id={reviewSubject.artists[0].id}
+            followEnabled={false}
+          />
+        </div>
+      </div>
+      <div className='inline-flex items-center gap-x-2'>
+        <NextPill variant='flat' text={reviewSubjectType} />
+        <IconButton
+          variant='ghost'
+          icon={FaSpotify}
+          // onClick={() => 'album' in subject ? subject.album.type : subject.type} //TODO update to external_url
+        />
+      </div>
+    </div>
+  );
 
-    if (option.type === 'reaction') {
-      setSelectedReaction(option);
-      if (option.success) {
-        toast(option.success(subject?.name), { icon: option.icon });
-      }
-    }
-  };
+  const ReviewDescription = () => (
+    <div className='inline-flex w-full items-start justify-between gap-x-2'>
+      <span className='line-clamp-1'>{`Reviewing ${reviewSubjectType}: ${reviewSubject.name}`}</span>
+      <span className='line-clamp-1'>User | Easy Rider | Example insight</span>
+    </div>
+  );
+
+  const ReviewSubject = () => (
+    <div className={cn('flex flex-col items-end gap-y-4 justify-center')}>
+      {reviewSubject && (
+        <AlbumCard
+          name={reviewSubject.name}
+          artistName={formatArtists(reviewSubject.artists) as string}
+          image={subjectImage}
+          type={reviewSubjectType}
+          onClick={() =>
+            router.push(
+              `/release/${'album' in reviewSubject ? reviewSubject.album.id : reviewSubject.id}`,
+            )
+          }
+        />
+      )}
+      {validReviewTypes && (
+        <Tabs
+          keyboardActivation='manual'
+          selectedKey={reviewSubject.type}
+          onSelectionChange={(key) => {
+            setReviewSubjectType(key as ReviewSubject);
+            key === 'album' && 'album' in subject
+              ? setReviewSubject(subject.album)
+              : setReviewSubject(subject);
+          }}
+          size='sm'
+          radius='md'
+          aria-label='Review Subject Type'
+        >
+          {validReviewTypes.map((t) => (
+            <Tab
+              key={t.type}
+              title={
+                <div className='flex items-center space-x-2'>
+                  <t.icon />
+                  <span>{t.type}</span>
+                </div>
+              }
+            ></Tab>
+          ))}
+        </Tabs>
+      )}
+    </div>
+  );
 
   return (
-    <div className='flex flex-col w-full'>
+    <div className='flex flex-col w-full p-6 gap-y-6'>
       {/* TEXTAREA / CONTENT */}
       <Textarea
         classNames={{
-          base: 'py-12',
+          base: '',
           label: 'text-lg',
-          input: 'p-2',
+          input: 'p-1',
           inputWrapper: 'flex w-full',
           innerWrapper: 'flex gap-x-4 p-2',
         }}
-        label={
-          <div
-            className={cn(
-              'inline-flex w-full items-end justify-between',
-              // ' mb-2 px-2 gap-x-2',
-            )}
-          >
-            <div
-              className={cn(
-                'flex flex-col',
-                // 'flex-grow'
-              )}
-            >
-              <h4 className='subtitle text-xs'>Let's talk about</h4>
-              <h4 className='text-brand-dark dark:text-brand-primary line-clamp-2'>{`${reviewSubject.name}`}</h4>
-              <h4 className='opacity-50 subtitle line-clamp-1'>
-                {`${formatArtists(reviewSubject.artists)}`}
-              </h4>
-            </div>
-            <div className='inline-flex items-center gap-x-2'>
-              <NextPill variant='flat' text={reviewSubjectType} />
-              <IconButton
-                variant='ghost'
-                icon={FaSpotify}
-                // onClick={() => 'album' in subject ? subject.album.type : subject.type} //TODO update to external_url
-              />
-            </div>
-          </div>
-        }
-        placeholder='Enter your review here'
-        description={
-          <div className='inline-flex w-full items-start justify-between px-2 gap-x-2'>
-            <span className='line-clamp-1'>{`Reviewing ${reviewSubjectType}: ${reviewSubject.name}`}</span>
-            {/* useHook for live(debounced) updates  ? */}
-            {/* <span className='line-clamp-1'>{`${getTimestampText(timestamp.toLocaleString())}`}</span> */}
-          </div>
-        }
-        labelPlacement='outside'
-        value={reviewText}
-        onValueChange={setReviewText}
         variant='bordered'
         size='lg'
         minRows={5}
         maxRows={15}
         radius='md'
-        // isRequired
-        endContent={
-          <div
-            className={cn(
-              'flex flex-col items-end gap-y-4 justify-center',
-              // 'border border-yellow-400',
-              // 'flex-1',
-              // 'flex-grow',
-            )}
-          >
-            {'album' in reviewSubject && (
-              <AlbumCard
-                name={reviewSubject.name}
-                artistName={formatArtists(reviewSubject.artists) as string}
-                image={subjectImage}
-                type={reviewSubjectType}
-              />
-            )}
-            {validReviewTypes && (
-              <Tabs
-                keyboardActivation='manual'
-                selectedKey={reviewSubject.type}
-                onSelectionChange={(key) => {
-                  setReviewSubjectType(key as ReviewSubject);
-                  key === 'album' && 'album' in subject
-                    ? setReviewSubject(subject.album)
-                    : setReviewSubject(subject);
-                }}
-                size='sm'
-                radius='md'
-                aria-label='Review Subject Type'
-              >
-                {validReviewTypes.map((t) => (
-                  <Tab
-                    key={t.type}
-                    title={
-                      <div className='flex items-center space-x-2'>
-                        <t.icon />
-                        <span>{t.type}</span>
-                      </div>
-                    }
-                  ></Tab>
-                ))}
-              </Tabs>
-            )}
-          </div>
-        }
+        labelPlacement='outside'
+        label={<ReviewLabel />}
+        description={<ReviewDescription />}
+        endContent={useMemo(
+          () => (
+            <ReviewSubject />
+          ),
+          [ReviewSubject, reviewSubject],
+        )} // TODO: fix re-rendering
+        value={reviewText}
+        onValueChange={setReviewText}
+        placeholder='Enter your review here'
       />
-
-      <div className='inline-flex items-center justify-end'>
-        {reactionOptions.map((option) => (
-          <IconButton
-            key={option.id}
-            variant='ghost'
-            icon={option.icon}
-            onClick={() => handleReactionClick(option)}
-            disabled={option.disabled}
-            classNames={{
-              icon: cn(
-                'text-lg md:text-xl',
-                selectedReaction?.id === option.id && 'text-brand-primary',
-              ),
-            }}
-          />
-        ))}
-      </div>
 
       {/* PREVIEW / SUBMIT */}
       <div
-        className={cn(
-          'w-full inline-flex items-center justify-end',
-          'gap-x-4',
-          // 'mt-6'
-        )}
+        className={cn('w-full inline-flex items-center justify-end', 'gap-x-4')}
       >
-        <Button variant='ghost' onClick={handleReviewPreview} disabled>
+        <Button
+          variant='ghost'
+          onClick={handleReviewPreview}
+          disabled={!reviewText}
+        >
           Preview
         </Button>
-        <Button variant='primary' onClick={handleReviewSubmit}>
+        <Button
+          variant='primary'
+          onClick={handleReviewSubmit}
+          disabled={!reviewText}
+        >
           Submit
         </Button>
       </div>

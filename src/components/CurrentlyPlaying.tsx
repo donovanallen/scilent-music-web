@@ -2,6 +2,7 @@
 
 import { Tooltip } from '@nextui-org/react';
 import { Track } from '@spotify/web-api-ts-sdk';
+import { useRouter } from 'next/navigation';
 import { IoPlay } from 'react-icons/io5';
 
 import { getSourceIcon } from '@/lib/utils';
@@ -12,6 +13,7 @@ import IconLink from '@/components/links/IconLink';
 import { usePlayer } from '@/providers/TrackPlayerProvider';
 
 export default function CurrentlyPlaying() {
+  const router = useRouter();
   const {
     // currentTrackAudio,
     // isPlaying,
@@ -63,7 +65,10 @@ export default function CurrentlyPlaying() {
         )}
       </div>
 
-      <FeedItem data={currentTrack as Track} />
+      <FeedItem
+        onClick={() => router.push(`/release/${currentTrack.id}`)}
+        data={currentTrack as Track}
+      />
     </div>
   );
 }
