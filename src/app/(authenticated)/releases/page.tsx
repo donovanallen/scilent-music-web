@@ -25,9 +25,9 @@ import { ReleaseFilters, ReleaseTypes } from '@/constant/types';
 const Releases: React.FC = () => {
   // const { apiEnabled } = useAPIStatus();
   const [parent, enableAnimations] = useAutoAnimate(/* optional config */);
-  // const [userReleases, setUserReleases] = useState<
-  //   SimplifiedAlbum[] | Album[] | any[]
-  // >([]);
+  const [userReleases, setUserReleases] = useState<
+    SimplifiedAlbum[] | Album[] | any[]
+  >([]);
   const [featuredReleases, setFeaturedReleases] = useState<
     SimplifiedAlbum[] | Album[]
   >();
@@ -44,34 +44,100 @@ const Releases: React.FC = () => {
 
   // const processedArtistsCtRef = useRef<number>(0);
 
+  // const sortReleases = (releases: (Album | SimplifiedAlbum)[]) => {
+  //   // Descending order
+  //   return releases?.sort((a, b) => {
+  //     const dateA = new Date(a?.release_date).getTime();
+  //     const dateB = new Date(b?.release_date).getTime();
+  //     return dateB - dateA;
+  //   });
+  // };
+
+  // const removeDuplicates = (arr: { id: string }[]) => {
+  //   const uniqueArray = Array.from(new Set(arr.map((item) => item.id))).map(
+  //     (id) => arr.find((item) => item.id === id),
+  //   );
+  //   return uniqueArray;
+  // };
+
+  // const getReleases = async (artistIds: string[], callback: any) => {
+  //   const batchSize = 20; // Process {batchSize} artists at a time
+
+  //   if (artistIds?.length > 0) {
+  //     for (let i = 0; i < artistIds.length; i += batchSize) {
+  //       const batch = artistIds.slice(i, i + batchSize);
+  //       const albumPromises = batch.map((artistId: string) =>
+  //         getArtistDiscography(artistId).then((res) => res[2]),
+  //       );
+  //       const albums = await Promise.all(albumPromises)
+  //         .then((res) => {
+  //           if (typeof res === 'object' && 'album_group' in res) {
+  //             return res.album_group;
+  //           } else {
+  //             return undefined;
+  //           }
+  //         })
+  //         .catch((error) => console.error(error.message || error));
+
+  //       // const releaseDates = albums?.flat().map((a) => a.release_date);
+  //       // .filter((album) => new Date(album.release_date) > new Date());
+  //       // console.log('------------------ releaseDates', releaseDates);
+
+  //       // const batchReleases = albums
+  //       //   ?.flat()
+  //       //   .map((album) => 'album_group' in album  album);
+  //       // .filter((album) => typeof album === typeof Album)
+  //       // .map((album) => parseRelease(album));
+
+  //       const next = !!artistIds[batchSize + 1];
+
+  //       if (next) {
+  //         callback(sortReleases(albums as Album[]), next); // Invoke the callback with the releases from the current batch
+  //       }
+  //     }
+  //   }
+  // };
+
   // useEffect(() => {
   //   if (followedArtists) {
-  //     console.log(followedCount, followedArtists.length);
-
+  //     console.log(
+  //       'GETTING USER RELEASES FOR: ',
+  //       followedCount,
+  //       followedArtists.length,
+  //     );
+  //     const artistIds = followedArtists.map((artist) => artist.id);
   //     (async () => {
-  //       const batchSize = 20;
-  //       const artistBatches = [];
-  //       // let processedArtistsCount = 0;
-
-  //       for (let i = 0; i < followedArtists.length; i += batchSize) {
-  //         const batch = followedArtists.slice(i, i + batchSize);
-  //         artistBatches.push(batch);
-  //       }
-
-  //       const results = await Promise.all(
-  //         artistBatches.map(async (batch) => {
-  //           const batchResults = await Promise.all(
-  //             batch.map(async (artist) => {
-  //               processedArtistsCtRef.current++;
-  //               return await getUpcomingReleases(artist.name);
-  //             }),
+  //       getReleases(artistIds, (newReleases: (Album | SimplifiedAlbum)[]) => {
+  //         setUserReleases((prevReleases) => {
+  //           const combinedReleases = [...newReleases, ...prevReleases];
+  //           console.log(
+  //             'USER RELEASES SET TO: ',
+  //             removeDuplicates(combinedReleases),
   //           );
-  //           return batchResults;
-  //         }),
-  //       );
 
-  //       const updatedUserReleases = results.flat();
-  //       setUserReleases(updatedUserReleases);
+  //           return removeDuplicates(combinedReleases);
+  //         });
+  //       });
+  //       // const batchSize = 20;
+  //       // const artistBatches = [];
+  //       // // let processedArtistsCount = 0;
+  //       // for (let i = 0; i < followedArtists.length; i += batchSize) {
+  //       //   const batch = followedArtists.slice(i, i + batchSize);
+  //       //   artistBatches.push(batch);
+  //       // }
+  //       // const results = await Promise.all(
+  //       //   artistBatches.map(async (batch) => {
+  //       //     const batchResults = await Promise.all(
+  //       //       batch.map(async (artist) => {
+  //       //         processedArtistsCtRef.current++;
+  //       //         return await getUpcomingReleases(artist.name);
+  //       //       }),
+  //       //     );
+  //       //     return batchResults;
+  //       //   }),
+  //       // );
+  //       // const updatedUserReleases = results.flat();
+  //       // setUserReleases(updatedUserReleases);
   //       // const result = Promise.all(
   //       //   followedArtists.map(
   //       //     async (artist) => await getUpcomingReleases(artist.name)
@@ -143,38 +209,73 @@ const Releases: React.FC = () => {
           ref={parent}
           className='overflow-y-auto overflow-x-hidden py-4 px-6'
         >
-          <div className='inline-flex items-center justify-between w-full'>
-            <div className='inline-flex items-center gap-x-2'>
-              <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>
-                Featured Releases
-              </h3>
-              {/* TODO: if user-curated releases, show link (small), onClick switch PageContent albums + title */}
-              <InfoIcon
-                tooltipEnabled
-                tooltip={{
-                  content: "These are Spotify's featured new releases",
-                }}
+          {userReleases && (
+            <>
+              <div className='inline-flex items-center justify-between w-full'>
+                <div className='inline-flex items-center gap-x-2'>
+                  <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>
+                    User Releases
+                  </h3>
+                  {/* TODO: if user-curated releases, show link (small), onClick switch PageContent albums + title */}
+                  <InfoIcon
+                    tooltipEnabled
+                    tooltip={{
+                      content:
+                        'These are recent releases from your followed artists',
+                    }}
+                  />
+                </div>
+                {/* <FilterOptions
+                  filterOptions={ReleaseFilters}
+                  onFilterSelect={setSelectedReleaseFilter as () => void}
+                  selectedFilter={selectedReleaseFilter}
+                  tooltipsEnabled
+                  isNullable
+                  className='justify-self-end'
+                /> */}
+              </div>
+              <PageContent
+                albums={userReleases}
+                albumContentProps={{ showArtist: true }}
               />
-            </div>
-            <FilterOptions
-              filterOptions={ReleaseFilters}
-              onFilterSelect={setSelectedReleaseFilter as () => void}
-              selectedFilter={selectedReleaseFilter}
-              tooltipsEnabled
-              isNullable
-              className='justify-self-end'
-            />
-          </div>
-          <PageContent
-            albums={
-              selectedReleaseFilter
-                ? (featuredReleases?.filter(
-                    (r) => r.album_type === selectedReleaseFilter,
-                  ) as SimplifiedAlbum[])
-                : featuredReleases
-            }
-            albumContentProps={{ showArtist: true }}
-          />
+            </>
+          )}
+          {featuredReleases && (
+            <>
+              <div className='inline-flex items-center justify-between w-full'>
+                <div className='inline-flex items-center gap-x-2'>
+                  <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>
+                    Featured Releases
+                  </h3>
+                  {/* TODO: if user-curated releases, show link (small), onClick switch PageContent albums + title */}
+                  <InfoIcon
+                    tooltipEnabled
+                    tooltip={{
+                      content: "These are Spotify's featured new releases",
+                    }}
+                  />
+                </div>
+                <FilterOptions
+                  filterOptions={ReleaseFilters}
+                  onFilterSelect={setSelectedReleaseFilter as () => void}
+                  selectedFilter={selectedReleaseFilter}
+                  tooltipsEnabled
+                  isNullable
+                  className='justify-self-end'
+                />
+              </div>
+              <PageContent
+                albums={
+                  selectedReleaseFilter
+                    ? (featuredReleases?.filter(
+                        (r) => r.album_type === selectedReleaseFilter,
+                      ) as SimplifiedAlbum[])
+                    : featuredReleases
+                }
+                albumContentProps={{ showArtist: true }}
+              />
+            </>
+          )}
         </div>
       </ScrollShadow>
     </Box>
