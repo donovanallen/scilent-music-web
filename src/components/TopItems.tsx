@@ -1,21 +1,25 @@
 'use client';
 
+import { Tooltip } from '@nextui-org/react';
 import { Album, Artist, Track } from '@spotify/web-api-ts-sdk';
+import { Edit } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { IconType } from 'react-icons';
-import { BiAlbum } from 'react-icons/bi';
 import { FaChevronUp, FaMinus, FaPlus } from 'react-icons/fa6';
 import { TbMusicHeart, TbUserHeart } from 'react-icons/tb';
 
 import { cn, formatArtists } from '@/lib/utils';
 import { useTopMusic } from '@/hooks/useTopMusic';
 
+import IconButton from '@/components/buttons/IconButton';
 import FilterOptions from '@/components/FilterOptions';
 import HeaderItem from '@/components/HeaderItem';
+// import HeaderCard from '@/components/HeaderCard';
 import InfoIcon from '@/components/InfoIcon';
 import LoadingIndicator from '@/components/LoadingIndicator';
+import HeaderCard from '@/components/next/HeaderCard';
 
 interface ExpandedTopItemProps {
   items: (Artist | Track | Album)[];
@@ -160,6 +164,23 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
   const router = useRouter();
   const [expanded, setExpanded] = useState(initExpanded);
 
+  const openNewReview = (subject: Track | Album) => {
+    const queryString = new URLSearchParams();
+    // const queryString = new URLSearchParams(
+    //   `subject=${serializeObjectToString(subject)}` +
+    //     `&content=${encodeURIComponent(reviewText ? reviewText : '')}` +
+    //     `&reaction=${selectedReaction ? serializeObjectToString(selectedReaction) : ''}`,
+    // );
+    queryString.append('subjectId', subject.id);
+    queryString.append('subjectType', subject.type);
+    queryString.append('content', '');
+    queryString.append('reaction', '');
+
+    console.log(queryString.toString());
+
+    router.push(`/reviews/new?${queryString}`);
+  };
+
   const {
     artists: topArtists,
     tracks: topTracks,
@@ -221,13 +242,22 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
             <div className='w-full flex-1'>
               {topArtists &&
                 (!expanded ? (
-                  <HeaderItem
+                  <HeaderCard
                     title='Top Artist'
                     name={topArtists[0].name}
                     icon={TbUserHeart}
                     image={topArtists[0].images[0].url}
                     onClick={() => router.push(`/artist/${topArtists[0].id}`)}
-                  />
+                  >
+                    {/* <div className='flex flex-grow gap-2 items-center justify-end'>
+                      <IconButton
+                        variant='dark'
+                        className='rounded-full'
+                        icon={Edit}
+                        onClick={() => openNewReview(topTracks[0])}
+                      />
+                    </div> */}
+                  </HeaderCard>
                 ) : (
                   <ExpandedTopItem
                     title='Top Artists'
@@ -241,7 +271,7 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
             <div className='w-full flex-1'>
               {topTracks &&
                 (!expanded ? (
-                  <HeaderItem
+                  <HeaderCard
                     title='Top Track'
                     name={topTracks[0].name}
                     icon={TbMusicHeart}
@@ -249,7 +279,18 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
                     onClick={() =>
                       router.push(`/release/${topTracks[0].album.id}`)
                     }
-                  />
+                  >
+                    <div className='flex flex-grow gap-2 items-center justify-end'>
+                      <Tooltip content={`Review ${topTracks[0].name}`}>
+                        <IconButton
+                          variant='dark'
+                          className='rounded-full'
+                          icon={Edit}
+                          onClick={() => openNewReview(topTracks[0])}
+                        />
+                      </Tooltip>
+                    </div>
+                  </HeaderCard>
                 ) : (
                   <ExpandedTopItem
                     title='Top Tracks'
@@ -260,10 +301,10 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
             </div>
 
             {/* TOP ALBUMS */}
-            <div className='w-full flex-1'>
+            {/* <div className='w-full flex-1'>
               {topAlbums &&
                 (!expanded ? (
-                  <HeaderItem
+                  <HeaderCard
                     title='Top Album'
                     name='Coming Soon'
                     icon={BiAlbum}
@@ -276,7 +317,7 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
                     icon={BiAlbum}
                   />
                 ))}
-            </div>
+            </div> */}
           </div>
         )}
 

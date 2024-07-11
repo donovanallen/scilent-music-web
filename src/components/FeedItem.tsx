@@ -1,6 +1,6 @@
 'use client';
 
-import { Skeleton } from '@nextui-org/react';
+import { Skeleton, Tooltip } from '@nextui-org/react';
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
 import { Track, TrackItem } from '@spotify/web-api-ts-sdk';
 import React, { useState } from 'react';
@@ -52,7 +52,15 @@ const FeedItem: React.FC<FeedItemProps> = ({
 
   return (
     <Skeleton className='rounded-md bg-neutral-500' isLoaded={isItemLoaded}>
-      <Popover placement='bottom-end' triggerType='dialog' isDismissable>
+      <Popover
+        classNames={{
+          base: 'shadow-lg',
+        }}
+        placement='bottom-end'
+        triggerType='dialog'
+        backdrop='opaque'
+        isDismissable
+      >
         <PopoverTrigger>
           <div
             onLoad={() => setIsItemLoaded(true)}
@@ -103,12 +111,14 @@ const FeedItem: React.FC<FeedItemProps> = ({
               )}
             </div>
             {onClick && (
-              <IconButton
-                className={cn(showArrow ? 'self-center' : 'hidden')}
-                variant='ghost'
-                icon={FaChevronRight}
-                onClick={handleClick}
-              />
+              <Tooltip content='Go to Track/Album'>
+                <IconButton
+                  className={cn(showArrow ? 'self-center' : 'hidden')}
+                  variant='ghost'
+                  icon={FaChevronRight}
+                  onClick={handleClick}
+                />
+              </Tooltip>
             )}
           </div>
         </PopoverTrigger>

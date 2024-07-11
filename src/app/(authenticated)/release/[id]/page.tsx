@@ -24,6 +24,7 @@ import IconLink from '@/components/links/IconLink';
 import NextImage from '@/components/NextImage';
 import PageContent from '@/components/PageContent';
 import NextPill from '@/components/Pill';
+import ReactionToolbar from '@/components/ReactionToolbar';
 
 const Release = ({ params }: { params: { id: string } }) => {
   const [albumDetails, setAlbumDetails] = useState<Album>();
@@ -205,6 +206,11 @@ const Release = ({ params }: { params: { id: string } }) => {
                 <NextPill text={genre} variant='solid' size='sm' key={genre} />
               ))}
             </div>
+          )}
+
+          {/* REACT/REVIEW */}
+          {albumDetails && (
+            <ReactionToolbar showArtwork={false} subject={albumDetails} />
           )}
         </div>
       </Header>

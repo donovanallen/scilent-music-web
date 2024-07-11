@@ -17,7 +17,6 @@ import Header from '@/components/Header';
 import ReviewCreate from '@/components/review/ReviewCreate';
 
 import ReviewSubjectSearch from '@/app/(authenticated)/reviews/components/ReviewSubjectSearch';
-import SuggestedReviewSubjects from '@/app/(authenticated)/reviews/components/SuggestedReviewSubjects';
 
 const NewReview = () => {
   const params = useSearchParams();
@@ -109,13 +108,13 @@ const NewReview = () => {
         )}
 
         {/* SUGGESTED REVIEW SUBJECTS */}
-        <SuggestedReviewSubjects
-          initExpanded={!reviewSubject}
+        {/* <SuggestedReviewSubjects
+          // initExpanded={!reviewSubject}
           onSubjectSelect={handleSubjectSelect}
-        />
+        /> */}
       </Header>
 
-      <div className='flex w-2/3 overflow-y-auto overflow-x-hidden self-center py-6'>
+      <div className=''>
         {reviewSubject && (
           <ReviewCreate
             subject={reviewSubject}

@@ -2,18 +2,18 @@
 
 import { ScrollShadow, Tooltip } from '@nextui-org/react';
 import { Album, Artist, SimplifiedAlbum, Track } from '@spotify/web-api-ts-sdk';
+import { Edit } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import numbro from 'numbro';
 import React, { useEffect, useMemo, useState } from 'react';
-import toast from 'react-hot-toast';
-import { FaCheck, FaPlus, FaUser } from 'react-icons/fa6';
+import { FaUser } from 'react-icons/fa6';
 import { TbMusicHeart, TbMusicStar } from 'react-icons/tb';
 
-import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { getReleaseDate } from '@/lib/utils';
 import { useAPIStatus } from '@/hooks/useAPIStatus';
 
+import ArtistFollowIcon from '@/components/ArtistFollowIcon';
 import Box from '@/components/Box';
 import IconButton from '@/components/buttons/IconButton';
 import ExternalLinks from '@/components/ExternalLinks';
@@ -22,6 +22,7 @@ import Header from '@/components/Header';
 import HeaderImage from '@/components/HeaderImage';
 import HeaderItem from '@/components/HeaderItem';
 import InfoIcon from '@/components/InfoIcon';
+import HeaderCard from '@/components/next/HeaderCard';
 import PageContent from '@/components/PageContent';
 import NextPill from '@/components/Pill';
 
@@ -54,14 +55,29 @@ const ArtistPage = ({ params }: { params: { id: string; name?: string } }) => {
   >();
   // const [credits, setCredits] = useState();
 
-  const [userFollows, setUserFollows] = useState<boolean>();
-
   const artistName = useMemo(
     () => params.name || metadata?.name,
     [params, metadata],
   );
   const session = useSession();
   const router = useRouter();
+
+  const openNewReview = (subject: Album | Track) => {
+    const queryString = new URLSearchParams();
+    // const queryString = new URLSearchParams(
+    //   `subject=${serializeObjectToString(subject)}` +
+    //     `&content=${encodeURIComponent(reviewText ? reviewText : '')}` +
+    //     `&reaction=${selectedReaction ? serializeObjectToString(selectedReaction) : ''}`,
+    // );
+    queryString.append('subjectId', subject.id);
+    queryString.append('subjectType', subject.type);
+    queryString.append('content', '');
+    queryString.append('reaction', '');
+
+    console.log(queryString.toString());
+
+    router.push(`/reviews/new?${queryString}`);
+  };
 
   // SPOTIFY ARTIST DATA
   useEffect(() => {
@@ -73,19 +89,6 @@ const ArtistPage = ({ params }: { params: { id: string; name?: string } }) => {
         setMetadata(() => artist);
         setReleases(() => artistAlbums.items);
         setRelatedArtists(() => relatedArtists.artists);
-      })();
-    }
-  }, [session, artistId]);
-
-  // SPOTIFY ARTIST/USER FOLLOW
-  useEffect(() => {
-    if (session.status === 'authenticated') {
-      (async () => {
-        const follows = await sdk.currentUser.followsArtistsOrUsers(
-          [artistId],
-          'artist',
-        );
-        setUserFollows(() => follows[0]);
       })();
     }
   }, [session, artistId]);
@@ -121,20 +124,6 @@ const ArtistPage = ({ params }: { params: { id: string; name?: string } }) => {
     }
   }, [metadata]);
 
-  const followArtist = async (id: string) => {
-    return await sdk.currentUser
-      .followArtistsOrUsers([id], 'artist')
-      .catch((e) => {
-        toast.error('Error following artist: ', e);
-      })
-      .then(() => {
-        setUserFollows(true);
-      })
-      .finally(() => {
-        toast.success('Artist followed');
-      });
-  };
-
   return (
     <Box className='h-full flex flex-col overflow-y-auto overflow-x-hidden'>
       <Header>
@@ -143,27 +132,7 @@ const ArtistPage = ({ params }: { params: { id: string; name?: string } }) => {
           <div className='flex items-center text-dark/80 dark:text-light/80'>
             {/* ARTIST TYPE */}
             <h4>{metadata?.type}</h4>
-
-            {/* ARTIST FOLLOW ICON */}
-            <Tooltip
-              shadow='md'
-              size='sm'
-              content={userFollows ? 'Artist followed' : 'Follow artist'}
-              classNames={{
-                content: 'text-dark bg-light',
-                base: 'max-w-xs',
-              }}
-              delay={1000}
-              showArrow
-            >
-              <IconButton
-                onClick={() => followArtist(params.id)}
-                icon={userFollows ? FaCheck : FaPlus}
-                variant='ghost'
-                disabled={userFollows}
-                classNames={{ icon: userFollows ? 'text-brand-dark' : '' }}
-              />
-            </Tooltip>
+            <ArtistFollowIcon id={params.id} />
           </div>
 
           {/* EXTERNAL LINKS */}
@@ -237,14 +206,14 @@ const ArtistPage = ({ params }: { params: { id: string; name?: string } }) => {
       <ScrollShadow hideScrollBar>
         <div className='overflow-y-auto overflow-x-hidden px-6 no-scrollbar'>
           <div className='grid grid-cols-1 md:grid-cols-2 md:gap-12 md:mb-8'>
-            {/* ARTIST UPCOMING RELEASES */}
+            {/* ARTIST UPCOMING/LATEST RELEASES */}
             {fReleases && fReleases.length > 0 ? (
               <div className='flex flex-col my-4 gap-y-4'>
                 <h3 className='text-brand-dark'>Coming soon</h3>
                 {fReleases.map((release, i) => (
                   <HeaderItem
                     key={`upcoming-releases-${i}`}
-                    title={`${getReleaseDate(release.releaseDate)}`}
+                    title={`Arriving ${getReleaseDate(release.releaseDate)}`}
                     name={release.title}
                     image={release.artwork.url}
                     className='self-center justify-items-center cursor-default'
@@ -259,14 +228,32 @@ const ArtistPage = ({ params }: { params: { id: string; name?: string } }) => {
               releases && (
                 <div className='flex flex-col my-4 gap-y-4'>
                   <h3 className='text-dark dark:text-light'>Latest Release</h3>
-                  <HeaderItem
+                  <HeaderCard
+                    title={`Released ${getReleaseDate(releases[0].release_date)}`}
+                    name={releases[0].name}
+                    icon={TbMusicStar}
+                    image={releases[0].images[0].url}
+                    onClick={() => router.push(`/release/${releases[0].id}`)}
+                  >
+                    <div className='flex flex-grow gap-2 items-center justify-end'>
+                      <Tooltip content={`Review ${releases[0].name}`}>
+                        <IconButton
+                          variant='dark'
+                          className='rounded-full'
+                          icon={Edit}
+                          onClick={() => openNewReview(releases[0] as Album)}
+                        />
+                      </Tooltip>
+                    </div>
+                  </HeaderCard>
+                  {/* <HeaderItem
                     title={`${getReleaseDate(releases[0].release_date)}`}
                     name={releases[0].name}
                     image={releases[0].images[0].url}
                     className='self-center justify-items-center'
                     icon={TbMusicStar}
                     onClick={() => router.push(`/release/${releases[0].id}`)}
-                  />
+                  /> */}
                 </div>
               )
             )}
@@ -275,7 +262,27 @@ const ArtistPage = ({ params }: { params: { id: string; name?: string } }) => {
             {topItems && (
               <div className='flex flex-col my-4 gap-y-4'>
                 <h3 className='text-dark/80 dark:text-light/80'>Top Music</h3>
-                <HeaderItem
+                <HeaderCard
+                  title='Top Track'
+                  name={topItems[0].name}
+                  icon={TbMusicHeart}
+                  image={topItems[0].album.images[0].url}
+                  onClick={() =>
+                    router.push(`/release/${topItems[0].album.id}`)
+                  }
+                >
+                  <div className='flex flex-grow gap-2 items-center justify-end'>
+                    <Tooltip content={`Review ${topItems[0].name}`}>
+                      <IconButton
+                        variant='dark'
+                        className='rounded-full'
+                        icon={Edit}
+                        onClick={() => openNewReview(topItems[0] as Track)}
+                      />
+                    </Tooltip>
+                  </div>
+                </HeaderCard>
+                {/* <HeaderItem
                   title='Top Track'
                   name={topItems[0].name}
                   icon={TbMusicHeart}
@@ -284,7 +291,7 @@ const ArtistPage = ({ params }: { params: { id: string; name?: string } }) => {
                     router.push(`/release/${topItems[0].album.id}`)
                   }
                   className='self-center'
-                />
+                /> */}
               </div>
             )}
           </div>

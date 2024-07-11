@@ -10,9 +10,13 @@ import { Reaction, ReactionOptions } from '@/constant/types';
 
 interface ReactionToolbarProps {
   subject: Track | Album;
+  showArtwork?: boolean;
 }
 
-const ReactionToolbar: React.FC<ReactionToolbarProps> = ({ subject }) => {
+const ReactionToolbar: React.FC<ReactionToolbarProps> = ({
+  subject,
+  showArtwork = true,
+}) => {
   const [parent, enableAnimations] = useAutoAnimate(/* optional config */);
 
   const reactionOptions = ReactionOptions.filter((o) => o.type === 'reaction');
@@ -23,26 +27,18 @@ const ReactionToolbar: React.FC<ReactionToolbarProps> = ({ subject }) => {
   >();
 
   return (
-    <>
-      <div ref={parent} className='flex flex-col'>
-        {/* QUICK POST */}
-        {/* <ReviewCreateMin
-          subject={subject}
-          hidden={!showTextArea}
-          defaultReaction={selectedReaction}
-        /> */}
-
-        {/* TOOLBAR */}
-        <Reactions
-          subject={subject}
-          reviewOptions={reviewOptions}
-          reactionOptions={reactionOptions}
-          onReviewSelect={() => setShowTextArea(!showTextArea)}
-          onReactionSelect={(r) => setSelectedReaction(r)}
-          defaultReaction={selectedReaction}
-        />
-      </div>
-    </>
+    <div ref={parent} className='flex flex-col'>
+      {/* TOOLBAR */}
+      <Reactions
+        subject={subject}
+        reviewOptions={reviewOptions}
+        reactionOptions={reactionOptions}
+        onReviewSelect={() => setShowTextArea(!showTextArea)}
+        onReactionSelect={(r) => setSelectedReaction(r)}
+        defaultReaction={selectedReaction}
+        showImage={showArtwork}
+      />
+    </div>
   );
 };
 

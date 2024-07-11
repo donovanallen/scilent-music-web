@@ -1,3 +1,4 @@
+import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
 import {
   Album,
   Artist,
@@ -14,6 +15,7 @@ import { formatArtists } from '@/lib/utils';
 import AlbumCard from '@/components/AlbumCard';
 import ArtistCard from '@/components/ArtistCard';
 import LoadingIndicator from '@/components/LoadingIndicator';
+import ReactionToolbar from '@/components/ReactionToolbar';
 import TrackItem from '@/components/TrackItem';
 
 import { ScilentAlbum } from '@/constant/types';
@@ -120,12 +122,29 @@ const PageContent: React.FC<PageContentProps> = ({
         <div className='flex flex-col w-full overflow-y-scroll no-scrollbar'>
           {tracks &&
             tracks.map((track, i) => (
-              <TrackItem
+              <Popover
+                classNames={{
+                  base: 'shadow-lg',
+                }}
+                placement='bottom-end'
+                triggerType='dialog'
+                backdrop='opaque'
+                isDismissable
                 key={i}
-                track={track}
-                disabled
-                numbered={tracksNumbered}
-              />
+              >
+                <PopoverTrigger>
+                  <a>
+                    <TrackItem
+                      key={i}
+                      track={track}
+                      numbered={tracksNumbered}
+                    />
+                  </a>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <ReactionToolbar subject={track as Track} />
+                </PopoverContent>
+              </Popover>
             ))}
         </div>
       ) : (
