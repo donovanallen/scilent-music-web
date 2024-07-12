@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import { FaSpotify } from 'react-icons/fa6';
 import { RxCaretLeft, RxCaretRight } from 'react-icons/rx';
 
+import logger from '@/lib/logger';
 import { cn } from '@/lib/utils';
 import { useAPIStatus } from '@/hooks/useAPIStatus';
 import useAuthModal from '@/hooks/useAuthModal';
@@ -28,11 +29,19 @@ const NavigationBar: React.FC = () => {
   const goBack = () => router.back();
   const goForward = () => router.forward();
 
-  const handleLogout = () => {
-    // TODO: Error handling
-    signOut({ callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/` });
-    authModal.onClose();
-    toast.success('Logged out');
+  const handleSignOut = () => {
+    signOut({
+      callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/login`,
+      redirect: false,
+    })
+      .catch((error) => {
+        toast.error('Error logging out. Try again.');
+        logger({ error }, 'ERROR: Error logging out');
+      })
+      .then(() => {
+        toast.success('See ya soon');
+        router.push('/login');
+      });
   };
 
   return (
@@ -105,7 +114,7 @@ const NavigationBar: React.FC = () => {
               </Link>
             )}
             <Button
-              onClick={handleLogout}
+              onClick={handleSignOut}
               className='text-xs'
               variant='outline'
             >
