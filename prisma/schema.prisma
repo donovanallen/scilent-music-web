@@ -9,66 +9,124 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("DB_PRISMA_URL") // uses connection pooling
+  provider  = "postgresql"
+  url       = env("DB_PRISMA_URL") // uses connection pooling
   directUrl = env("DB_URL_NON_POOLING") // uses a direct connection
 }
 
 model User {
-  id            String          @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String?
-  email         String?          @unique
+  email         String?   @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
- 
+  reviews       Review[] // Add this line to establish the relationship
+  profile       Profile?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // @@map(name: "users")
 }
- 
+
+model Profile {
+  userId        String
+  personaId     String
+  profileTypeId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  persona Persona?    @relation(fields: [personaId], references: [id], onDelete: Cascade)
+  type    ProfileType @relation(fields: [profileTypeId], references: [id])
+
+  @@id([userId])
+}
+
 model Account {
   userId            String
   type              String
   provider          String
   providerAccountId String
 
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  expires_in        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
- 
+  refresh_token String?
+  access_token  String?
+  expires_at    Int?
+  expires_in    Int?
+  token_type    String?
+  scope         String?
+  id_token      String?
+  session_state String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
-  @@id([provider, providerAccountId])
   // @@map("accounts")
+
+  @@id([provider, providerAccountId])
 }
- 
+
 model Session {
-  sessionToken String      @unique
+  sessionToken String   @unique
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // @@map("sessions")
 }
- 
+
 model VerificationToken {
   identifier String
   token      String   @unique
   expires    DateTime
- 
+
   @@id([identifier, token])
+}
+
+model Review {
+  id          String        @id @default(cuid())
+  userId      String
+  content     String        @default("")
+  isPublic    Boolean?      @default(true)
+  subjectType ReviewSubject
+  subjectId   String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Persona {
+  id          String    @id @default(cuid())
+  label       String
+  value       String
+  description String?
+  image       String?
+  Profile     Profile[]
+}
+
+model ProfileType {
+  id          String       @id @default(cuid())
+  value       ProfileTypes @default(user)
+  label       String
+  description String?
+  Profile     Profile[]
+}
+
+enum ReviewSubject {
+  TRACK
+  ALBUM
+}
+
+enum ProfileTypes {
+  user
+  voice
+  artist
 }
