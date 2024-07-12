@@ -15,7 +15,7 @@ const Login = () => {
 
   return (
     <Box className='h-full flex flex-col items-center justify-center gap-y-12'>
-      <LogoGray className='w-1/2' />
+      <LogoGray className='w-1/3' />
       <div className='inline-flex items-center gap-x-6'>
         <Button onClick={authModal.onOpen} size='base' variant='primary'>
           Get Started

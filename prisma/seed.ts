@@ -1,8 +1,10 @@
 import { PrismaClient } from '@prisma/client';
+
+import logger from '@/lib/logger';
 const prisma = new PrismaClient();
 
 async function main() {
-  const alice = await prisma.user.upsert({
+  const _alice = await prisma.user.upsert({
     where: { email: 'alice@example.io' },
     update: {},
     create: {
@@ -15,16 +17,10 @@ async function main() {
           providerAccountId: 'example_spotify_id_123',
         },
       },
-      sessions: {
-        create: {
-          sessionToken: 'example_session_token_1',
-          expires: new Date(),
-        },
-      },
     },
   });
 
-  const bob = await prisma.user.upsert({
+  const _bob = await prisma.user.upsert({
     where: { email: 'bob@example.io' },
     update: {},
     create: {
@@ -37,22 +33,15 @@ async function main() {
           providerAccountId: 'example_spotify_id_456',
         },
       },
-      sessions: {
-        create: {
-          sessionToken: 'example_session_token_2',
-          expires: new Date(),
-        },
-      },
     },
   });
-  console.log({ alice, bob });
 }
 main()
   .then(async () => {
     await prisma.$disconnect();
   })
-  .catch(async (e) => {
-    console.error(e);
+  .catch(async (error) => {
+    logger({ error }, 'ERROR: Error seeding database');
     await prisma.$disconnect();
     process.exit(1);
   });

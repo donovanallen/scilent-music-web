@@ -41,7 +41,7 @@ async function refreshSpotifyAccessToken(token: JWT): Promise<JWT> {
       // refresh_token: refreshedTokens.refresh_token ?? token.refreshToken,
     };
   } catch (error) {
-    logger({ error }, 'ERROR: Refresh token error');
+    logger({ error }, 'ERROR: Error refreshing token');
     return {
       ...token,
       error: 'RefreshAccessTokenError',
@@ -54,8 +54,8 @@ const authOptions: AuthOptions = {
   providers: [spotifyProfile],
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-    updateAge: 24 * 60 * 60, // 24 hours
+    maxAge: 7 * 24 * 60 * 60, // 7 days
+    updateAge: 3600, // 1 hour
   },
   callbacks: {
     async redirect({ baseUrl, url }) {
@@ -103,14 +103,8 @@ const authOptions: AuthOptions = {
     signIn: '/login',
   },
   events: {
-    signIn({ user, account, profile, isNewUser }) {
-      logger(
-        { user, account, profile, isNewUser },
-        'AuthOptions EVENT : signIn',
-      );
-    },
     signOut: async ({ token, session }) => {
-      logger({ token, session }, 'AuthOptions EVENT : signOut');
+      logger({ user: session.user }, 'SIGNING OUT - User: ');
       if (token.sub) {
         await prisma.account.updateMany({
           where: { userId: token.sub },
@@ -121,12 +115,6 @@ const authOptions: AuthOptions = {
           },
         });
       }
-    },
-    updateUser({ user }) {
-      logger({ user }, 'AuthOptions EVENT : updateUser');
-    },
-    session({ session, token }) {
-      logger({ session, token }, 'AuthOptions EVENT : session');
     },
   },
 };
