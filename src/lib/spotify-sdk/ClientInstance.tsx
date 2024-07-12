@@ -7,11 +7,16 @@ import {
   SdkOptions,
   SpotifyApi,
 } from '@spotify/web-api-ts-sdk';
+import { Session } from 'next-auth';
 import { getSession, signIn } from 'next-auth/react';
 
 import logger from '@/lib/logger';
 
-import { AuthUser } from '@/constant/types';
+// Extend the Session type to include accessToken
+interface ExtendedSession extends Session {
+  accessToken?: string;
+  error?: string;
+}
 
 /**
  * A class that implements the Spotify SDK IAuthStrategy interface and wraps the NextAuth functionality.
@@ -23,25 +28,24 @@ class NextAuthStrategy implements IAuthStrategy {
   }
 
   public async getAccessToken(): Promise<AccessToken> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const session: any = await getSession();
+    const session = (await getSession()) as ExtendedSession | null;
     if (!session) {
-      return {} as AccessToken;
+      throw new Error('No session found');
     }
-
-    if (session && session?.error === 'RefreshAccessTokenError') {
-      await signIn();
-      return this.getAccessToken();
+    if (session.error === 'RefreshAccessTokenError') {
+      await signIn('spotify'); // Re-authenticate
+      throw new Error('Failed to refresh access token');
     }
-
-    const { user }: { user: AuthUser } = session;
+    if (!session.accessToken) {
+      throw new Error('No access token found in session');
+    }
 
     return {
-      access_token: user.access_token,
+      access_token: session.accessToken,
       token_type: 'Bearer',
-      expires_in: user.expires_in,
-      expires: user.expires_at,
-      refresh_token: user.refresh_token,
+      expires_in: 3600, // You might want to store this in the session
+      expires: session.expires || Date.now() + 3600 * 1000, // This should ideally come from the session
+      refresh_token: '', // You might want to store this in the session if needed
     } as AccessToken;
   }
 
@@ -52,8 +56,7 @@ class NextAuthStrategy implements IAuthStrategy {
     );
   }
 
-  // eslint-disable-next-line unused-imports/no-unused-vars
-  public setConfiguration(configuration: SdkConfiguration): void {
+  public setConfiguration(_configuration: SdkConfiguration): void {
     logger(
       { WARNING: '[Spotify-SDK][WARN]\nsetConfiguration not implemented' },
       'WARNING - ClientInstance.tsx line 56',

@@ -18,7 +18,7 @@ export default function Error({
   React.useEffect(() => {
     if (error.message.includes('401')) {
       // Handle NextAuth 401 errors
-      logger({ error }, '401 AUTH ERROR - error.tsx - line 19');
+      logger({ error }, 'ERROR (401 AUTH): Error Component, line 19');
       toast.error('Session expired. Please log in again.');
       signOut();
       // Optionally, redirect to login or refresh the token
@@ -27,7 +27,7 @@ export default function Error({
       // Handle other errors
       toast.error(`${error.name}: ${error.message} - ${error.cause}`);
     }
-    logger({ error }, 'error.tsx line 30');
+    logger({ error }, 'ERROR: Error Component, line 30');
   }, [error, reset]);
 
   return (
