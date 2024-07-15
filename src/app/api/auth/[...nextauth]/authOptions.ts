@@ -70,7 +70,7 @@ const authOptions: AuthOptions = {
         accessToken: token.accessToken,
         user: {
           ...session.user,
-          id: token.sub!, // Use the subject from the token as the user id
+          id: token.sub, // Use the subject from the token as the user id
         },
       };
     },

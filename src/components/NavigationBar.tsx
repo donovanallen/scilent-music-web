@@ -37,7 +37,7 @@ const NavigationBar: React.FC = () => {
         logger({ error }, 'ERROR: Error logging out');
       })
       .then(() => {
-        toast.success('See ya soon');
+        toast.success('See ya soon!');
         router.push('/login');
       });
   };
@@ -94,32 +94,30 @@ const NavigationBar: React.FC = () => {
                 />
               </div>
             </Tooltip> */}
-            {pathname !== '/profile' &&
-              session?.user &&
-              'id' in session.user && (
-                <Tooltip
-                  content='View your profile'
-                  delay={1000}
-                  classNames={{
-                    content: 'text-dark bg-light dark:text-light dark:bg-dark',
-                    base: 'max-w-xs',
-                  }}
+            {pathname !== '/profile' && session?.user?.id && (
+              <Tooltip
+                content='View your profile'
+                delay={1000}
+                classNames={{
+                  content: 'text-dark bg-light dark:text-light dark:bg-dark',
+                  base: 'max-w-xs',
+                }}
+              >
+                <Link
+                  href='/profile/me'
+                  className='rounded-full border-2 p-0.5 border-dark/80 dark:border-light/80 hover:border-brand-dark dark:hover:border-brand-primary transition'
                 >
-                  <Link
-                    href='/profile/me'
-                    className='rounded-full border-2 p-0.5 border-dark/80 dark:border-light/80 hover:border-brand-dark dark:hover:border-brand-primary transition'
-                  >
-                    <Avatar
-                      src={session.user.image || undefined}
-                      size='md'
-                      name={session.user.name || undefined}
-                      fallback={<AvatarIcon />}
-                      isFocusable
-                      showFallback
-                    />
-                  </Link>
-                </Tooltip>
-              )}
+                  <Avatar
+                    src={session.user.image || undefined}
+                    size='md'
+                    name={session.user.name || undefined}
+                    fallback={<AvatarIcon />}
+                    isFocusable
+                    showFallback
+                  />
+                </Link>
+              </Tooltip>
+            )}
             <Button
               onClick={handleSignOut}
               className='text-xs'
