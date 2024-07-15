@@ -11,7 +11,7 @@ import { BiSearch } from 'react-icons/bi';
 import { FaPlay } from 'react-icons/fa6';
 import { HiHome } from 'react-icons/hi';
 import { RxCaretLeft, RxCaretRight } from 'react-icons/rx';
-import { TbMusicStar, TbUserHeart } from 'react-icons/tb';
+import { TbMusicStar, TbUserHeart, TbUsers } from 'react-icons/tb';
 
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { cn } from '@/lib/utils';
@@ -60,6 +60,12 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         label: 'Artists',
         active: pathname === '/artists',
         href: '/artists',
+      },
+      {
+        icon: TbUsers,
+        label: 'Users',
+        active: pathname === '/users',
+        href: '/users',
       },
       {
         icon: TbMusicStar,
