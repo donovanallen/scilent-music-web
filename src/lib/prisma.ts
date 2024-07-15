@@ -1,24 +1,10 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
-// Extend the NodeJS global type with the prisma property
-declare global {
-  /* eslint-disable no-var */
-  var prisma: PrismaClient | undefined;
-}
-
-const prismaOptions: Prisma.PrismaClientOptions = {
-  log: ['query', 'error', 'warn'],
+const globalForPrisma = global as unknown as {
+  prisma: PrismaClient | undefined;
 };
 
-let prisma: PrismaClient;
+export const prisma =
+  globalForPrisma.prisma ?? new PrismaClient({ log: ['query'] });
 
-if (process.env.NODE_ENV === 'production') {
-  prisma = new PrismaClient();
-} else {
-  if (!global.prisma) {
-    global.prisma = new PrismaClient(prismaOptions);
-  }
-  prisma = global.prisma;
-}
-
-export default prisma;
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;

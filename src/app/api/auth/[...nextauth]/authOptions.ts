@@ -3,7 +3,7 @@ import { AuthOptions } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 
 import logger from '@/lib/logger';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 import spotifyProfile from './SpotifyProfile';
 
@@ -70,7 +70,7 @@ const authOptions: AuthOptions = {
         accessToken: token.accessToken,
         user: {
           ...session.user,
-          id: token.sub, // Use the subject from the token as the user id
+          id: token.sub!, // Use the subject from the token as the user id
         },
       };
     },
@@ -103,8 +103,18 @@ const authOptions: AuthOptions = {
     signIn: '/login',
   },
   events: {
+    createUser: async ({ user }) => {
+      // Create a profile for the new user
+      const profile = await prisma.profile.create({
+        data: {
+          userId: user.id,
+          // Add any other default fields you want for new profiles
+        },
+      });
+      logger({ user, profile }, 'Profile created for user: ');
+    },
     signOut: async ({ token, session }) => {
-      logger({ user: session.user }, 'SIGNING OUT - User: ');
+      logger({ user: session }, 'SIGNING OUT - Session: ');
       if (token.sub) {
         await prisma.account.updateMany({
           where: { userId: token.sub },
@@ -115,6 +125,17 @@ const authOptions: AuthOptions = {
           },
         });
       }
+    },
+    updateUser: async ({ user }) => {
+      // Create a profile for the new user
+      logger({ user }, 'Updating User: ');
+      await prisma.profile.update({
+        where: { userId: user.id },
+        data: {
+          userId: user.id,
+          // Add any other default fields you want for new profiles
+        },
+      });
     },
   },
 };

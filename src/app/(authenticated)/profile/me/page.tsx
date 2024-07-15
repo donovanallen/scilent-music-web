@@ -1,6 +1,7 @@
 'use client';
 
 import { ScrollShadow, Tooltip } from '@nextui-org/react';
+import { Profile as ScilentProfile } from '@prisma/client';
 import { UserProfile } from '@spotify/web-api-ts-sdk';
 import React, { Suspense, useEffect, useState } from 'react';
 
@@ -15,10 +16,11 @@ import TopItems from '@/components/TopItems';
 
 import ProfileAura from '@/app/(authenticated)/profile/components/ProfileAura';
 
-import ProfileInfo from './components/ProfileInfo';
+import ProfileInfo from '../components/ProfileInfo';
 
-const Profile: React.FC = () => {
-  const [profile, setProfile] = useState<UserProfile>();
+const Profile = async () => {
+  const [profile, setProfile] = useState<UserProfile | ScilentProfile>();
+
   useEffect(() => {
     (async () => {
       const result = await sdk.currentUser.profile();
@@ -32,27 +34,34 @@ const Profile: React.FC = () => {
         <div className='flex w-full items-center justify-between'>
           <h4 className='text-dark/50 dark:text-light/50'>Profile</h4>
           {profile && (
-            <Tooltip
-              content='Anywhere you see the Spotify icon, click to go directly to the app for any profile, artist, album, track, or playlist.'
-              delay={1000}
-              classNames={{
-                content: 'text-dark bg-light dark:bg-dark dark:text-light p-4',
-                base: 'max-w-xs',
-              }}
-            >
-              <IconLink
-                href={profile.external_urls.spotify || ''}
-                target='_blank'
-                rel='noopener noreferrer'
-                icon={getSourceIcon('spotify')}
-                variant='ghost'
-              />
-            </Tooltip>
+            <>
+              <Tooltip
+                content='Anywhere you see the Spotify icon, click to go directly to the app for any profile, artist, album, track, or playlist.'
+                delay={1000}
+                classNames={{
+                  content:
+                    'text-dark bg-light dark:bg-dark dark:text-light p-4',
+                  base: 'max-w-xs',
+                }}
+              >
+                <IconLink
+                  href={
+                    'external_urls' in profile
+                      ? profile.external_urls.spotify
+                      : ''
+                  }
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  icon={getSourceIcon('spotify')}
+                  variant='ghost'
+                />
+              </Tooltip>
+            </>
           )}
         </div>
 
         <Suspense fallback={<Skeleton />}>
-          {profile && <ProfileInfo {...profile} />}
+          {profile && <ProfileInfo {...(profile as UserProfile)} />}
         </Suspense>
       </Header>
       <ScrollShadow hideScrollBar>

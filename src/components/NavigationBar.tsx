@@ -11,12 +11,10 @@ import { RxCaretLeft, RxCaretRight } from 'react-icons/rx';
 
 import logger from '@/lib/logger';
 import { cn } from '@/lib/utils';
-import { useAPIStatus } from '@/hooks/useAPIStatus';
 import useAuthModal from '@/hooks/useAuthModal';
 
 import Button from '@/components/buttons/Button';
 import IconButton from '@/components/buttons/IconButton';
-import StatusIndicator from '@/components/StatusIndicator';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 
 const NavigationBar: React.FC = () => {
@@ -24,7 +22,7 @@ const NavigationBar: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { data: session, status } = useSession();
-  const { apiEnabled, loading, error } = useAPIStatus();
+  // const { apiEnabled, loading, error } = useAPIStatus();
 
   const goBack = () => router.back();
   const goForward = () => router.forward();
@@ -65,7 +63,7 @@ const NavigationBar: React.FC = () => {
           </div>
           {/* LOG IN/LOG OUT/SIGN UP */}
           <div className='flex gap-x-4 items-center justify-end flex-1'>
-            <Tooltip
+            {/* <Tooltip
               shadow='md'
               size='sm'
               content={`API Status: ${apiEnabled ? 'Active' : loading ? 'Connecting' : error ? 'Error' : 'Unavailable'}`}
@@ -95,24 +93,33 @@ const NavigationBar: React.FC = () => {
                   }}
                 />
               </div>
-            </Tooltip>
-            {pathname !== '/profile' && (
-              <Link
-                href='/profile'
-                className='rounded-full border-2 p-0.5 border-dark/80 dark:border-light/80 hover:border-brand-dark dark:hover:border-brand-primary transition'
-              >
-                {session.user && (
-                  <Avatar
-                    src={session.user.image || undefined}
-                    size='md'
-                    name={session.user.name || undefined}
-                    fallback={<AvatarIcon />}
-                    isFocusable
-                    showFallback
-                  />
-                )}
-              </Link>
-            )}
+            </Tooltip> */}
+            {pathname !== '/profile' &&
+              session?.user &&
+              'id' in session.user && (
+                <Tooltip
+                  content='View your profile'
+                  delay={1000}
+                  classNames={{
+                    content: 'text-dark bg-light dark:text-light dark:bg-dark',
+                    base: 'max-w-xs',
+                  }}
+                >
+                  <Link
+                    href='/profile/me'
+                    className='rounded-full border-2 p-0.5 border-dark/80 dark:border-light/80 hover:border-brand-dark dark:hover:border-brand-primary transition'
+                  >
+                    <Avatar
+                      src={session.user.image || undefined}
+                      size='md'
+                      name={session.user.name || undefined}
+                      fallback={<AvatarIcon />}
+                      isFocusable
+                      showFallback
+                    />
+                  </Link>
+                </Tooltip>
+              )}
             <Button
               onClick={handleSignOut}
               className='text-xs'
