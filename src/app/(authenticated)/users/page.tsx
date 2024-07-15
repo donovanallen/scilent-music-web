@@ -8,11 +8,14 @@ import React, { useEffect, useState } from 'react';
 import Box from '@/components/Box';
 import Header from '@/components/Header';
 import InfoIcon from '@/components/InfoIcon';
+import PageContent from '@/components/PageContent';
 
 const Users = () => {
   const { data: session } = useSession();
   const [followedUsers, setFollowedUsers] =
-    useState<(Profile & { user: User } & { accounts: Account[] })[]>();
+    useState<(Profile & { user: User & { accounts: Account[] } })[]>();
+  const [suggestedUsers, setSuggestedUsers] =
+    useState<(Profile & { user: User & { accounts: Account[] } })[]>();
 
   useEffect(() => {
     (async () => {
@@ -23,8 +26,10 @@ const Users = () => {
         return result;
       });
       const followed: Follow[] = profile.followers; // TODO: update this to following when fixed
-      const fetchedUsers: (Profile & { user: User } & {
-        accounts: Account[];
+      const fetchedUsers: (Profile & {
+        user: User & {
+          accounts: Account[];
+        };
       })[] = await Promise.all(
         followed.map(async (u: Follow) => {
           const res = await fetch(`/api/db/${u.followingId}`);
@@ -35,49 +40,18 @@ const Users = () => {
     })();
   }, [session]);
 
-  // useEffect(() => {
-  //   (async () => {
-  //     if (followedUsers && followedUsers?.length > 0) {
-  //       const fetchedUsers: User[] = await Promise.all(followedUsers.map(async (u: Follow) => {
-  //         const res = await fetch(`/api/db/${u.followingId}`);
-  //         return res.json();
-  //       }));
-  //       // setUsers(fetchedUsers);
-  //       console.log('User profiles', fetchedUsers);
-  //     }
-  //   })();
-  // }, [followedUsers]);
+  useEffect(() => {
+    (async () => {
+      const allProfiles: (Profile & {
+        user: User & { accounts: Account[] };
+      })[] = await fetch(`api/db/users`, { method: 'GET' }).then((res) => {
+        const result = res.json();
+        return result;
+      });
 
-  // const getFollowedArtists = async ({
-  //   pageParam = '',
-  // }: {
-  //   pageParam: string;
-  // }) => {
-  //   const result = await sdk.currentUser.followedArtists(pageParam, 20);
-  //   return {
-  //     items: result.artists.items,
-  //     nextPage: result.artists.next ? !!pageParam : undefined,
-  //   };
-  // };
-
-  // const {
-  //   data: artists,
-  //   fetchNextPage,
-  //   hasNextPage,
-  //   isFetchingNextPage,
-  // } = useInfiniteQuery({
-  //   queryKey: ['followedArtists'],
-  //   queryFn: getFollowedArtists,
-  //   initialPageParam: '',
-  //   getNextPageParam: (lastPage) =>
-  //     lastPage.items[lastPage.items.length - 1].id,
-  // });
-
-  // useEffect(() => {
-  //   if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
-  //     fetchNextPage();
-  //   }
-  // }, [entry, hasNextPage, isFetchingNextPage, fetchNextPage]);
+      setSuggestedUsers(allProfiles);
+    })();
+  }, []);
 
   return (
     <Box className='h-full flex flex-col'>
@@ -85,7 +59,7 @@ const Users = () => {
         {/* TITLE */}
         <div className='inline-flex items-center gap-x-2'>
           <h1 className='text-brand-dark dark:text-brand-light w-fit text-lg sm:text-xl md:text-2xl'>
-            Followed Users
+            Users
           </h1>
 
           <InfoIcon
@@ -100,21 +74,18 @@ const Users = () => {
           {followedUsers?.length} total
         </h4>
         {/* recommended profiles  */}
+        <h4 className='text-dark dark:text-light subtitle'>
+          Recommended Profiles
+        </h4>
+        <div className='overflow-y-auto overflow-x-hidden'>
+          <PageContent profiles={suggestedUsers} />
+        </div>
       </Header>
 
       <ScrollShadow hideScrollBar>
         <div className='overflow-y-auto overflow-x-hidden py-4 px-6'>
-          {followedUsers?.map((user) => (
-            <h4 key={user.id}>{user.user.name}</h4>
-          ))}
-          {/* <PageContent
-            artists={
-              followedArtists.sort((a, b) =>
-                a.name.localeCompare(b.name),
-              ) as Artist[]
-            }
-            loading={isLoading}
-          /> */}
+          <h4 className='text-dark dark:text-light subtitle'>Following</h4>
+          <PageContent profiles={followedUsers} />
         </div>
       </ScrollShadow>
     </Box>

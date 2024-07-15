@@ -1,3 +1,4 @@
+import { Account, Profile, User } from '@prisma/client';
 import {
   Album,
   Artist,
@@ -27,6 +28,7 @@ interface PageContentProps {
   albumContentProps?: {
     showArtist?: boolean;
   };
+  profiles?: (Profile & { user: User & { accounts: Account[] } })[];
   loading?: boolean;
 }
 
@@ -54,6 +56,7 @@ const PageContent: React.FC<PageContentProps> = ({
   albumContentProps,
   tracks,
   tracksNumbered,
+  profiles,
   loading = false,
 }) => {
   const router = useRouter();
@@ -65,6 +68,26 @@ const PageContent: React.FC<PageContentProps> = ({
       </div>
     );
   } else {
+    if (profiles) {
+      return profiles?.length !== 0 ? (
+        <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-8 gap-4 my-4 overflow-y-scroll no-scrollbar'>
+          {profiles &&
+            profiles.map((profile) => (
+              <ArtistCard
+                key={profile.id}
+                name={profile.user.name ?? ''}
+                image={profile.user.image ?? ''}
+                type='User'
+                id={profile.id}
+                onClick={() => router.push(`/profile/${profile.id}`)}
+              />
+            ))}
+        </div>
+      ) : (
+        <div className='mt-4 text-neutral-400'>No profiles found</div>
+      );
+    }
+
     if (albums) {
       return albums?.length !== 0 ? (
         <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-8 gap-4 my-4 overflow-y-scroll no-scrollbar'>
