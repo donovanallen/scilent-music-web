@@ -2,10 +2,11 @@
 
 import { useRouter } from 'next/navigation';
 import { signIn, useSession } from 'next-auth/react';
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { FaSpotify } from 'react-icons/fa';
-import { FaSpinner } from 'react-icons/fa6';
 
+import logger from '@/lib/logger';
 import { cn } from '@/lib/utils';
 import useAuthModal from '@/hooks/useAuthModal';
 
@@ -16,13 +17,24 @@ const AuthModal = () => {
   const router = useRouter();
   const { onClose, isOpen } = useAuthModal();
   const { status } = useSession();
+  const [error, setError] = useState<string | undefined>();
 
-  useEffect(() => {
-    if (status === 'authenticated') {
-      router.refresh();
-      onClose();
-    }
-  }, [status, router, onClose]);
+  const handleSignIn = () => {
+    signIn('spotify', {
+      callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/`,
+      redirect: false,
+    }).then((res) => {
+      if (res?.error) {
+        toast.error('Error logging in. Try again.');
+        logger({ error: res.error }, 'ERROR: Error logging in');
+        setError(res.error);
+      } else if (res?.ok) {
+        toast.success('Welcome back!');
+        onClose();
+        router.push('/');
+      }
+    });
+  };
 
   const onChange = (open: boolean) => {
     if (!open) {
@@ -38,12 +50,8 @@ const AuthModal = () => {
       onChange={onChange}
     >
       <Button
-        onClick={() =>
-          signIn('spotify', {
-            callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}`,
-          })
-        }
-        rightIcon={status === 'loading' ? FaSpinner : FaSpotify}
+        onClick={handleSignIn}
+        rightIcon={FaSpotify}
         variant='outline'
         size='base'
         aria-label='Log in with Spotify'
@@ -63,6 +71,11 @@ const AuthModal = () => {
       >
         Log in
       </Button>
+      {error && (
+        <p className='w-2/3 subtitle text-red-400 text-center self-center'>
+          {error}
+        </p>
+      )}
     </NextModal>
   );
 };

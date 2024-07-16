@@ -1,13 +1,11 @@
 'use client';
 
-// import { Avatar, Tooltip } from '@nextui-org/react';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { Tooltip } from '@nextui-org/react';
 import { PlayHistory, Track, TrackItem } from '@spotify/web-api-ts-sdk';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import { usePathname } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { BiEdit, BiSearch } from 'react-icons/bi';
 import { FaPlay } from 'react-icons/fa6';
@@ -17,10 +15,8 @@ import { TbMusicStar, TbUserHeart } from 'react-icons/tb';
 
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { cn } from '@/lib/utils';
-import useAuthModal from '@/hooks/useAuthModal';
 
 import Box from '@/components/Box';
-import Button from '@/components/buttons/Button';
 import IconButton from '@/components/buttons/IconButton';
 import CurrentlyPlaying from '@/components/CurrentlyPlaying';
 import Feed from '@/components/Feed';
@@ -37,16 +33,13 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const isSmallDevice = useMediaQuery('only screen and (max-width : 769px)');
-
   const { currentTrack, setCurrentTrack } = useStore();
-
   const pathname = usePathname();
-  const { data: session } = useSession();
-  const authModal = useAuthModal();
   const queryClient = new QueryClient();
+  const [parent] = useAutoAnimate(/* optional config */);
+
   const [history, setHistory] = useState<PlayHistory[] | null>();
   const [sidebarOpen, setSidebarOpen] = useState<boolean>();
-  const [parent] = useAutoAnimate(/* optional config */);
 
   const routes = useMemo(
     () => [
@@ -89,22 +82,18 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   );
 
   useEffect(() => {
-    if (session) {
-      (async () => {
-        const result = await sdk.player.getRecentlyPlayedTracks();
-        setHistory(() => result.items.map((item) => item));
-      })();
-    }
-  }, [session]);
+    (async () => {
+      const result = await sdk.player.getRecentlyPlayedTracks();
+      setHistory(() => result.items.map((item) => item));
+    })();
+  }, []);
 
   useEffect(() => {
-    if (session) {
-      (async () => {
-        const result = await sdk.player.getUsersQueue();
-        setCurrentTrack(result.currently_playing as TrackItem);
-      })();
-    }
-  }, [session, setCurrentTrack]);
+    (async () => {
+      const result = await sdk.player.getUsersQueue();
+      setCurrentTrack(result.currently_playing as TrackItem);
+    })();
+  }, [setCurrentTrack]);
 
   return (
     <div ref={parent} className='flex h-[100vh]'>
@@ -115,86 +104,74 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
           isSmallDevice ? (!sidebarOpen ? 'hidden' : '') : '',
         )}
       >
-        {session ? (
-          <>
-            <Box>
-              <div className='flex flex-col items-center gap-y-4 px-5 py-4'>
-                {routes.map((item) => (
-                  <SidebarItem
-                    disabled={item.disabled}
-                    key={item.label}
-                    {...item}
-                    pill={
-                      item.pill && (
-                        <NextPill
-                          text={item.pill}
-                          radius='sm'
-                          variant='bordered'
-                          size='sm'
-                          classNames={{
-                            base: 'border-2 border-brand-dark',
-                            content:
-                              'font-medium text-dark dark:text-brand-primary',
-                          }}
-                          disabled={item.disabled}
-                        />
-                      )
-                    }
-                  />
-                ))}
-                <div className='flex md:hidden'>
-                  <Tooltip
+        <>
+          <Box>
+            <div className='flex flex-col items-center gap-y-4 px-5 py-4'>
+              {routes.map((item) => (
+                <SidebarItem
+                  key={item.label}
+                  {...item}
+                  pill={
+                    item.pill && (
+                      <NextPill
+                        text={item.pill}
+                        radius='sm'
+                        variant='bordered'
+                        size='sm'
+                        classNames={{
+                          base: 'border-2 border-brand-dark',
+                          content:
+                            'font-medium text-dark dark:text-brand-primary',
+                        }}
+                        disabled={item.disabled}
+                      />
+                    )
+                  }
+                />
+              ))}
+              <div className='flex md:hidden'>
+                <Tooltip
+                  classNames={{
+                    base: 'ring-2 ring-brand-light/10 rounded-md z-20',
+                    content: 'bg-light dark:bg-dark/90 p-4 max-w-sm',
+                  }}
+                  shadow='lg'
+                  placement='right'
+                  content={
+                    <Box>
+                      <CurrentlyPlaying />
+                    </Box>
+                  }
+                >
+                  <IconButton
+                    variant='ghost'
+                    icon={FaPlay}
                     classNames={{
-                      base: 'ring-2 ring-brand-light/10 rounded-md z-20',
-                      content: 'bg-light dark:bg-dark/90 p-4 max-w-sm',
+                      icon: 'text-xl hover:text-brand-primary animate-pulse',
                     }}
-                    shadow='lg'
-                    placement='right'
-                    content={
-                      <Box>
-                        <CurrentlyPlaying />
-                      </Box>
-                    }
-                  >
-                    <IconButton
-                      variant='ghost'
-                      icon={FaPlay}
-                      classNames={{
-                        icon: 'text-xl hover:text-brand-primary animate-pulse',
-                      }}
-                    />
-                  </Tooltip>
-                </div>
+                  />
+                </Tooltip>
               </div>
-            </Box>
-            <Feed
-              title='Live Mix'
-              cpTrack={currentTrack as Track}
-              history={history as PlayHistory[]}
-              className='hidden md:flex h-full overflow-y-scroll no-scrollbar'
-            />
-            <Box className='md:hidden flex flex-col h-[100%] w-full'>
-              <Logo className='transform -rotate-90 align-middle origin-center my-auto' />
-            </Box>
-            <Box className='md:hidden flex flex-col h-fit w-full'>
-              <IconButton
-                variant='primary'
-                icon={RxCaretLeft}
-                classNames={{ icon: 'text-3xl' }}
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-              />
-            </Box>
-          </>
-        ) : (
-          <Box className='h-full flex items-center justify-center '>
-            <Button
-              onClick={authModal.onOpen}
-              className='flex text-center justify-center'
-            >
-              Get Started
-            </Button>
+            </div>
           </Box>
-        )}
+          <Feed
+            title='Live Mix'
+            cpTrack={currentTrack as Track}
+            history={history as PlayHistory[]}
+            className='hidden md:flex h-full overflow-y-scroll no-scrollbar'
+          />
+          <Box className='md:hidden flex flex-col h-[100%] w-full'>
+            <Logo className='transform -rotate-90 align-middle origin-center my-auto' />
+          </Box>
+          <Box className='md:hidden flex flex-col h-fit w-full'>
+            <IconButton
+              variant='primary'
+              icon={RxCaretLeft}
+              classNames={{ icon: 'text-3xl' }}
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+            />
+          </Box>
+        </>
       </div>
       {isSmallDevice && (
         <div

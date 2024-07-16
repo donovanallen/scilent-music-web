@@ -1,8 +1,6 @@
 'use client';
 
 import { Tooltip } from '@nextui-org/react';
-import { useTheme } from 'next-themes';
-import React from 'react';
 
 import useAuthModal from '@/hooks/useAuthModal';
 
@@ -14,16 +12,10 @@ import LogoGray from '~/svg/Logo_Full_Gray.svg';
 
 const Login = () => {
   const authModal = useAuthModal();
-  const { theme } = useTheme();
 
   return (
     <Box className='h-full flex flex-col items-center justify-center gap-y-12'>
-      {/* {theme === 'dark' ? (
-        <LogoBlack className='w-1/2' />
-      ) : (
-      <LogoGray className='w-1/2' />
-      )} */}
-      <LogoGray className='w-1/2' />
+      <LogoGray className='w-1/3' />
       <div className='inline-flex items-center gap-x-6'>
         <Button onClick={authModal.onOpen} size='base' variant='primary'>
           Get Started

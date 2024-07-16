@@ -1,49 +1,100 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { AuthOptions } from 'next-auth';
+import { JWT } from 'next-auth/jwt';
 
 import logger from '@/lib/logger';
 import prisma from '@/lib/prisma';
 
 import spotifyProfile from './SpotifyProfile';
 
+async function refreshSpotifyAccessToken(token: JWT): Promise<JWT> {
+  try {
+    const response = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization:
+          'Basic ' +
+          Buffer.from(
+            process.env.SPOTIFY_CLIENT_ID +
+              ':' +
+              process.env.SPOTIFY_CLIENT_SECRET,
+          ).toString('base64'),
+      },
+      body: `grant_type=refresh_token&refresh_token=${token.refreshToken}`,
+    });
+
+    const refreshedTokens = await response.json();
+
+    if (!response.ok) {
+      throw refreshedTokens;
+      // throw new Error('Failed to refresh token');
+    }
+
+    return {
+      ...token,
+      accessToken: refreshedTokens.access_token,
+      accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
+      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
+      // access_token: refreshedTokens.access_token,
+      // expires_at: Date.now() + refreshedTokens.expires_in * 1000, // Convert expires_in to milliseconds
+      // refresh_token: refreshedTokens.refresh_token ?? token.refreshToken,
+    };
+  } catch (error) {
+    logger({ error }, 'ERROR: Error refreshing token');
+    return {
+      ...token,
+      error: 'RefreshAccessTokenError',
+    };
+  }
+}
+
 const authOptions: AuthOptions = {
-  providers: [spotifyProfile],
   adapter: PrismaAdapter(prisma),
+  providers: [spotifyProfile],
   session: {
-    strategy: 'database',
-    maxAge: 60 * 60, // 1hr
+    strategy: 'jwt',
+    maxAge: 7 * 24 * 60 * 60, // 7 days
+    updateAge: 3600, // 1 hour
   },
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
-      console.log('---------- CALLBACK: SIGN IN -------');
-      console.log('user', user);
-      console.log('account', account);
-      console.log('profile', profile);
-      console.log('email', email);
-      console.log('credentials', credentials);
-
-      return true;
-    },
-    async redirect({ url, baseUrl }) {
-      console.log('---------- CALLBACK: REDIRECT -------');
-      console.log('url', url);
-      console.log('baseUrl', baseUrl);
+    async redirect({ baseUrl, url }) {
+      if (url.startsWith('/'))
+        return `${baseUrl}${url}`; // Allows relative callback URLs
+      else if (new URL(url).origin === baseUrl) return url; // Allows callback URLs on the same origin
       return baseUrl;
     },
-    async session({ session, user, token }) {
-      console.log('---------- CALLBACK: SESSION -------');
-      console.log('session', session);
-      console.log('user', user);
-      console.log('token', token);
-      return session;
+    async session({ session, token }) {
+      return {
+        ...session,
+        accessToken: token.accessToken,
+        user: {
+          ...session.user,
+          id: token.sub, // Use the subject from the token as the user id
+        },
+      };
     },
-    async jwt({ token, user, account, profile }) {
-      console.log('---------- CALLBACK: JWT -------');
-      console.log('profile', profile);
-      console.log('account', account);
-      console.log('user', user);
-      console.log('token', token);
-      return token;
+    async jwt({ token, user, account }) {
+      // Initial sign in
+      if (account && user) {
+        return {
+          ...token,
+          accessToken: account.access_token,
+          accessTokenExpires: (account.expires_at ?? 0) * 1000, // Use 0 as default if undefined // Convert to milliseconds for JS Date object compatibility
+          refreshToken: account.refresh_token,
+          user,
+        };
+      }
+      // If the access token has not expired yet, return the token as is
+      if (
+        typeof token.accessTokenExpires === 'number' &&
+        Date.now() < token.accessTokenExpires
+      ) {
+        return token;
+      }
+
+      // If the token has expired, try to refresh it
+      return refreshSpotifyAccessToken(token);
     },
     //   async signIn({ user, account, profile, email, credentials }) {
     //     // You can perform any custom actions here before the user is signed in
@@ -166,20 +217,18 @@ const authOptions: AuthOptions = {
     signIn: '/login',
   },
   events: {
-    signIn({ user, account, profile, isNewUser }) {
-      logger(
-        { user, account, profile, isNewUser },
-        'authOptions.ts EVENT : signIn',
-      );
-    },
-    signOut({ token, session }) {
-      logger({ token, session }, 'authOptions.ts EVENT : signOut');
-    },
-    updateUser({ user }) {
-      logger({ user }, 'authOptions.ts EVENT : updateUser');
-    },
-    session({ session, token }) {
-      logger({ session, token }, 'authOptions.ts EVENT : session');
+    signOut: async ({ token, session }) => {
+      logger({ user: session.user }, 'SIGNING OUT - User: ');
+      if (token.sub) {
+        await prisma.account.updateMany({
+          where: { userId: token.sub },
+          data: {
+            access_token: null,
+            refresh_token: null,
+            expires_at: null,
+          },
+        });
+      }
     },
   },
 };
