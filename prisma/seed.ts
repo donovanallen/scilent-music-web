@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 
-import logger from '@/lib/logger';
+// import logger from '@/lib/logger';
 const prisma = new PrismaClient();
 
 async function main() {
@@ -15,6 +15,14 @@ async function main() {
           type: 'oauth',
           provider: 'spotify',
           providerAccountId: 'example_spotify_id_123',
+        },
+      },
+      reviews: {
+        create: {
+          content: 'This is an example review by Alice.',
+          subject: 'album',
+          isPublic: true,
+          published: false,
         },
       },
     },
@@ -33,6 +41,14 @@ async function main() {
           providerAccountId: 'example_spotify_id_456',
         },
       },
+      reviews: {
+        create: {
+          content: 'This is an example review by Bob.',
+          subject: 'track',
+          isPublic: true,
+          published: false,
+        },
+      },
     },
   });
 }
@@ -41,7 +57,7 @@ main()
     await prisma.$disconnect();
   })
   .catch(async (error) => {
-    logger({ error }, 'ERROR: Error seeding database');
+    // logger({ error }, 'ERROR: Error seeding database');
     await prisma.$disconnect();
     process.exit(1);
   });
