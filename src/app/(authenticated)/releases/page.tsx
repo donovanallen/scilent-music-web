@@ -10,6 +10,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { useFollowedArtists } from '@/hooks/useFollowedArtists';
 
+import AlbumsCollection from '@/components/AlbumsCollection';
 // import { useAPIStatus } from '@/hooks/useAPIStatus';
 // import { useFollowedArtists } from '@/hooks/useFollowedArtists';
 // import { useFollowedArtists } from '@/hooks/useFollowedArtists';
@@ -18,7 +19,6 @@ import FilterOptions from '@/components/FilterOptions';
 import Header from '@/components/Header';
 // import HeaderItem from '@/components/HeaderItem';
 import InfoIcon from '@/components/InfoIcon';
-import PageContent from '@/components/PageContent';
 
 import { getUpcomingReleasesForMultipleArtists } from '@/actions/getUpcomingReleases';
 import { ReleaseFilters, ReleaseTypes } from '@/constant/types';
@@ -214,48 +214,45 @@ const Releases: React.FC = () => {
                   className='justify-self-end'
                 /> */}
               </div>
-              <PageContent
+              <AlbumsCollection
                 albums={userReleases as Album[]}
                 albumContentProps={{ showArtist: true }}
               />
             </>
           )}
-          {featuredReleases && (
-            <>
-              <div className='inline-flex items-center justify-between w-full'>
-                <div className='inline-flex items-center gap-x-2'>
-                  <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>
-                    Featured Releases
-                  </h3>
-                  {/* TODO: if user-curated releases, show link (small), onClick switch PageContent albums + title */}
-                  <InfoIcon
-                    tooltipEnabled
-                    tooltip={{
-                      content: "These are Spotify's featured new releases",
-                    }}
-                  />
-                </div>
-                <FilterOptions
-                  filterOptions={ReleaseFilters}
-                  onFilterSelect={setSelectedReleaseFilter as () => void}
-                  selectedFilter={selectedReleaseFilter}
-                  tooltipsEnabled
-                  isNullable
-                  className='justify-self-end'
-                />
-              </div>
-              <PageContent
-                albums={
-                  selectedReleaseFilter
-                    ? (featuredReleases?.filter(
-                        (r) => r.album_type === selectedReleaseFilter,
-                      ) as SimplifiedAlbum[])
-                    : featuredReleases
-                }
-                albumContentProps={{ showArtist: true }}
+
+          <div className='inline-flex items-center justify-between w-full'>
+            <div className='inline-flex items-center gap-x-2'>
+              <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>
+                Featured Releases
+              </h3>
+              {/* TODO: if user-curated releases, show link (small), onClick switch page content albums + title */}
+              <InfoIcon
+                tooltipEnabled
+                tooltip={{
+                  content: "These are Spotify's featured new releases",
+                }}
               />
-            </>
-          )}
+            </div>
+            <FilterOptions
+              filterOptions={ReleaseFilters}
+              onFilterSelect={setSelectedReleaseFilter as () => void}
+              selectedFilter={selectedReleaseFilter}
+              tooltipsEnabled
+              isNullable
+              className='justify-self-end'
+            />
+          </div>
+          <AlbumsCollection
+            albums={
+              selectedReleaseFilter
+                ? (featuredReleases?.filter(
+                    (r) => r.album_type === selectedReleaseFilter,
+                  ) as SimplifiedAlbum[])
+                : featuredReleases
+            }
+            albumContentProps={{ showArtist: true }}
+          />
         </div>
       </ScrollShadow>
     </Box>

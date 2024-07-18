@@ -1,7 +1,7 @@
 'use client';
 
 import { ScrollShadow, Tooltip } from '@nextui-org/react';
-import { Album, SimplifiedTrack } from '@spotify/web-api-ts-sdk';
+import { Album } from '@spotify/web-api-ts-sdk';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { BiAlbum } from 'react-icons/bi';
@@ -22,8 +22,8 @@ import IconButton from '@/components/buttons/IconButton';
 import Header from '@/components/Header';
 import IconLink from '@/components/links/IconLink';
 import NextImage from '@/components/NextImage';
-import PageContent from '@/components/PageContent';
 import NextPill from '@/components/Pill';
+import TracksCollection from '@/components/TracksCollection';
 
 const Release = ({ params }: { params: { id: string } }) => {
   const [albumDetails, setAlbumDetails] = useState<Album>();
@@ -215,8 +215,8 @@ const Release = ({ params }: { params: { id: string } }) => {
               <h3 className='text-dark/80 dark:text-light/80 my-4'>
                 Tracklist{' '}
               </h3>
-              <PageContent
-                tracks={albumDetails.tracks.items as SimplifiedTrack[]}
+              <TracksCollection
+                tracks={albumDetails.tracks.items}
                 tracksNumbered
               />
             </>

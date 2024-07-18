@@ -6,7 +6,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 
-import PageContent from '@/components/PageContent';
+import AlbumsCollection from '@/components/AlbumsCollection';
+import ArtistsCollection from '@/components/ArtistsCollection';
+import TracksCollection from '@/components/TracksCollection';
 
 import { SearchFilterValue } from '../../../../constant/types';
 interface SearchContentProps {
@@ -67,12 +69,13 @@ const SearchContent: React.FC<SearchContentProps> = ({
 
               {/* ARTISTS RESULTS */}
               {memoizedSearchType.includes('artist') &&
-                results.artists?.total !== 0 && (
+                results.artists?.total !== 0 &&
+                results.artists?.items && (
                   <>
                     <h4 className='dark:text-light/80 text-dark/80'>
                       Artists ({results?.artists?.total})
                     </h4>
-                    <PageContent artists={results?.artists?.items} />
+                    <ArtistsCollection artists={results?.artists?.items} />
                   </>
                 )}
 
@@ -83,7 +86,7 @@ const SearchContent: React.FC<SearchContentProps> = ({
                     <h4 className='dark:text-light/80 text-dark/80'>
                       Albums ({results?.albums?.total})
                     </h4>
-                    <PageContent albums={results?.albums?.items} />
+                    <AlbumsCollection albums={results?.albums?.items} />
                   </>
                 )}
 
@@ -94,7 +97,7 @@ const SearchContent: React.FC<SearchContentProps> = ({
                     <h4 className='dark:text-light/80 text-dark/80'>
                       Tracks ({results?.tracks?.total})
                     </h4>
-                    <PageContent tracks={results?.tracks?.items} />
+                    <TracksCollection tracks={results?.tracks?.items} />
                   </>
                 )}
             </>

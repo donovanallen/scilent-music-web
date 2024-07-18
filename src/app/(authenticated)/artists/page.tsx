@@ -6,10 +6,10 @@ import React from 'react';
 
 import { useFollowedArtists } from '@/hooks/useFollowedArtists';
 
+import ArtistsCollection from '@/components/ArtistsCollection';
 import Box from '@/components/Box';
 import Header from '@/components/Header';
 import InfoIcon from '@/components/InfoIcon';
-import PageContent from '@/components/PageContent';
 
 const Artists = () => {
   const {
@@ -86,13 +86,12 @@ const Artists = () => {
 
       <ScrollShadow hideScrollBar>
         <div className='overflow-y-auto overflow-x-hidden py-4 px-6'>
-          <PageContent
+          <ArtistsCollection
             artists={
               followedArtists.sort((a, b) =>
                 a.name.localeCompare(b.name),
               ) as Artist[]
             }
-            loading={isLoading}
           />
         </div>
       </ScrollShadow>
