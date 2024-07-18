@@ -69,10 +69,8 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
         isPressable={!!onClick}
         onLoad={() => setIsCardLoaded(true)}
         onPress={onClick}
-        onClick={onClick}
         fullWidth
         className={cn('bg-neutral-900', className)}
-        // onMouseOver={() => setShowFooter(!showFooter)}
       >
         <CardHeader onClick={onClick}>
           {Icon && <Icon size={36} />}
@@ -92,7 +90,7 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
         <Image
           removeWrapper
           alt='Card Image'
-          className='z-0 w-full h-full object-cover object-center overflow-hidden aspect-square opacity-50 bg-opacity-50 semi-opaque-bg'
+          className='z-10 w-full h-full object-cover object-center overflow-hidden aspect-square opacity-50 bg-opacity-50 semi-opaque-bg'
           src={image || ''}
           fallbackSrc={
             <BiAlbum size={64} className='m-auto h-full text-dark' />

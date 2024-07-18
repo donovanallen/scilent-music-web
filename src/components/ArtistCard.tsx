@@ -50,7 +50,7 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
           base: cn(
             'max-h-[220px] w-full overflow-hidden transition relative',
             'hover:shadow-lg hover:border hover:border-brand-dark dark:hover:border-brand-primary',
-            isDisabled ? 'opacity-30' : '',
+            isDisabled ? 'opacity-30' : 'cursor-pointer',
             className,
           ),
           header: 'absolute z-10 top-1 flex-col items-start w-10/12',
@@ -67,7 +67,6 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
         isPressable={!!onClick}
         onLoad={() => setIsCardLoaded(true)}
         onPress={onClick}
-        // onMouseOver={() => setShowFooter(!showFooter)}
       >
         <CardHeader onClick={onClick}>
           {Icon && <Icon size={36} />}
@@ -78,7 +77,7 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
         <Image
           removeWrapper
           alt='Card Image'
-          className='z-0 w-full h-full object-cover object-center overflow-hidden aspect-square opacity-50 bg-opacity-50 semi-opaque-bg'
+          className='z-10 w-full h-full object-cover object-center overflow-hidden aspect-square opacity-50 bg-opacity-50 semi-opaque-bg'
           src={image || ''}
           fallbackSrc={
             <BiAlbum size={64} className='m-auto h-full text-dark' />
