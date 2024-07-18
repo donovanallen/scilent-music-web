@@ -1,6 +1,6 @@
+/* eslint-disable no-console */
 import { PrismaClient } from '@prisma/client';
 
-import logger from '@/lib/logger';
 const prisma = new PrismaClient();
 
 async function main() {
@@ -41,7 +41,7 @@ main()
     await prisma.$disconnect();
   })
   .catch(async (error) => {
-    logger({ error }, 'ERROR: Error seeding database');
+    console.error('Error seeding database:', error);
     await prisma.$disconnect();
     process.exit(1);
   });
