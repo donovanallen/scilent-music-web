@@ -1,142 +1,158 @@
 'use client';
 
 import { useAutoAnimate } from '@formkit/auto-animate/react';
-import { Progress, ScrollShadow } from '@nextui-org/react';
-import { Album, Artist, SimplifiedAlbum } from '@spotify/web-api-ts-sdk';
-import { IImage, IReleaseGroupMatch } from 'musicbrainz-api';
-import React, { useCallback, useEffect, useState } from 'react';
+import { ScrollShadow } from '@nextui-org/react';
+import { Album, SimplifiedAlbum } from '@spotify/web-api-ts-sdk';
+import { compareDesc } from 'date-fns';
+import React, { useEffect, useState } from 'react';
+import { IoRefresh } from 'react-icons/io5';
 
-// import { TbMusicStar } from 'react-icons/tb';
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { useFollowedArtists } from '@/hooks/useFollowedArtists';
 
 import AlbumsCollection from '@/components/AlbumsCollection';
-// import { useAPIStatus } from '@/hooks/useAPIStatus';
-// import { useFollowedArtists } from '@/hooks/useFollowedArtists';
-// import { useFollowedArtists } from '@/hooks/useFollowedArtists';
 import Box from '@/components/Box';
+import IconButton from '@/components/buttons/IconButton';
 import FilterOptions from '@/components/FilterOptions';
 import Header from '@/components/Header';
-// import HeaderItem from '@/components/HeaderItem';
 import InfoIcon from '@/components/InfoIcon';
+import LoadingIndicator from '@/components/LoadingIndicator';
 
-import { getUpcomingReleasesForMultipleArtists } from '@/actions/getUpcomingReleases';
 import { ReleaseFilters, ReleaseTypes } from '@/constant/types';
 
-const BATCH_SIZE = 20; // Declare batch size as a constant
-
-interface ReleaseGroup extends IReleaseGroupMatch {
-  // id: string;
-  mbid: string;
-  artwork?: IImage;
-  // title: string;
-  type: string;
-  date: string;
-  artists: Array<{ artist?: { name: string }; name: string }>; // Simplified type
-  // releases: Array<any>; // Add a more specific type if available
-  // subTypes: Array<string>;
-}
+// interface ReleaseGroup extends IReleaseGroupMatch {
+//   // id: string;
+//   mbid: string;
+//   artwork?: IImage;
+//   // title: string;
+//   type: string;
+//   date: string;
+//   artists: Array<{ artist?: { name: string }; name: string }>; // Simplified type
+//   // releases: Array<any>; // Add a more specific type if available
+//   // subTypes: Array<string>;
+// }
 
 const Releases: React.FC = () => {
-  // const { apiEnabled } = useAPIStatus();
-  const [parent, enableAnimations] = useAutoAnimate(/* optional config */);
-  const [userReleases, setUserReleases] = useState<(SimplifiedAlbum | Album)[]>(
-    [],
-  );
-
-  const [featuredReleases, setFeaturedReleases] = useState<
-    SimplifiedAlbum[] | Album[]
-  >();
+  const [parent] = useAutoAnimate();
 
   const [selectedReleaseFilter, setSelectedReleaseFilter] = useState<
     ReleaseTypes | undefined
   >();
 
-  const [totalArtists, setTotalArtists] = useState(0);
-  const [processedArtists, setProcessedArtists] = useState(0);
+  const { followedArtists, isLoading } = useFollowedArtists();
 
-  const {
-    total: followedCount,
-    followedArtists,
-    isLoading,
-  } = useFollowedArtists();
+  // ALL USER RELEASES
+  const [userReleases, setUserReleases] =
+    useState<(SimplifiedAlbum | Album)[]>();
+  const [loadingUserReleases, setLoadingUserReleases] = useState(false);
+  const splitIntoBatches = (array: any[], batchSize: number) => {
+    const batches = [];
+    for (let i = 0; i < array.length; i += batchSize) {
+      batches.push(array.slice(i, i + batchSize));
+    }
+    return batches;
+  };
+  const getAllUserReleases = async () => {
+    setLoadingUserReleases(true);
+    try {
+      const batchSize = 20; // Adjust this value based on Spotify's rate limits
+      const artistBatches = splitIntoBatches(followedArtists, batchSize);
+      let allAlbums: SimplifiedAlbum[] = [];
 
-  const getReleases = useCallback(async (artists: Artist[]) => {
-    setTotalArtists(artists.length);
-    setProcessedArtists(0); // Reset the processed count
+      for (const batch of artistBatches) {
+        const batchResults = await Promise.all(
+          batch.map((artist) => sdk.artists.albums(artist.id)),
+        );
+        allAlbums = [...allAlbums, ...batchResults.flatMap((r) => r.items)];
 
-    // Extract artist names for concurrent requests
-    const artistNames: string[] = artists.map((artist) => artist.name);
+        // Add a delay between batches to further reduce the risk of hitting rate limits
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
 
-    // Fetch releases for all artists concurrently
-    const releases = await getUpcomingReleasesForMultipleArtists(artistNames);
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const allUserReleases = allAlbums
+        .filter((a) => {
+          const releaseDate = new Date(a.release_date);
+          return (
+            a.release_date_precision === 'day' &&
+            a.release_date &&
+            releaseDate >= thirtyDaysAgo
+          );
+        })
+        .sort((a, b) => compareDesc(a?.release_date, b?.release_date));
 
-    // Flatten and filter the releases
-    const nonEmptyReleases = releases?.flat().filter(Boolean) as Album[];
+      setUserReleases(() => allUserReleases);
+    } catch (error) {
+      console.error('Error fetching user releases:', error);
+    } finally {
+      setLoadingUserReleases(false);
+    }
+  };
+  useEffect(() => {
+    (async () => {
+      if (!followedArtists?.length) return;
+      await getAllUserReleases();
+    })();
+  }, [followedArtists]);
 
-    setUserReleases((prev) => [...prev, ...nonEmptyReleases]);
-    setProcessedArtists((prev) => prev + artists.length);
+  // FEATURED RELEASES
+  const [featuredReleases, setFeaturedReleases] =
+    useState<(SimplifiedAlbum | Album)[]>();
+  const [loadingFeaturedReleases, setLoadingFeaturedReleases] = useState(false);
+  const getFeaturedReleases = async () => {
+    setLoadingFeaturedReleases(true);
+    try {
+      const result = await sdk.browse.getNewReleases();
+      setFeaturedReleases(() => result.albums.items);
+    } catch (error) {
+      console.error('Error fetching featured releases:', error);
+    } finally {
+      setLoadingFeaturedReleases(false);
+    }
+  };
+  useEffect(() => {
+    (async () => {
+      await getFeaturedReleases();
+    })();
   }, []);
 
-  // Fetch releases for a batch of artists
-  // const getReleases = useCallback(async (artists: Artist[]) => {
+  // UPCOMING RELEASES
+  // const [totalArtists, setTotalArtists] = useState(0);
+  // const [processedArtists, setProcessedArtists] = useState(0);
+  // const [upcomingReleases, setUpcomingReleases] = useState<
+  //   (SimplifiedAlbum | Album)[]
+  // >([]);
+  // const getUpcomingReleases = useCallback(async (artists: Artist[]) => {
   //   setTotalArtists(artists.length);
   //   setProcessedArtists(0); // Reset the processed count
 
-  //   // const allReleases = [];
+  //   // Extract artist names for concurrent requests
+  //   const artistNames: string[] = artists.map((artist) => artist.name);
 
-  //   // Fetch releases for each batch of artists
-  //   for (let i = 0; i < artists.length; i += BATCH_SIZE) {
-  //     const batch = artists.slice(i, Math.min(i + BATCH_SIZE, artists.length));
-  //     const batchNames = batch.map((artist) => artist.name);
+  //   // Fetch releases for all artists concurrently
+  //   const releases = await getUpcomingReleasesForMultipleArtists(artistNames);
 
-  //     const releases = await Promise.all(
-  //       batchNames.map((name) => getUpcomingReleases(name)),
-  //     );
-  //     console.log('BATCH RELEASES: ', releases);
-
-  //     const nonEmptyReleases = releases.flat().filter(Boolean) as Album[];
-
-  //     setUserReleases((prev) => [...prev, ...nonEmptyReleases]);
-  //     setProcessedArtists((prev) => prev + batch.length);
-
-  //     // allReleases.push(...releases.flat());
-  //     // setProcessedArtists((prev) => prev + batch.length); // Update processed artists
+  //   // Flatten and filter the releases
+  //   const nonEmptyReleases = releases?.flat().filter(Boolean) as Album[];
+  //   if (nonEmptyReleases.length > 0) {
+  //     setUpcomingReleases((prev) => [...prev, ...nonEmptyReleases]);
+  //     setProcessedArtists((prev) => prev + artists.length);
   //   }
-
-  //   // Filter out empty or undefined releases once
-  //   // const nonEmptyReleases = allReleases.filter(Boolean) as Album[];
-
-  //   // Transform releases to Spotify format
-  //   // const transformedReleases = transformToSpotifyFormat(nonEmptyReleases);
-
-  //   // return nonEmptyReleases;
   // }, []);
-
-  // Fetch user releases when followed artists change
-  useEffect(() => {
-    if (followedArtists?.length) {
-      const fetchReleases = async () => {
-        try {
-          await getReleases(followedArtists);
-        } catch (error) {
-          console.error('Error fetching user releases:', error);
-        }
-      };
-      fetchReleases();
-    }
-  }, [followedArtists, getReleases]);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const result = await sdk.browse.getNewReleases();
-        setFeaturedReleases(() => result.albums.items);
-      } catch (error) {
-        console.error('Error fetching featured releases:', error);
-      }
-    })();
-  }, []);
+  // useEffect(() => {
+  //   if (followedArtists?.length) {
+  //     const fetchReleases = async () => {
+  //       try {
+  //         await getUpcomingReleases(followedArtists);
+  //       } catch (error) {
+  //         console.error('Error fetching user releases:', error);
+  //       }
+  //     };
+  //     return () => {
+  //       fetchReleases();
+  //     };
+  //   }
+  // }, [followedArtists, getUpcomingReleases]);
 
   return (
     <Box className='h-full flex flex-col overflow-y-auto overflow-x-hidden'>
@@ -153,50 +169,101 @@ const Releases: React.FC = () => {
             }}
           />
         </div>
-        <Progress
-          value={processedArtists}
-          maxValue={totalArtists}
-          size='md'
-          radius='md'
-          color='primary'
-          showValueLabel
-          valueLabel={`${processedArtists} / ${totalArtists}`}
-          label='Searching for new releases...'
-          isIndeterminate={isLoading || !totalArtists}
-        />
-        {/* {userReleases.length > 0 &&
-          userReleases.map(
-            (r) =>
-              r && (
-                <HeaderItem
-                  key={r.id}
-                  title={`Coming ${r.releaseDate}`}
-                  name={r.title}
-                  icon={TbMusicStar}
-                  image={r.artwork.url}
-                  className='self-center cursor-default'
-                  // disabled
-                  // onClick={() =>
-                  //   router.push(`/release/${r.album.id}`)
-                  // }
-                />
-              ),
-          )} */}
       </Header>
-      <ScrollShadow hideScrollBar>
-        {/* FEATURED RELEASES */}
-        <div
-          ref={parent}
-          className='overflow-y-auto overflow-x-hidden py-4 px-6'
-        >
-          {userReleases && (
+      {isLoading ? (
+        <LoadingIndicator />
+      ) : (
+        <ScrollShadow hideScrollBar>
+          <div
+            ref={parent}
+            className='overflow-y-auto overflow-x-hidden py-4 px-6'
+          >
+            {/* USER RELEASES */}
             <>
               <div className='inline-flex items-center justify-between w-full'>
                 <div className='inline-flex items-center gap-x-2'>
                   <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>
                     User Releases
                   </h3>
-                  {/* TODO: if user-curated releases, show link (small), onClick switch PageContent albums + title */}
+                  <InfoIcon
+                    tooltipEnabled
+                    tooltip={{
+                      content:
+                        'These are recent releases from your followed artists',
+                    }}
+                  />
+                  <IconButton
+                    variant='ghost'
+                    icon={IoRefresh}
+                    onClick={getAllUserReleases}
+                    classNames={{
+                      icon: loadingUserReleases ? 'animate-spin' : '',
+                    }}
+                    disabled={loadingUserReleases}
+                  />
+                </div>
+              </div>
+              {userReleases && userReleases.length > 0 && (
+                <AlbumsCollection
+                  albums={userReleases as Album[]}
+                  albumContentProps={{ showArtist: true }}
+                />
+              )}
+            </>
+
+            {/* FEATURED RELEASES */}
+            <>
+              <div className='inline-flex items-center justify-between w-full'>
+                <div className='inline-flex items-center gap-x-2'>
+                  <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>
+                    Featured Releases
+                  </h3>
+                  {/* TODO: if user-curated releases, show link (small), onClick switch page content albums + title */}
+                  <InfoIcon
+                    tooltipEnabled
+                    tooltip={{
+                      content: "These are Spotify's featured new releases",
+                    }}
+                  />
+                  <IconButton
+                    variant='ghost'
+                    icon={IoRefresh}
+                    onClick={getAllUserReleases}
+                    classNames={{
+                      icon: loadingFeaturedReleases ? 'animate-spin' : '',
+                    }}
+                    disabled={loadingFeaturedReleases}
+                  />
+                </div>
+                <FilterOptions
+                  filterOptions={ReleaseFilters}
+                  onFilterSelect={setSelectedReleaseFilter as () => void}
+                  selectedFilter={selectedReleaseFilter}
+                  tooltipsEnabled
+                  isNullable
+                  className='justify-self-end'
+                />
+              </div>
+              <AlbumsCollection
+                albums={
+                  selectedReleaseFilter
+                    ? (featuredReleases?.filter(
+                        (r) => r.album_type === selectedReleaseFilter,
+                      ) as SimplifiedAlbum[])
+                    : featuredReleases
+                }
+                albumContentProps={{ showArtist: true }}
+              />
+            </>
+
+            {/* UPCOMING RELEASES */}
+            {/* {upcomingReleases && (
+            <>
+              <div className='inline-flex items-center justify-between w-full'>
+                <div className='inline-flex items-center gap-x-2'>
+                  <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>
+                    User Releases
+                  </h3>
                   <InfoIcon
                     tooltipEnabled
                     tooltip={{
@@ -205,56 +272,17 @@ const Releases: React.FC = () => {
                     }}
                   />
                 </div>
-                {/* <FilterOptions
-                  filterOptions={ReleaseFilters}
-                  onFilterSelect={setSelectedReleaseFilter as () => void}
-                  selectedFilter={selectedReleaseFilter}
-                  tooltipsEnabled
-                  isNullable
-                  className='justify-self-end'
-                /> */}
+
               </div>
               <AlbumsCollection
-                albums={userReleases as Album[]}
+                albums={upcomingReleases as Album[]}
                 albumContentProps={{ showArtist: true }}
               />
             </>
-          )}
-
-          <div className='inline-flex items-center justify-between w-full'>
-            <div className='inline-flex items-center gap-x-2'>
-              <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>
-                Featured Releases
-              </h3>
-              {/* TODO: if user-curated releases, show link (small), onClick switch page content albums + title */}
-              <InfoIcon
-                tooltipEnabled
-                tooltip={{
-                  content: "These are Spotify's featured new releases",
-                }}
-              />
-            </div>
-            <FilterOptions
-              filterOptions={ReleaseFilters}
-              onFilterSelect={setSelectedReleaseFilter as () => void}
-              selectedFilter={selectedReleaseFilter}
-              tooltipsEnabled
-              isNullable
-              className='justify-self-end'
-            />
+          )} */}
           </div>
-          <AlbumsCollection
-            albums={
-              selectedReleaseFilter
-                ? (featuredReleases?.filter(
-                    (r) => r.album_type === selectedReleaseFilter,
-                  ) as SimplifiedAlbum[])
-                : featuredReleases
-            }
-            albumContentProps={{ showArtist: true }}
-          />
-        </div>
-      </ScrollShadow>
+        </ScrollShadow>
+      )}
     </Box>
   );
 };

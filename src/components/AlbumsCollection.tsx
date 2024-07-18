@@ -9,7 +9,7 @@ import AlbumCard from '@/components/AlbumCard';
 import { ScilentAlbum } from '@/constant/types';
 
 interface AlbumsCollectionProps {
-  albums?: Album[] | SimplifiedAlbum[] | ScilentAlbum[];
+  albums?: (Album | SimplifiedAlbum | ScilentAlbum)[];
   albumContentProps?: {
     showArtist?: boolean;
   };
