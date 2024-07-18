@@ -22,6 +22,31 @@ interface ReleaseGroup extends IReleaseGroup {
 //   'release-groups': ReleaseGroup[];
 // }
 
+const getUpcomingReleasesForMultipleArtists = async (
+  artistNames: string[],
+): Promise<Album[][] | undefined> => {
+  try {
+    const promises = artistNames.map((name) =>
+      fetch(`${NEXT_API}/artist/upcoming?artist=${name}`),
+    );
+
+    const responses = await Promise.all(promises);
+    const releasesPromises = responses.map((response) => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch upcoming releases');
+      }
+      return response.json();
+    });
+
+    const releases: ReleaseGroup[][] = await Promise.all(releasesPromises);
+    return releases.map((releaseGroups: ReleaseGroup[]) =>
+      transformScilentReleaseGroup(releaseGroups),
+    );
+  } catch (error) {
+    logger(error, 'Error fetching upcoming releases: getUpcomingReleases.ts');
+  }
+};
+
 const getUpcomingReleases = async (
   artistName?: string,
 ): Promise<Album[] | undefined> => {
@@ -82,8 +107,8 @@ const getUpcomingReleases = async (
 
 const transformScilentReleaseGroup = (
   releaseGroup: ReleaseGroup[],
-): Album[] | undefined => {
-  if (releaseGroup.length === 0) return; // Return an empty array if no releases found
+): Album[] => {
+  if (releaseGroup.length === 0) return []; // Return an empty array if no releases found
 
   console.log('TRANSFORM RELEASE GROUP :: ', releaseGroup);
   return releaseGroup.map(
@@ -107,4 +132,4 @@ const transformScilentReleaseGroup = (
   ) as Album[];
 };
 
-export { getUpcomingReleases };
+export { getUpcomingReleases, getUpcomingReleasesForMultipleArtists };

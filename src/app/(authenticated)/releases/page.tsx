@@ -20,7 +20,7 @@ import Header from '@/components/Header';
 import InfoIcon from '@/components/InfoIcon';
 import PageContent from '@/components/PageContent';
 
-import { getUpcomingReleases } from '@/actions/getUpcomingReleases';
+import { getUpcomingReleasesForMultipleArtists } from '@/actions/getUpcomingReleases';
 import { ReleaseFilters, ReleaseTypes } from '@/constant/types';
 
 const BATCH_SIZE = 20; // Declare batch size as a constant
@@ -40,9 +40,10 @@ interface ReleaseGroup extends IReleaseGroupMatch {
 const Releases: React.FC = () => {
   // const { apiEnabled } = useAPIStatus();
   const [parent, enableAnimations] = useAutoAnimate(/* optional config */);
-  const [userReleases, setUserReleases] = useState<SimplifiedAlbum[] | Album[]>(
+  const [userReleases, setUserReleases] = useState<(SimplifiedAlbum | Album)[]>(
     [],
   );
+
   const [featuredReleases, setFeaturedReleases] = useState<
     SimplifiedAlbum[] | Album[]
   >();
@@ -60,45 +61,64 @@ const Releases: React.FC = () => {
     isLoading,
   } = useFollowedArtists();
 
-  // Fetch releases for a batch of artists
   const getReleases = useCallback(async (artists: Artist[]) => {
     setTotalArtists(artists.length);
     setProcessedArtists(0); // Reset the processed count
 
-    const allReleases = [];
+    // Extract artist names for concurrent requests
+    const artistNames: string[] = artists.map((artist) => artist.name);
 
-    // Fetch releases for each batch of artists
-    for (let i = 0; i < artists.length; i += BATCH_SIZE) {
-      const batch = artists.slice(i, i + BATCH_SIZE);
-      const batchNames = batch.map((artist) => artist.name);
+    // Fetch releases for all artists concurrently
+    const releases = await getUpcomingReleasesForMultipleArtists(artistNames);
 
-      const releases = await Promise.all(
-        batchNames.map((name) => getUpcomingReleases(name)),
-      );
-      console.log('BATCH RELEASES: ', releases);
+    // Flatten and filter the releases
+    const nonEmptyReleases = releases?.flat().filter(Boolean) as Album[];
 
-      allReleases.push(...releases.flat());
-      setProcessedArtists((prev) => prev + batch.length); // Update processed artists
-    }
-
-    // Filter out empty or undefined releases once
-    const nonEmptyReleases = allReleases.filter(Boolean) as Album[];
-
-    // Transform releases to Spotify format
-    // const transformedReleases = transformToSpotifyFormat(nonEmptyReleases);
-
-    return nonEmptyReleases;
+    setUserReleases((prev) => [...prev, ...nonEmptyReleases]);
+    setProcessedArtists((prev) => prev + artists.length);
   }, []);
+
+  // Fetch releases for a batch of artists
+  // const getReleases = useCallback(async (artists: Artist[]) => {
+  //   setTotalArtists(artists.length);
+  //   setProcessedArtists(0); // Reset the processed count
+
+  //   // const allReleases = [];
+
+  //   // Fetch releases for each batch of artists
+  //   for (let i = 0; i < artists.length; i += BATCH_SIZE) {
+  //     const batch = artists.slice(i, Math.min(i + BATCH_SIZE, artists.length));
+  //     const batchNames = batch.map((artist) => artist.name);
+
+  //     const releases = await Promise.all(
+  //       batchNames.map((name) => getUpcomingReleases(name)),
+  //     );
+  //     console.log('BATCH RELEASES: ', releases);
+
+  //     const nonEmptyReleases = releases.flat().filter(Boolean) as Album[];
+
+  //     setUserReleases((prev) => [...prev, ...nonEmptyReleases]);
+  //     setProcessedArtists((prev) => prev + batch.length);
+
+  //     // allReleases.push(...releases.flat());
+  //     // setProcessedArtists((prev) => prev + batch.length); // Update processed artists
+  //   }
+
+  //   // Filter out empty or undefined releases once
+  //   // const nonEmptyReleases = allReleases.filter(Boolean) as Album[];
+
+  //   // Transform releases to Spotify format
+  //   // const transformedReleases = transformToSpotifyFormat(nonEmptyReleases);
+
+  //   // return nonEmptyReleases;
+  // }, []);
 
   // Fetch user releases when followed artists change
   useEffect(() => {
     if (followedArtists?.length) {
       const fetchReleases = async () => {
         try {
-          const releases = await getReleases(followedArtists);
-          console.log('RELEASES', releases);
-
-          setUserReleases(releases);
+          await getReleases(followedArtists);
         } catch (error) {
           console.error('Error fetching user releases:', error);
         }
@@ -142,7 +162,7 @@ const Releases: React.FC = () => {
           showValueLabel
           valueLabel={`${processedArtists} / ${totalArtists}`}
           label='Searching for new releases...'
-          isIndeterminate={false}
+          isIndeterminate={isLoading || !totalArtists}
         />
         {/* {userReleases.length > 0 &&
           userReleases.map(
@@ -195,7 +215,7 @@ const Releases: React.FC = () => {
                 /> */}
               </div>
               <PageContent
-                albums={userReleases}
+                albums={userReleases as Album[]}
                 albumContentProps={{ showArtist: true }}
               />
             </>
