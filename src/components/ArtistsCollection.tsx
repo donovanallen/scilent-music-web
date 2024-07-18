@@ -33,4 +33,4 @@ const ArtistsCollection: React.FC<ArtistsCollectionProps> = ({
   );
 };
 
-export default ArtistsCollection;
+export default React.memo(ArtistsCollection);
