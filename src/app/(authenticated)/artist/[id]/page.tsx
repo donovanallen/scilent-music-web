@@ -14,6 +14,8 @@ import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { getReleaseDate } from '@/lib/utils';
 import { useAPIStatus } from '@/hooks/useAPIStatus';
 
+import AlbumsCollection from '@/components/AlbumsCollection';
+import ArtistsCollection from '@/components/ArtistsCollection';
 import Box from '@/components/Box';
 import IconButton from '@/components/buttons/IconButton';
 import ExternalLinks from '@/components/ExternalLinks';
@@ -22,7 +24,6 @@ import Header from '@/components/Header';
 import HeaderImage from '@/components/HeaderImage';
 import HeaderItem from '@/components/HeaderItem';
 import InfoIcon from '@/components/InfoIcon';
-import PageContent from '@/components/PageContent';
 import NextPill from '@/components/Pill';
 
 import getArtistData from '@/actions/getArtistData';
@@ -301,7 +302,7 @@ const ArtistPage = ({ params }: { params: { id: string; name?: string } }) => {
                 isNullable
               />
             </div>
-            <PageContent
+            <AlbumsCollection
               albums={
                 selectedReleaseFilter
                   ? (releases?.filter(
@@ -313,14 +314,16 @@ const ArtistPage = ({ params }: { params: { id: string; name?: string } }) => {
           </div>
 
           {/* RELATED ARTISTS */}
-          <div className='mb-8'>
-            <div className='w-full flex items-center gap-x-2'>
-              <h3 className='text-dark/80 dark:text-light/80'>
-                Related Artists
-              </h3>
+          {relatedArtists && (
+            <div className='mb-8'>
+              <div className='w-full flex items-center gap-x-2'>
+                <h3 className='text-dark/80 dark:text-light/80'>
+                  Related Artists
+                </h3>
+              </div>
+              <ArtistsCollection artists={relatedArtists} />
             </div>
-            <PageContent artists={relatedArtists} />
-          </div>
+          )}
 
           {/* Credits */}
         </div>

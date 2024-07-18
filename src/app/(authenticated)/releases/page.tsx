@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react';
 // import { TbMusicStar } from 'react-icons/tb';
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 
+import AlbumsCollection from '@/components/AlbumsCollection';
 // import { useAPIStatus } from '@/hooks/useAPIStatus';
 // import { useFollowedArtists } from '@/hooks/useFollowedArtists';
 // import { useFollowedArtists } from '@/hooks/useFollowedArtists';
@@ -16,7 +17,6 @@ import FilterOptions from '@/components/FilterOptions';
 import Header from '@/components/Header';
 // import HeaderItem from '@/components/HeaderItem';
 import InfoIcon from '@/components/InfoIcon';
-import PageContent from '@/components/PageContent';
 
 // import { getUpcomingReleases } from '@/actions/getUpcomingReleases';
 // import { batchUpcomingReleases } from '@/actions/getUpcomingReleases';
@@ -165,7 +165,7 @@ const Releases: React.FC = () => {
               className='justify-self-end'
             />
           </div>
-          <PageContent
+          <AlbumsCollection
             albums={
               selectedReleaseFilter
                 ? (featuredReleases?.filter(
