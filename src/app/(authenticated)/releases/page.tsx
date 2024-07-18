@@ -148,7 +148,7 @@ const Releases: React.FC = () => {
               <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>
                 Featured Releases
               </h3>
-              {/* TODO: if user-curated releases, show link (small), onClick switch PageContent albums + title */}
+              {/* TODO: if user-curated releases, show link (small), onClick switch page content albums + title */}
               <InfoIcon
                 tooltipEnabled
                 tooltip={{
