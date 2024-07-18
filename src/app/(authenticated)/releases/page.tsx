@@ -1,12 +1,14 @@
 'use client';
 
 import { useAutoAnimate } from '@formkit/auto-animate/react';
-import { ScrollShadow } from '@nextui-org/react';
-import { Album, SimplifiedAlbum } from '@spotify/web-api-ts-sdk';
-import React, { useEffect, useState } from 'react';
+import { Progress, ScrollShadow } from '@nextui-org/react';
+import { Album, Artist, SimplifiedAlbum } from '@spotify/web-api-ts-sdk';
+import { IImage, IReleaseGroupMatch } from 'musicbrainz-api';
+import React, { useCallback, useEffect, useState } from 'react';
 
 // import { TbMusicStar } from 'react-icons/tb';
 import sdk from '@/lib/spotify-sdk/ClientInstance';
+import { useFollowedArtists } from '@/hooks/useFollowedArtists';
 
 // import { useAPIStatus } from '@/hooks/useAPIStatus';
 // import { useFollowedArtists } from '@/hooks/useFollowedArtists';
@@ -18,16 +20,29 @@ import Header from '@/components/Header';
 import InfoIcon from '@/components/InfoIcon';
 import PageContent from '@/components/PageContent';
 
-// import { getUpcomingReleases } from '@/actions/getUpcomingReleases';
-// import { batchUpcomingReleases } from '@/actions/getUpcomingReleases';
+import { getUpcomingReleases } from '@/actions/getUpcomingReleases';
 import { ReleaseFilters, ReleaseTypes } from '@/constant/types';
+
+const BATCH_SIZE = 20; // Declare batch size as a constant
+
+interface ReleaseGroup extends IReleaseGroupMatch {
+  // id: string;
+  mbid: string;
+  artwork?: IImage;
+  // title: string;
+  type: string;
+  date: string;
+  artists: Array<{ artist?: { name: string }; name: string }>; // Simplified type
+  // releases: Array<any>; // Add a more specific type if available
+  // subTypes: Array<string>;
+}
 
 const Releases: React.FC = () => {
   // const { apiEnabled } = useAPIStatus();
   const [parent, enableAnimations] = useAutoAnimate(/* optional config */);
-  const [userReleases, setUserReleases] = useState<
-    SimplifiedAlbum[] | Album[] | any[]
-  >([]);
+  const [userReleases, setUserReleases] = useState<SimplifiedAlbum[] | Album[]>(
+    [],
+  );
   const [featuredReleases, setFeaturedReleases] = useState<
     SimplifiedAlbum[] | Album[]
   >();
@@ -36,123 +51,70 @@ const Releases: React.FC = () => {
     ReleaseTypes | undefined
   >();
 
-  // const {
-  //   total: followedCount,
-  //   followedArtists,
-  //   isLoading,
-  // } = useFollowedArtists();
+  const [totalArtists, setTotalArtists] = useState(0);
+  const [processedArtists, setProcessedArtists] = useState(0);
 
-  // const processedArtistsCtRef = useRef<number>(0);
+  const {
+    total: followedCount,
+    followedArtists,
+    isLoading,
+  } = useFollowedArtists();
 
-  // const sortReleases = (releases: (Album | SimplifiedAlbum)[]) => {
-  //   // Descending order
-  //   return releases?.sort((a, b) => {
-  //     const dateA = new Date(a?.release_date).getTime();
-  //     const dateB = new Date(b?.release_date).getTime();
-  //     return dateB - dateA;
-  //   });
-  // };
+  // Fetch releases for a batch of artists
+  const getReleases = useCallback(async (artists: Artist[]) => {
+    setTotalArtists(artists.length);
+    setProcessedArtists(0); // Reset the processed count
 
-  // const removeDuplicates = (arr: { id: string }[]) => {
-  //   const uniqueArray = Array.from(new Set(arr.map((item) => item.id))).map(
-  //     (id) => arr.find((item) => item.id === id),
-  //   );
-  //   return uniqueArray;
-  // };
+    const allReleases = [];
 
-  // const getReleases = async (artistIds: string[], callback: any) => {
-  //   const batchSize = 20; // Process {batchSize} artists at a time
+    // Fetch releases for each batch of artists
+    for (let i = 0; i < artists.length; i += BATCH_SIZE) {
+      const batch = artists.slice(i, i + BATCH_SIZE);
+      const batchNames = batch.map((artist) => artist.name);
 
-  //   if (artistIds?.length > 0) {
-  //     for (let i = 0; i < artistIds.length; i += batchSize) {
-  //       const batch = artistIds.slice(i, i + batchSize);
-  //       const albumPromises = batch.map((artistId: string) =>
-  //         getArtistDiscography(artistId).then((res) => res[2]),
-  //       );
-  //       const albums = await Promise.all(albumPromises)
-  //         .then((res) => {
-  //           if (typeof res === 'object' && 'album_group' in res) {
-  //             return res.album_group;
-  //           } else {
-  //             return undefined;
-  //           }
-  //         })
-  //         .catch((error) => console.error(error.message || error));
+      const releases = await Promise.all(
+        batchNames.map((name) => getUpcomingReleases(name)),
+      );
+      console.log('BATCH RELEASES: ', releases);
 
-  //       // const releaseDates = albums?.flat().map((a) => a.release_date);
-  //       // .filter((album) => new Date(album.release_date) > new Date());
-  //       // console.log('------------------ releaseDates', releaseDates);
+      allReleases.push(...releases.flat());
+      setProcessedArtists((prev) => prev + batch.length); // Update processed artists
+    }
 
-  //       // const batchReleases = albums
-  //       //   ?.flat()
-  //       //   .map((album) => 'album_group' in album  album);
-  //       // .filter((album) => typeof album === typeof Album)
-  //       // .map((album) => parseRelease(album));
+    // Filter out empty or undefined releases once
+    const nonEmptyReleases = allReleases.filter(Boolean) as Album[];
 
-  //       const next = !!artistIds[batchSize + 1];
+    // Transform releases to Spotify format
+    // const transformedReleases = transformToSpotifyFormat(nonEmptyReleases);
 
-  //       if (next) {
-  //         callback(sortReleases(albums as Album[]), next); // Invoke the callback with the releases from the current batch
-  //       }
-  //     }
-  //   }
-  // };
+    return nonEmptyReleases;
+  }, []);
 
-  // useEffect(() => {
-  //   if (followedArtists) {
-  //     console.log(
-  //       'GETTING USER RELEASES FOR: ',
-  //       followedCount,
-  //       followedArtists.length,
-  //     );
-  //     const artistIds = followedArtists.map((artist) => artist.id);
-  //     (async () => {
-  //       getReleases(artistIds, (newReleases: (Album | SimplifiedAlbum)[]) => {
-  //         setUserReleases((prevReleases) => {
-  //           const combinedReleases = [...newReleases, ...prevReleases];
-  //           console.log(
-  //             'USER RELEASES SET TO: ',
-  //             removeDuplicates(combinedReleases),
-  //           );
+  // Fetch user releases when followed artists change
+  useEffect(() => {
+    if (followedArtists?.length) {
+      const fetchReleases = async () => {
+        try {
+          const releases = await getReleases(followedArtists);
+          console.log('RELEASES', releases);
 
-  //           return removeDuplicates(combinedReleases);
-  //         });
-  //       });
-  //       // const batchSize = 20;
-  //       // const artistBatches = [];
-  //       // // let processedArtistsCount = 0;
-  //       // for (let i = 0; i < followedArtists.length; i += batchSize) {
-  //       //   const batch = followedArtists.slice(i, i + batchSize);
-  //       //   artistBatches.push(batch);
-  //       // }
-  //       // const results = await Promise.all(
-  //       //   artistBatches.map(async (batch) => {
-  //       //     const batchResults = await Promise.all(
-  //       //       batch.map(async (artist) => {
-  //       //         processedArtistsCtRef.current++;
-  //       //         return await getUpcomingReleases(artist.name);
-  //       //       }),
-  //       //     );
-  //       //     return batchResults;
-  //       //   }),
-  //       // );
-  //       // const updatedUserReleases = results.flat();
-  //       // setUserReleases(updatedUserReleases);
-  //       // const result = Promise.all(
-  //       //   followedArtists.map(
-  //       //     async (artist) => await getUpcomingReleases(artist.name)
-  //       //   ),
-  //       // );
-  //       // console.log('user releases', result);
-  //       // setFeaturedReleases(() => result.albums.items);
-  //     })();
-  //   }
-  // }, [followedArtists, followedCount]);
+          setUserReleases(releases);
+        } catch (error) {
+          console.error('Error fetching user releases:', error);
+        }
+      };
+      fetchReleases();
+    }
+  }, [followedArtists, getReleases]);
 
   useEffect(() => {
     (async () => {
-      const result = await sdk.browse.getNewReleases();
-      setFeaturedReleases(() => result.albums.items);
+      try {
+        const result = await sdk.browse.getNewReleases();
+        setFeaturedReleases(() => result.albums.items);
+      } catch (error) {
+        console.error('Error fetching featured releases:', error);
+      }
     })();
   }, []);
 
@@ -171,20 +133,18 @@ const Releases: React.FC = () => {
             }}
           />
         </div>
-        {/* {apiEnabled && (
-          <Progress
-            isIndeterminate={isLoading}
-            label='Searching for new releases...'
-            size='md'
-            radius='md'
-            color='default'
-            showValueLabel
-            minValue={0}
-            maxValue={followedCount}
-            value={processedArtistsCtRef.current}
-          />
-        )}
-        {userReleases.length > 0 &&
+        <Progress
+          value={processedArtists}
+          maxValue={totalArtists}
+          size='md'
+          radius='md'
+          color='primary'
+          showValueLabel
+          valueLabel={`${processedArtists} / ${totalArtists}`}
+          label='Searching for new releases...'
+          isIndeterminate={false}
+        />
+        {/* {userReleases.length > 0 &&
           userReleases.map(
             (r) =>
               r && (
