@@ -5,6 +5,7 @@ import React from 'react';
 import { formatArtists } from '@/lib/utils';
 
 import AlbumCard from '@/components/AlbumCard';
+import GridLayout from '@/components/layouts/GridLayout';
 
 import { ScilentAlbum } from '@/constant/types';
 
@@ -24,7 +25,7 @@ const AlbumsCollection: React.FC<AlbumsCollectionProps> = ({
   const router = useRouter();
 
   return albums?.length !== 0 ? (
-    <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-8 gap-4 my-4 overflow-y-scroll no-scrollbar'>
+    <GridLayout>
       {albums &&
         albums.map((album: Album | ScilentAlbum | SimplifiedAlbum | any) => (
           <AlbumCard
@@ -43,7 +44,7 @@ const AlbumsCollection: React.FC<AlbumsCollectionProps> = ({
             }
           />
         ))}
-    </div>
+    </GridLayout>
   ) : (
     <div className='mt-4 text-neutral-400'>{emptyText}</div>
   );

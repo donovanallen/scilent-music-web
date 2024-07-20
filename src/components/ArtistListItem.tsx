@@ -40,14 +40,16 @@ const ArtistListItem: React.FC<ArtistListItemProps> = ({
       <div
         key={id}
         className={cn(
-          'flex items-center p-2 hover:bg-gray-100 cursor-pointer',
+          'flex items-center p-2 hover:opacity-80 cursor-pointer',
           className,
         )}
         onClick={onClick}
         onLoad={() => setIsItemLoaded(true)}
       >
-        <Avatar src={image} alt={name} className='w-12 h-12 mr-4' />
-        <span>{name}</span>
+        <Avatar src={image} alt={name} size='lg' className='mr-6' />
+        <h3 className='text-dark dark:text-light font-normal line-clamp-1'>
+          {name}
+        </h3>
       </div>
     </Skeleton>
   );

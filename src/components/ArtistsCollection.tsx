@@ -24,8 +24,8 @@ const ArtistsCollection: React.FC<ArtistsCollectionProps> = ({
     router.push(`/artist/${artistId}`);
   };
 
-  if (!artists.length) {
-    return <div className='mt-4 text-neutral-400'>{emptyText}</div>;
+  if (artists.length === 0) {
+    return <div className='p-6 text-neutral-400'>{emptyText}</div>;
   }
 
   return (

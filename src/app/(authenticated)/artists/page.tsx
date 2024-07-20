@@ -9,6 +9,7 @@ import ArtistsCollection from '@/components/ArtistsCollection';
 import Box from '@/components/Box';
 import Header from '@/components/Header';
 import InfoIcon from '@/components/InfoIcon';
+import LoadingIndicator from '@/components/LoadingIndicator';
 
 const Artists = () => {
   const {
@@ -83,13 +84,19 @@ const Artists = () => {
         {/* add top artist(s)? top 3  */}
       </Header>
 
-      <ArtistsCollection
-        artists={
-          followedArtists.sort((a, b) =>
-            a.name.localeCompare(b.name),
-          ) as Artist[]
-        }
-      />
+      {isLoading ? (
+        <div className='flex flex-col items-center justify-center h-full w-full gap-y-12'>
+          <LoadingIndicator />
+        </div>
+      ) : (
+        <ArtistsCollection
+          artists={
+            followedArtists.sort((a, b) =>
+              a.name.localeCompare(b.name),
+            ) as Artist[]
+          }
+        />
+      )}
     </Box>
   );
 };
