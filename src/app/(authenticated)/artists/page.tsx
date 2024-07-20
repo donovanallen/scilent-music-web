@@ -1,6 +1,5 @@
 'use client';
 
-import { ScrollShadow } from '@nextui-org/react';
 import { Artist } from '@spotify/web-api-ts-sdk';
 import React from 'react';
 
@@ -84,17 +83,13 @@ const Artists = () => {
         {/* add top artist(s)? top 3  */}
       </Header>
 
-      <ScrollShadow hideScrollBar>
-        <div className='overflow-y-auto overflow-x-hidden py-4 px-6'>
-          <ArtistsCollection
-            artists={
-              followedArtists.sort((a, b) =>
-                a.name.localeCompare(b.name),
-              ) as Artist[]
-            }
-          />
-        </div>
-      </ScrollShadow>
+      <ArtistsCollection
+        artists={
+          followedArtists.sort((a, b) =>
+            a.name.localeCompare(b.name),
+          ) as Artist[]
+        }
+      />
     </Box>
   );
 };
