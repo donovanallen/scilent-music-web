@@ -17,6 +17,7 @@ import FilterOptions from '@/components/FilterOptions';
 import Header from '@/components/Header';
 // import HeaderItem from '@/components/HeaderItem';
 import InfoIcon from '@/components/InfoIcon';
+import ViewToggle, { ViewType } from '@/components/ViewToggle';
 
 // import { getUpcomingReleases } from '@/actions/getUpcomingReleases';
 // import { batchUpcomingReleases } from '@/actions/getUpcomingReleases';
@@ -35,6 +36,8 @@ const Releases: React.FC = () => {
   const [selectedReleaseFilter, setSelectedReleaseFilter] = useState<
     ReleaseTypes | undefined
   >();
+
+  const [view, setView] = useState<ViewType>('grid');
 
   // const {
   //   total: followedCount,
@@ -156,14 +159,18 @@ const Releases: React.FC = () => {
                 }}
               />
             </div>
-            <FilterOptions
-              filterOptions={ReleaseFilters}
-              onFilterSelect={setSelectedReleaseFilter as () => void}
-              selectedFilter={selectedReleaseFilter}
-              tooltipsEnabled
-              isNullable
-              className='justify-self-end'
-            />
+            <div className='inline-flex items-center gap-x-4'>
+              <FilterOptions
+                filterOptions={ReleaseFilters}
+                onFilterSelect={setSelectedReleaseFilter as () => void}
+                selectedFilter={selectedReleaseFilter}
+                tooltipsEnabled
+                isNullable
+                className='justify-self-end'
+              />
+
+              <ViewToggle view={view} onViewChange={setView} />
+            </div>
           </div>
           <AlbumsCollection
             albums={
@@ -171,9 +178,10 @@ const Releases: React.FC = () => {
                 ? (featuredReleases?.filter(
                     (r) => r.album_type === selectedReleaseFilter,
                   ) as SimplifiedAlbum[])
-                : featuredReleases
+                : (featuredReleases as SimplifiedAlbum[])
             }
             albumContentProps={{ showArtist: true }}
+            layout={view}
           />
         </div>
       </ScrollShadow>

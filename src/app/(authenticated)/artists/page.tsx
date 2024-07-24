@@ -1,8 +1,7 @@
 'use client';
 
-import { ScrollShadow } from '@nextui-org/react';
 import { Artist } from '@spotify/web-api-ts-sdk';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { useFollowedArtists } from '@/hooks/useFollowedArtists';
 
@@ -10,6 +9,8 @@ import ArtistsCollection from '@/components/ArtistsCollection';
 import Box from '@/components/Box';
 import Header from '@/components/Header';
 import InfoIcon from '@/components/InfoIcon';
+import LoadingIndicator from '@/components/LoadingIndicator';
+import ViewToggle, { ViewType } from '@/components/ViewToggle';
 
 const Artists = () => {
   const {
@@ -17,6 +18,8 @@ const Artists = () => {
     followedArtists,
     isLoading,
   } = useFollowedArtists();
+
+  const [view, setView] = useState<ViewType>('grid');
 
   // const [followedArtists, setFollowedArtists] = useState<FollowedArtists>(
   //   {} as FollowedArtists,
@@ -66,7 +69,7 @@ const Artists = () => {
         {/* TITLE */}
         <div className='inline-flex items-center gap-x-2'>
           <h1 className='text-brand-dark dark:text-brand-light w-fit text-lg sm:text-xl md:text-2xl'>
-            Followed Artists
+            Artists
           </h1>
 
           <InfoIcon
@@ -77,24 +80,36 @@ const Artists = () => {
             }}
           />
         </div>
-        <h4 className='text-dark dark:text-light self-end font-thin subtitle'>
-          {followedCount} total
-          {/* {followedArtists.length} of {followedCount} total */}
-        </h4>
+
         {/* add top artist(s)? top 3  */}
       </Header>
 
-      <ScrollShadow hideScrollBar>
-        <div className='overflow-y-auto overflow-x-hidden py-4 px-6'>
+      <div className='flex flex-col h-full w-full p-6'>
+        <div className='inline-flex items-center justify-between w-full'>
+          <h4 className='w-fit'>Following</h4>
+          <div className='inline-flex items-center gap-x-4'>
+            <h4 className='text-dark dark:text-light font-thin subtitle'>
+              {followedCount} total
+              {/* {followedArtists.length} of {followedCount} total */}
+            </h4>
+            <ViewToggle view={view} onViewChange={setView} />
+          </div>
+        </div>
+        {isLoading ? (
+          <div className='flex flex-col items-center justify-center h-full w-full gap-y-12'>
+            <LoadingIndicator />
+          </div>
+        ) : (
           <ArtistsCollection
             artists={
               followedArtists.sort((a, b) =>
                 a.name.localeCompare(b.name),
               ) as Artist[]
             }
+            layout={view}
           />
-        </div>
-      </ScrollShadow>
+        )}
+      </div>
     </Box>
   );
 };

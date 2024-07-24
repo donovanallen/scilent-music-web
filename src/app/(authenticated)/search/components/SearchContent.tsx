@@ -1,6 +1,10 @@
 'use client';
 
-import { ItemTypes, SearchResults } from '@spotify/web-api-ts-sdk';
+import {
+  ItemTypes,
+  SearchResults,
+  SimplifiedAlbum,
+} from '@spotify/web-api-ts-sdk';
 import { useDebounce } from '@uidotdev/usehooks';
 import React, { useEffect, useMemo, useState } from 'react';
 
@@ -86,7 +90,10 @@ const SearchContent: React.FC<SearchContentProps> = ({
                     <h4 className='dark:text-light/80 text-dark/80'>
                       Albums ({results?.albums?.total})
                     </h4>
-                    <AlbumsCollection albums={results?.albums?.items} />
+                    <AlbumsCollection
+                      albums={results?.albums?.items as SimplifiedAlbum[]}
+                      albumContentProps={{ showArtist: true }}
+                    />
                   </>
                 )}
 
