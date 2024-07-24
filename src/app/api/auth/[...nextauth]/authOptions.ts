@@ -1,61 +1,121 @@
-import { Account, AuthOptions } from 'next-auth';
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import { AuthOptions } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 
-import { AuthUser } from '@/constant/types';
+import logger from '@/lib/logger';
+import prisma from '@/lib/prisma';
 
-import spotifyProfile, { refreshAccessToken } from './SpotifyProfile';
+import spotifyProfile from './SpotifyProfile';
+
+async function refreshSpotifyAccessToken(token: JWT): Promise<JWT> {
+  try {
+    const response = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization:
+          'Basic ' +
+          Buffer.from(
+            process.env.SPOTIFY_CLIENT_ID +
+              ':' +
+              process.env.SPOTIFY_CLIENT_SECRET,
+          ).toString('base64'),
+      },
+      body: `grant_type=refresh_token&refresh_token=${token.refreshToken}`,
+    });
+
+    const refreshedTokens = await response.json();
+
+    if (!response.ok) {
+      throw refreshedTokens;
+      // throw new Error('Failed to refresh token');
+    }
+
+    return {
+      ...token,
+      accessToken: refreshedTokens.access_token,
+      accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
+      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
+      // access_token: refreshedTokens.access_token,
+      // expires_at: Date.now() + refreshedTokens.expires_in * 1000, // Convert expires_in to milliseconds
+      // refresh_token: refreshedTokens.refresh_token ?? token.refreshToken,
+    };
+  } catch (error) {
+    logger({ error }, 'ERROR: Error refreshing token');
+    return {
+      ...token,
+      error: 'RefreshAccessTokenError',
+    };
+  }
+}
 
 const authOptions: AuthOptions = {
+  adapter: PrismaAdapter(prisma),
   providers: [spotifyProfile],
   session: {
-    maxAge: 60 * 60, // 1hr
+    strategy: 'jwt',
+    maxAge: 7 * 24 * 60 * 60, // 7 days
+    updateAge: 3600, // 1 hour
   },
   callbacks: {
-    async jwt({ token, account }: { token: JWT; account: Account | null }) {
-      // pass access token info from account signin to JWT
-      if (!account) {
+    async redirect({ baseUrl, url }) {
+      if (url.startsWith('/'))
+        return `${baseUrl}${url}`; // Allows relative callback URLs
+      else if (new URL(url).origin === baseUrl) return url; // Allows callback URLs on the same origin
+      return baseUrl;
+    },
+    async session({ session, token }) {
+      return {
+        ...session,
+        accessToken: token.accessToken,
+        user: {
+          ...session.user,
+          id: token.sub, // Use the subject from the token as the user id
+        },
+      };
+    },
+    async jwt({ token, user, account }) {
+      // Initial sign in
+      if (account && user) {
+        return {
+          ...token,
+          accessToken: account.access_token,
+          accessTokenExpires: (account.expires_at ?? 0) * 1000, // Use 0 as default if undefined // Convert to milliseconds for JS Date object compatibility
+          refreshToken: account.refresh_token,
+          user,
+        };
+      }
+      // If the access token has not expired yet, return the token as is
+      if (
+        typeof token.accessTokenExpires === 'number' &&
+        Date.now() < token.accessTokenExpires
+      ) {
         return token;
       }
 
-      const updatedToken = {
-        ...token,
-        access_token: account?.access_token,
-        token_type: account?.token_type,
-        expires_at: account?.expires_at ?? Date.now() / 1000,
-        expires_in: (account?.expires_at ?? 0) - Date.now() / 1000,
-        refresh_token: account?.refresh_token,
-        scope: account?.scope,
-        id: account?.providerAccountId,
-      };
-
-      if (Date.now() < updatedToken.expires_at) {
-        return refreshAccessToken(updatedToken);
-      }
-
-      return updatedToken;
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async session({ session, token }: { session: any; token: any }) {
-      // pass access token info from JWT to session to be used in Spotify SDK
-      const user: AuthUser = {
-        ...session.user,
-        access_token: token.access_token,
-        token_type: token.token_type,
-        expires_at: token.expires_at,
-        expires_in: token.expires_in,
-        refresh_token: token.refresh_token,
-        scope: token.scope,
-        id: token.id,
-      };
-      session.user = user;
-      session.error = token.error;
-      return session;
+      // If the token has expired, try to refresh it
+      return refreshSpotifyAccessToken(token);
     },
   },
   debug: process.env.NODE_ENV === 'development',
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: '/login',
+  },
+  events: {
+    signOut: async ({ token, session }) => {
+      logger({ user: session.user }, 'SIGNING OUT - User: ');
+      if (token.sub) {
+        await prisma.account.updateMany({
+          where: { userId: token.sub },
+          data: {
+            access_token: null,
+            refresh_token: null,
+            expires_at: null,
+          },
+        });
+      }
+    },
   },
 };
 

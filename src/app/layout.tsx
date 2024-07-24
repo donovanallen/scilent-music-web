@@ -1,20 +1,13 @@
-import { NextUIProvider } from '@nextui-org/react';
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Metadata } from 'next';
 import * as React from 'react';
 
 import '@/styles/globals.css';
 
-import { getAuthSession } from '@/lib/helper';
-import logger from '@/lib/logger';
+import AuthenticatedLayout from '@/components/AuthenticatedLayout';
 
-import Sidebar from '@/components/Sidebar';
-
+import { Providers } from '@/app/providers';
 import { siteConfig } from '@/constant/config';
-import AuthSessionProvider from '@/providers/AuthSessionProvider';
-import ModalProvider from '@/providers/ModalProvider';
-import ToastProvider from '@/providers/ToastProvider';
+import TrackPlayerProvider from '@/providers/TrackPlayerProvider';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -31,28 +24,19 @@ export const metadata: Metadata = {
   manifest: `/favicon/site.webmanifest`,
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getAuthSession();
-  logger({ session }, 'layout.tsx line 38');
-
   return (
-    <html>
+    <html suppressHydrationWarning>
       <body>
-        <NextUIProvider className='h-full'>
-          <AuthSessionProvider session={session}>
-            <ToastProvider />
-            <ModalProvider />
-            <SpeedInsights />
-            <Analytics />
-            {/* <main className='h-full'> */}
-            {session ? <Sidebar>{children}</Sidebar> : children}
-            {/* </main> */}
-          </AuthSessionProvider>
-        </NextUIProvider>
+        <Providers>
+          <TrackPlayerProvider>
+            <AuthenticatedLayout>{children}</AuthenticatedLayout>
+          </TrackPlayerProvider>
+        </Providers>
       </body>
     </html>
   );

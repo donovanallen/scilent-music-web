@@ -1,6 +1,12 @@
-// import NextImage from '@/components/NextImage';
-import { Card, CardBody, CardFooter, Image, Skeleton } from '@nextui-org/react';
+import {
+  Card,
+  CardFooter,
+  CardHeader,
+  Image,
+  Skeleton,
+} from '@nextui-org/react';
 import React, { useState } from 'react';
+import { IconType } from 'react-icons';
 import { BiAlbum } from 'react-icons/bi';
 
 import { cn } from '@/lib/utils';
@@ -8,63 +14,77 @@ import { cn } from '@/lib/utils';
 interface ArtistCardProps {
   id?: string;
   name?: string;
+  title?: string;
+
   image?: string;
   type?: string;
+  icon?: IconType;
+
   isDisabled?: boolean;
   className?: string;
   onClick?: () => void;
+
+  children?: React.ReactNode;
 }
 
 const ArtistCard: React.FC<ArtistCardProps> = ({
   id,
   name,
+  title,
   image,
-  type,
+  icon: Icon,
+
   isDisabled = false,
   className,
   onClick,
+
+  // type,
+  // children,
 }) => {
-  const imagePath = image;
   const [isCardLoaded, setIsCardLoaded] = useState(false);
 
   return (
-    <Skeleton className='rounded-md bg-neutral-500' isLoaded={isCardLoaded}>
+    <Skeleton className='rounded-lg bg-neutral-500' isLoaded={isCardLoaded}>
       <Card
+        classNames={{
+          base: cn(
+            'max-h-[220px] w-full overflow-hidden transition relative',
+            'hover:shadow-lg hover:border hover:border-brand-dark dark:hover:border-brand-primary',
+            isDisabled ? 'opacity-30' : 'cursor-pointer',
+            className,
+          ),
+          header: 'absolute z-10 top-1 flex-col items-start w-10/12',
+          body: '',
+          footer: cn(
+            'absolute z-10 bottom-0 bg-black/40 border-t-1 border-default-600 dark:border-default-100 transition',
+          ),
+        }}
         key={id}
-        shadow='sm'
-        radius='md'
-        fullWidth
+        radius='lg'
+        isFooterBlurred
+        isHoverable // update to if children
         isDisabled={isDisabled}
-        isHoverable
-        isPressable
-        onPress={onClick}
-        className={cn('bg-neutral-900', className)}
+        isPressable={!!onClick}
         onLoad={() => setIsCardLoaded(true)}
+        onPress={onClick}
       >
-        <CardBody className='p-0 relative aspect-square w-full'>
-          {imagePath ? (
-            <Image
-              shadow='md'
-              radius='md'
-              width='100%'
-              alt={name}
-              className='w-full object-cover aspect-square'
-              src={imagePath}
-            />
-          ) : (
+        <CardHeader onClick={onClick}>
+          {Icon && <Icon size={36} />}
+          <h4 className='subtitle text-xs lg:text-sm line-clamp-1 text-dark/50 dark:text-light/50'>
+            {title}
+          </h4>
+        </CardHeader>
+        <Image
+          removeWrapper
+          alt='Card Image'
+          className='z-10 w-full h-full object-cover object-center overflow-hidden aspect-square opacity-50 bg-opacity-50 semi-opaque-bg'
+          src={image || ''}
+          fallbackSrc={
             <BiAlbum size={64} className='m-auto h-full text-dark' />
-          )}
-          {/* {type && (
-          <NextPill
-            text={type}
-            variant='solid'
-            size='sm'
-            className='absolute bottom-1.5 right-1.5'
-          />
-        )} */}
-        </CardBody>
-        <CardFooter className='flex-col w-full overflow-clip text-left items-start'>
-          <h4 className='line-clamp-1'>{name}</h4>
+          }
+        />
+        <CardFooter>
+          <h4 className='text-brand-light line-clamp-1 text-left'>{name}</h4>
         </CardFooter>
       </Card>
     </Skeleton>

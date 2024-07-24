@@ -5,11 +5,31 @@
 :root,
 body {
   height: 100vh;
-  background-color: black;
-  color-scheme: dark;
+  color: #000;
+  background-color: #fff;
+  /* background-color: black;
+  color-scheme: dark; */
 }
 
+/* body.dark,
+[data-theme='dark'] body,
+body[data-theme='dark'] {
+  background-color: #000;
+  color: #fff;
+} */
+
 @layer base {
+  /* body {
+    @apply bg-background text-foreground;
+  } */
+  /* body.dark {
+  }
+  body.light {
+  } */
+  body {
+    @apply text-dark dark:text-light;
+  }
+
   /* inter var - latin */
   @font-face {
     font-family: 'Inter';

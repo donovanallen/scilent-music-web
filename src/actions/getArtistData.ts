@@ -1,5 +1,6 @@
 import { compareDesc } from 'date-fns';
 const BASE_URL = 'http://localhost:5001/mb'; // ! TODO: add env's
+const NEXT_API = '/api/mb';
 
 const getArtistData = async (
   artistName?: string,
@@ -7,7 +8,7 @@ const getArtistData = async (
 ): Promise<any> => {
   try {
     const response = await fetch(
-      `${BASE_URL}/artist?artist=${artistName}${id ? '&sourceId=' + id : ''}`,
+      `${NEXT_API}/artist?artist=${artistName}${id ? '&sourceId=' + id : ''}`,
     );
 
     if (!response.ok) {

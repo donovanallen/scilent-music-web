@@ -26,21 +26,21 @@ export default {
           light: '#fef4ec',
           dark: '#756456',
         },
-        cta: {
-          primary: '#7edbf0',
-          light: '#e2f6fb',
-          dark: '#406870',
-        },
-        danger: {
-          primary: '#ff5f59',
-          light: '#ffd9d3',
-          dark: '#79332e',
-        },
-        success: {
-          primary: '#76ea5e',
-          light: '#e1fbd8',
-          dark: '#3d6e32',
-        },
+        // cta: {
+        //   primary: '#7edbf0',
+        //   light: '#e2f6fb',
+        //   dark: '#406870',
+        // },
+        // danger: {
+        //   primary: '#ff5f59',
+        //   light: '#ffd9d3',
+        //   dark: '#79332e',
+        // },
+        // success: {
+        //   primary: '#76ea5e',
+        //   light: '#e1fbd8',
+        //   dark: '#3d6e32',
+        // },
         spotify: {
           primary: '#1db954',
         },
@@ -75,20 +75,27 @@ export default {
   darkMode: 'class',
   plugins: [
     nextui({
+      defaultTheme: 'dark', // default theme from the themes object
+      // defaultExtendTheme: 'dark', // default theme to extend on custom themes
       themes: {
         light: {
           colors: {
-            background: '#121212',
-            foreground: '#d6d6d6',
+            // LAYOUT COLORS
+            background: '#d6d6d6',
+            foreground: '#121212',
+            divider: '#121212',
+            focus: '#756456',
+
+            // BASE COLORS
             primary: {
-              DEFAULT: '#121212',
-              foreground: '#d6d6d6',
+              DEFAULT: '#f9d3b4',
+              foreground: '#121212',
             },
+            danger: '#ff5f59',
+            success: '#76ea5e',
             // Add custom colors
             // brand: '#f9d3b4',
             // cta: '#7edbf0',
-            // danger: '#ff5f59',
-            // success: '#76ea5e',
             // spotify: '#1db954',
           },
           // Add custom fonts
@@ -99,17 +106,25 @@ export default {
         },
         dark: {
           colors: {
+            // LAYOUT COLORS
             background: '#121212',
             foreground: '#d6d6d6',
+            divider: '#d6d6d6',
+            focus: '#fef4ec',
+            // BASE COLORS
             primary: {
-              DEFAULT: '#d6d6d6',
+              DEFAULT: '#f9d3b4',
               foreground: '#d6d6d6',
             },
+            // secondary: {
+            //   DEFAULT: '',
+            //   foreground: ''
+            // },
+            danger: '#ff5f59',
+            success: '#76ea5e',
             // Add custom colors
             // brand: '#f9d3b4',
             // cta: '#7edbf0',
-            // danger: '#ff5f59',
-            // success: '#76ea5e',
             // spotify: '#1db954',
           },
           // Add custom fonts

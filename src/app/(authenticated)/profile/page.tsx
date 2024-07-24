@@ -27,16 +27,16 @@ const Profile: React.FC = () => {
   }, []);
 
   return (
-    <Box className='bg-dark rounded-md h-full flex flex-col overflow-y-auto overflow-x-hidden'>
+    <Box className='h-full flex flex-col overflow-y-auto overflow-x-hidden'>
       <Header>
         <div className='flex w-full items-center justify-between'>
-          <h4 className='text-neutral-500'>Profile</h4>
+          <h4 className='text-dark/50 dark:text-light/50'>Profile</h4>
           {profile && (
             <Tooltip
               content='Anywhere you see the Spotify icon, click to go directly to the app for any profile, artist, album, track, or playlist.'
-              delay={1200}
+              delay={1000}
               classNames={{
-                content: 'text-dark bg-light p-4',
+                content: 'text-dark bg-light dark:bg-dark dark:text-light p-4',
                 base: 'max-w-xs',
               }}
             >

@@ -50,12 +50,13 @@ const NextModal: React.FC<NextModalProps> = ({
         className={cn(className)}
         classNames={{
           wrapper: '',
-          base: 'bg-dark/80',
+          base: 'text-dark dark:text-light bg-light/90 dark:bg-dark/90 ring-2 ring-brand-light/10 max-w-5/6 m-12',
           backdrop: '',
           header: 'my-2',
           body: '',
-          footer: '',
-          closeButton: 'hover:bg-transparent hover:text-brand-dark',
+          footer: 'my-2 self-center',
+          closeButton:
+            'hover:bg-transparent hover:text-brand-dark active:bg-brand-dark/10 dark:active:bg-brand-light/10 dark:active:text-brand-primary',
         }}
         size={size}
         radius='lg'
@@ -72,12 +73,11 @@ const NextModal: React.FC<NextModalProps> = ({
                 </h1>
               </ModalHeader>
               <ModalBody>
-                <p className='font-thin text-sm md:text-base text-center '>
+                <p className='font-thin text-sm md:text-base text-center uppercase w-3/4 self-center'>
                   {description}
                 </p>
-                {children}
               </ModalBody>
-              <ModalFooter></ModalFooter>
+              <ModalFooter>{children}</ModalFooter>
             </>
           )}
         </ModalContent>

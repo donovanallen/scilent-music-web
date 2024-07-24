@@ -1,26 +1,25 @@
 import { ScrollShadow } from '@nextui-org/react';
 import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth';
 
-import { getAuthSession } from '@/lib/helper';
 import { firstName } from '@/lib/utils';
 
 import Box from '@/components/Box';
 import Header from '@/components/Header';
 import TopItems from '@/components/TopItems';
 
+import authOptions from '@/app/api/auth/[...nextauth]/authOptions';
+
 export default async function HomePage() {
-  // const { data: session, status } = useSession();
-  // logger({ data: session, status }, 'page.tsx line 16');
-  // TODO Add to other pages (ensure page is async server component)
-  const session = await getAuthSession();
+  const session = await getServerSession(authOptions);
   if (!session) {
     redirect('/login');
   }
 
   return (
-    <Box className='flex flex-col h-full bg-dark overflow-y-auto overflow-x-hidden'>
+    <Box className='flex flex-col h-full overflow-y-auto overflow-x-hidden'>
       <Header
-        title={`Welcome ${session?.user ? firstName(session.user.name || '') : ''}`}
+        title={`Welcome ${session?.user ? ', ' + firstName(session.user.name || '') : ''}`}
       ></Header>
 
       <ScrollShadow hideScrollBar>
