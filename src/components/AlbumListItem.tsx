@@ -4,7 +4,7 @@ import { IconType } from 'react-icons';
 
 import { cn } from '@/lib/utils';
 
-interface ArtistListItemProps {
+interface AlbumListItemProps {
   id?: string;
   name?: string;
   title?: string;
@@ -17,10 +17,12 @@ interface ArtistListItemProps {
   className?: string;
   onClick?: () => void;
 
+  artistName?: string;
+
   // children?: React.ReactNode;
 }
 
-const ArtistListItem: React.FC<ArtistListItemProps> = ({
+const AlbumListItem: React.FC<AlbumListItemProps> = ({
   id,
   name,
   image,
@@ -30,6 +32,7 @@ const ArtistListItem: React.FC<ArtistListItemProps> = ({
   className,
   onClick,
 
+  artistName,
   // type,
   // children,
 }) => {
@@ -46,13 +49,18 @@ const ArtistListItem: React.FC<ArtistListItemProps> = ({
         onClick={onClick}
         onLoad={() => setIsItemLoaded(true)}
       >
-        <Avatar src={image} alt={name} size='lg' radius='md' className='mr-6' />
-        <h3 className='text-dark dark:text-light font-normal line-clamp-1'>
-          {name}
-        </h3>
+        <Avatar radius='md' src={image} alt={name} size='lg' className='mr-6' />
+        <div className='flex flex-col items-start'>
+          <h3 className='text-dark dark:text-light font-normal line-clamp-1'>
+            {name}
+          </h3>
+          <h4 className='text-dark/70 dark:text-light/70 font-light line-clamp-1'>
+            {artistName}
+          </h4>
+        </div>
       </div>
     </Skeleton>
   );
 };
 
-export default ArtistListItem;
+export default AlbumListItem;

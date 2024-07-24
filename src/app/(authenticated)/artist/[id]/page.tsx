@@ -308,8 +308,9 @@ const ArtistPage = ({ params }: { params: { id: string; name?: string } }) => {
                   ? (releases?.filter(
                       (r) => r.album_type === selectedReleaseFilter,
                     ) as SimplifiedAlbum[])
-                  : releases
+                  : (releases as SimplifiedAlbum[])
               }
+              albumContentProps={{ showArtist: false }}
             />
           </div>
 

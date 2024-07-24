@@ -29,7 +29,7 @@ const ArtistsCollection: React.FC<ArtistsCollectionProps> = ({
   }
 
   return (
-    <div className='flex flex-col p-6 gap-y-4 overflow-hidden'>
+    <div className='flex flex-col gap-y-4 overflow-hidden'>
       <div className='w-full flex items-center justify-end'>
         <ViewToggle view={view} onViewChange={setView} className='' />
       </div>

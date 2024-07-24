@@ -171,7 +171,7 @@ const Releases: React.FC = () => {
                 ? (featuredReleases?.filter(
                     (r) => r.album_type === selectedReleaseFilter,
                   ) as SimplifiedAlbum[])
-                : featuredReleases
+                : (featuredReleases as SimplifiedAlbum[])
             }
             albumContentProps={{ showArtist: true }}
           />
