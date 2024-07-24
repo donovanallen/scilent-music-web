@@ -82,6 +82,8 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
           fallbackSrc={
             <BiAlbum size={64} className='m-auto h-full text-dark' />
           }
+          isZoomed
+          isBlurred
         />
         <CardFooter>
           <h4 className='text-brand-light line-clamp-1 text-left'>{name}</h4>

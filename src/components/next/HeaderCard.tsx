@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardFooter } from '@nextui-org/card';
+import { Card, CardFooter, CardHeader } from '@nextui-org/card';
 import { Image, Skeleton } from '@nextui-org/react';
 import React, { useState } from 'react';
 import { IconType } from 'react-icons';
@@ -28,67 +28,55 @@ const HeaderCard: React.FC<HeaderCardProps> = ({
   disabled = false,
   children,
 }) => {
-  // Prepare background image style if image prop is provided
-  const backgroundImageStyle = image
-    ? { backgroundImage: `url(${image})` }
-    : {};
-
   const [isCardLoaded, setIsCardLoaded] = useState(false);
+  const [showFooter, setShowFooter] = useState(false);
 
   return (
-    <Skeleton className='rounded-md bg-neutral-500' isLoaded={isCardLoaded}>
+    <Skeleton className='rounded-lg bg-neutral-500' isLoaded={isCardLoaded}>
       <Card
-        isFooterBlurred
+        classNames={{
+          base: cn(
+            'max-h-[180px] w-full transition',
+            'z-30 bg-clip-text',
+            'hover:shadow-lg hover:border hover:border-brand-dark dark:hover:border-brand-primary',
+            disabled ? 'opacity-30' : '',
+            className,
+          ),
+          header:
+            'absolute z-10 top-0 flex-col items-start w-full h-full semi-opaque-bg',
+          body: 'border border-green-400',
+          footer: cn(
+            'absolute z-10 bottom-0 bg-black/40 border-t-1 border-default-600 dark:border-default-100 transition',
+          ),
+        }}
         radius='lg'
-        className={cn(
-          'border',
-          'relative group min-h-36 max-h-50 rounded-lg w-full overflow-hidden transition',
-        )}
+        isFooterBlurred
+        isBlurred
+        isHoverable
         isPressable={!!onClick}
-        onPress={onClick}
         onLoad={() => setIsCardLoaded(true)}
+        onPress={onClick}
       >
         <Image
+          removeWrapper
           alt='Card Image'
-          className='border object-cover object-center overflow-hidden aspect-square'
-          radius='lg'
-          // height={200}
+          className='z-10 w-full h-full object-cover object-center overflow-hidden aspect-square'
           src={image}
-          // width={200}
+          isZoomed
+          shadow='md'
         />
-        {/* <CardHeader></CardHeader> */}
-        {/* <CardBody>
-        <h2 className='text-lg lg:text-2xl xl:text-3xl line-clamp-1'>{name}</h2>
-      </CardBody> */}
-        <CardFooter className='border w-auto flex-col self-center justify-between before:bg-white/10 border-white/20 overflow-hidden py-2 absolute before:rounded-xl rounded-large bottom-1 shadow-small ml-1 z-10 text-brand-dark'>
-          <h4 className='subtitle text-xs lg:text-sm line-clamp-1'>{title}</h4>
-          {Icon && <Icon size={20} />}
-        </CardFooter>
+        <CardHeader>
+          {Icon && <Icon size={36} />}
+          <h4 className='subtitle text-xs lg:text-sm line-clamp-1 text-dark/50 dark:text-light/50'>
+            {title}
+          </h4>
+          <h4 className='text-brand-primary font-medium line-clamp-1'>
+            {name}
+          </h4>
+        </CardHeader>
+        {children && <CardFooter>{children}</CardFooter>}
       </Card>
     </Skeleton>
-    // <button
-    //   onClick={onClick}
-    //   className={cn(
-    //     'relative group  min-h-36 rounded-lg w-full overflow-hidden transition bg-black border-white border',
-    //     'bg-cover bg-center', // Background size and position
-    //     'semi-opaque-bg', // Custom class for semi-opaque background
-
-    //     disabled ? 'opacity-30 cursor-not-allowed' : '',
-    //     className,
-    //   )}
-    //   style={backgroundImageStyle}
-    // >
-    //   <div
-    //     className={cn('flex flex-col justify-end gap-y-2 px-4 w-full h-full')}
-    //   >
-    //     <h2 className='text-lg lg:text-2xl xl:text-3xl line-clamp-1'>{name}</h2>
-    //     <div className='flex flex-col gap-y-1 w-full items-center self-center text-brand-dark'>
-    //       <h4 className='subtitle text-xs lg:text-sm line-clamp-1'>{title}</h4>
-    //       {Icon && <Icon size={20} />}
-    //     </div>
-    //   </div>
-    //   {children}
-    // </button>
   );
 };
 

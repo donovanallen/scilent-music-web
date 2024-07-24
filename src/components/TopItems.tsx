@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { IconType } from 'react-icons';
-import { BiAlbum } from 'react-icons/bi';
 import { FaChevronUp, FaMinus, FaPlus } from 'react-icons/fa6';
 import { TbMusicHeart, TbUserHeart } from 'react-icons/tb';
 
@@ -198,7 +197,7 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
         </div>
 
         {/* TOP ITEMS FILTER OPTIONS */}
-        {filterOptions && (topArtists || topAlbums || topTracks) && (
+        {filterOptions && (topArtists || topTracks) && (
           <div className='inline-flex items-center gap-x-4'>
             <FilterOptions
               filterOptions={filterOptions}
@@ -258,30 +257,11 @@ const TopItems: React.FC<{ initExpanded?: boolean }> = ({
                   />
                 ))}
             </div>
-
-            {/* TOP ALBUMS */}
-            <div className='w-full flex-1'>
-              {topAlbums &&
-                (!expanded ? (
-                  <HeaderItem
-                    title='Top Album'
-                    name='Coming Soon'
-                    icon={BiAlbum}
-                    disabled
-                  />
-                ) : (
-                  <ExpandedTopItem
-                    title='Top Albums'
-                    items={topAlbums}
-                    icon={BiAlbum}
-                  />
-                ))}
-            </div>
           </div>
         )}
 
         {/* SHOW MORE BUTTON */}
-        {!isLoading && expanded && (topArtists || topAlbums || topTracks) && (
+        {!isLoading && expanded && (topArtists || topTracks) && (
           <FaChevronUp
             onClick={() => setExpanded(!expanded)}
             size={24}
