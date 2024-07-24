@@ -1,4 +1,3 @@
-// components/ListLayout.tsx
 import React from 'react';
 
 const ListLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (

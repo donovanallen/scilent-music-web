@@ -1,24 +1,26 @@
 import { ScrollShadow } from '@nextui-org/react';
 import { Artist } from '@spotify/web-api-ts-sdk';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React from 'react';
 
 import ArtistCard from '@/components/ArtistCard';
 import ArtistListItem from '@/components/ArtistListItem';
 import GridLayout from '@/components/layouts/GridLayout';
 import ListLayout from '@/components/layouts/ListLayout';
-import ViewToggle, { ViewType } from '@/components/ViewToggle';
+import { ViewType } from '@/components/ViewToggle';
 interface ArtistsCollectionProps {
   artists: Artist[];
   emptyText?: string;
+  layout?: ViewType;
 }
 
 const ArtistsCollection: React.FC<ArtistsCollectionProps> = ({
   artists,
   emptyText = 'No artists available',
+  layout = 'grid',
 }) => {
   const router = useRouter();
-  const [view, setView] = useState<ViewType>('grid');
+  // const [view, setView] = useState<ViewType>('grid');
 
   const handleArtistClick = (artistId: string) => {
     router.push(`/artist/${artistId}`);
@@ -30,12 +32,12 @@ const ArtistsCollection: React.FC<ArtistsCollectionProps> = ({
 
   return (
     <div className='flex flex-col gap-y-4 overflow-hidden'>
-      <div className='w-full flex items-center justify-end'>
+      {/* <div className='w-full flex items-center justify-end'>
         <ViewToggle view={view} onViewChange={setView} className='' />
-      </div>
+      </div> */}
 
       <ScrollShadow hideScrollBar className='overflow-y-auto overflow-x-hidden'>
-        {view === 'grid' ? (
+        {layout === 'grid' ? (
           <GridLayout>
             {artists.map((artist) => (
               <ArtistCard

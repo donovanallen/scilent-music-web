@@ -1,6 +1,6 @@
 import { Album, SimplifiedAlbum } from '@spotify/web-api-ts-sdk';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React from 'react';
 
 import { formatArtists } from '@/lib/utils';
 
@@ -8,7 +8,7 @@ import AlbumCard from '@/components/AlbumCard';
 import AlbumListItem from '@/components/AlbumListItem';
 import GridLayout from '@/components/layouts/GridLayout';
 import ListLayout from '@/components/layouts/ListLayout';
-import ViewToggle, { ViewType } from '@/components/ViewToggle';
+import { ViewType } from '@/components/ViewToggle';
 
 import { ScilentAlbum } from '@/constant/types';
 
@@ -18,15 +18,16 @@ interface AlbumsCollectionProps {
     showArtist?: boolean;
   };
   emptyText?: string;
+  layout?: ViewType;
 }
 
 const AlbumsCollection: React.FC<AlbumsCollectionProps> = ({
   albums,
   albumContentProps,
   emptyText = 'No albums available',
+  layout = 'grid',
 }) => {
   const router = useRouter();
-  const [view, setView] = useState<ViewType>('grid');
 
   if (albums?.length === 0) {
     return <div className='p-6 text-neutral-400'>{emptyText}</div>;
@@ -34,10 +35,7 @@ const AlbumsCollection: React.FC<AlbumsCollectionProps> = ({
 
   return (
     <div className='flex flex-col gap-y-4 overflow-hidden'>
-      <div className='w-full flex items-center justify-end'>
-        <ViewToggle view={view} onViewChange={setView} className='' />
-      </div>
-      {view === 'grid' ? (
+      {layout === 'grid' ? (
         <GridLayout>
           {albums?.map(
             (album: Album | ScilentAlbum | SimplifiedAlbum | any) => (

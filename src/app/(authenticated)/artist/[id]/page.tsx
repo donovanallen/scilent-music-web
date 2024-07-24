@@ -25,6 +25,7 @@ import HeaderImage from '@/components/HeaderImage';
 import HeaderItem from '@/components/HeaderItem';
 import InfoIcon from '@/components/InfoIcon';
 import NextPill from '@/components/Pill';
+import ViewToggle, { ViewType } from '@/components/ViewToggle';
 
 import getArtistData from '@/actions/getArtistData';
 import { getArtistDiscography } from '@/actions/getArtistDiscography';
@@ -53,6 +54,10 @@ const ArtistPage = ({ params }: { params: { id: string; name?: string } }) => {
   const [selectedReleaseFilter, setSelectedReleaseFilter] = useState<
     ReleaseTypes | undefined
   >();
+  const [view, setView] = useState<ViewType>('grid');
+  const [relatedArtistsView, setRelatedArtistsView] =
+    useState<ViewType>('grid');
+
   // const [credits, setCredits] = useState();
 
   const [userFollows, setUserFollows] = useState<boolean>();
@@ -294,13 +299,16 @@ const ArtistPage = ({ params }: { params: { id: string; name?: string } }) => {
           <div className='mb-8'>
             <div className='inline-flex items-center justify-between w-full'>
               <h3 className='text-dark/80 dark:text-light/80'>Releases</h3>
-              <FilterOptions
-                filterOptions={ReleaseFilters}
-                onFilterSelect={setSelectedReleaseFilter as () => void}
-                selectedFilter={selectedReleaseFilter}
-                tooltipsEnabled
-                isNullable
-              />
+              <div className='inline-flex items-center gap-x-4'>
+                <FilterOptions
+                  filterOptions={ReleaseFilters}
+                  onFilterSelect={setSelectedReleaseFilter as () => void}
+                  selectedFilter={selectedReleaseFilter}
+                  tooltipsEnabled
+                  isNullable
+                />
+                <ViewToggle view={view} onViewChange={setView} />
+              </div>
             </div>
             <AlbumsCollection
               albums={
@@ -311,18 +319,26 @@ const ArtistPage = ({ params }: { params: { id: string; name?: string } }) => {
                   : (releases as SimplifiedAlbum[])
               }
               albumContentProps={{ showArtist: false }}
+              layout={view}
             />
           </div>
 
           {/* RELATED ARTISTS */}
           {relatedArtists && (
             <div className='mb-8'>
-              <div className='w-full flex items-center gap-x-2'>
+              <div className='w-full flex items-center justify-between'>
                 <h3 className='text-dark/80 dark:text-light/80'>
                   Related Artists
                 </h3>
+                <ViewToggle
+                  view={relatedArtistsView}
+                  onViewChange={setRelatedArtistsView}
+                />
               </div>
-              <ArtistsCollection artists={relatedArtists} />
+              <ArtistsCollection
+                artists={relatedArtists}
+                layout={relatedArtistsView}
+              />
             </div>
           )}
 
