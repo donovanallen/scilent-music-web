@@ -1,11 +1,55 @@
-import { Album, SimplifiedAlbum } from '@spotify/web-api-ts-sdk';
+import { Album, SimplifiedArtist } from '@spotify/web-api-ts-sdk';
+import { IImage, IReleaseGroup } from 'musicbrainz-api';
 
 import logger from '@/lib/logger';
 
 const BASE_URL = 'http://localhost:5001/mb'; // ! TODO: add env's
 const NEXT_API = '/api/mb';
 
-const getUpcomingReleases = async (artistName?: string): Promise<any> => {
+interface ReleaseGroup extends IReleaseGroup {
+  // id: string;
+  mbid: string;
+  artwork?: IImage;
+  // title: string;
+  // type: string;
+  // date: string;
+  // artists: Array<{ artist?: { name: string }, name: string }>; // Simplified type
+  // releases: Array<any>; // Add a more specific type if available
+  // subTypes: Array<string>;
+}
+
+// interface MusicBrainzReleaseGroupResponse {
+//   'release-groups': ReleaseGroup[];
+// }
+
+const getUpcomingReleasesForMultipleArtists = async (
+  artistNames: string[],
+): Promise<Album[][] | undefined> => {
+  try {
+    const promises = artistNames.map((name) =>
+      fetch(`${NEXT_API}/artist/upcoming?artist=${name}`),
+    );
+
+    const responses = await Promise.all(promises);
+    const releasesPromises = responses.map((response) => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch upcoming releases');
+      }
+      return response.json();
+    });
+
+    const releases: ReleaseGroup[][] = await Promise.all(releasesPromises);
+    return releases.map((releaseGroups: ReleaseGroup[]) =>
+      transformScilentReleaseGroup(releaseGroups),
+    );
+  } catch (error) {
+    logger(error, 'Error fetching upcoming releases: getUpcomingReleases.ts');
+  }
+};
+
+const getUpcomingReleases = async (
+  artistName?: string,
+): Promise<Album[] | undefined> => {
   try {
     const response = await fetch(
       `${NEXT_API}/artist/upcoming?artist=${artistName}`,
@@ -15,8 +59,11 @@ const getUpcomingReleases = async (artistName?: string): Promise<any> => {
       throw new Error('Failed to fetch upcoming releases');
     }
 
-    const releases = await response.json();
+    const releases: ReleaseGroup[] = (await response.json()) as ReleaseGroup[];
 
+    console.log('RELEASES TO TRANSFORM: ', releases);
+
+    // return releases;
     return transformScilentReleaseGroup(releases);
   } catch (error) {
     logger(error, 'Error fetching upcoming releases: getUpcomingReleases.ts');
@@ -24,52 +71,65 @@ const getUpcomingReleases = async (artistName?: string): Promise<any> => {
 };
 
 // Function to fetch upcoming releases in batches
-const batchUpcomingReleases = async (artists: string[]) => {
-  const response = await fetch(`${BASE_URL}/artist/upcoming`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ artists }),
-  });
+// const batchUpcomingReleases = async (artists: string[]) => {
+//   const response = await fetch(`${BASE_URL}/artist/upcoming`, {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     body: JSON.stringify({ artists }),
+//   });
 
-  if (response && response.body) {
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let result: string | undefined;
-    const releaseData = [];
+//   if (response && response.body) {
+//     const reader = response.body.getReader();
+//     const decoder = new TextDecoder();
+//     let result: string | undefined;
+//     const releaseData = [];
 
-    // while (true) {
-    const { done, value } = await reader.read();
+//     // while (true) {
+//     const { done, value } = await reader.read();
 
-    result += decoder.decode(value, { stream: true });
+//     result += decoder.decode(value, { stream: true });
 
-    const lines = result?.split('\n');
-    result = lines?.length ? lines.pop() : '';
+//     const lines = result?.split('\n');
+//     result = lines?.length ? lines.pop() : '';
 
-    for (const line of lines || []) {
-      const data = JSON.parse(line);
-      releaseData.push(...data);
-    }
+//     for (const line of lines || []) {
+//       const data = JSON.parse(line);
+//       releaseData.push(...data);
+//     }
 
-    // console.log({ releaseData });
+//     // console.log({ releaseData });
 
-    if (done) return releaseData;
-  }
-};
+//     if (done) return releaseData;
+//   }
+// };
 
 const transformScilentReleaseGroup = (
-  releaseGroup: any[],
-): Album | SimplifiedAlbum | any => {
-  console.log('TRANSFORM RELEASE GROUP :: ', releaseGroup);
+  releaseGroup: ReleaseGroup[],
+): Album[] => {
+  if (releaseGroup.length === 0) return []; // Return an empty array if no releases found
 
-  return releaseGroup.map((release) => ({
-    sourceId: { id: release.sourceId, source: release.source || 'spotify' },
-    type: release.type.toLowerCase(),
-    subTypes: release.subTypes,
-    releaseDate: release.date,
-    ...release,
-  }));
+  console.log('TRANSFORM RELEASE GROUP :: ', releaseGroup);
+  return releaseGroup.map(
+    (release) =>
+      release && {
+        name: release.title,
+        type: release['primary-type']?.toLowerCase(),
+        album_type: release['secondary-types']
+          ? release['secondary-types'][0]?.toLowerCase()
+          : undefined,
+        release_date: release['first-release-date'],
+        images: release.artwork
+          ? [{ url: release.artwork.thumbnails.large }]
+          : [],
+        artists: release['artist-credit'].map((artist) => ({
+          id: artist.artist?.id,
+          name: artist.artist?.name || artist.name,
+          type: 'artist',
+        })) as SimplifiedArtist[],
+      },
+  ) as Album[];
 };
 
-export { batchUpcomingReleases, getUpcomingReleases };
+export { getUpcomingReleases, getUpcomingReleasesForMultipleArtists };
