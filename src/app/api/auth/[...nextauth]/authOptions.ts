@@ -103,19 +103,32 @@ const authOptions: AuthOptions = {
     signIn: '/login',
   },
   events: {
-    createUser: async ({ user }) => {
+    signIn: async ({ user, account, profile, isNewUser }) => {
+      logger({ user, account, profile, isNewUser }, 'Signing in user: ');
+
+      if (isNewUser) {
+        logger({ user, profile, isNewUser }, 'New user sign in: ');
+      }
+
       // Create a profile for the new user
-      const profile = await prisma.profile.create({
+      await prisma.user.update({
+        where: { id: user.id },
         data: {
-          userId: user.id,
-          // Add any other default fields you want for new profiles
+          profile: {
+            connectOrCreate: {
+              where: { userId: user.id },
+              create: {
+                id: user.id,
+              },
+            },
+          },
         },
       });
-      logger({ user, profile }, 'Profile created for user: ');
     },
     signOut: async ({ token, session }) => {
       logger({ user: session }, 'SIGNING OUT - Session: ');
       if (token.sub) {
+        // Clear all tokens for the user
         await prisma.account.updateMany({
           where: { userId: token.sub },
           data: {
@@ -125,17 +138,6 @@ const authOptions: AuthOptions = {
           },
         });
       }
-    },
-    updateUser: async ({ user }) => {
-      // Create a profile for the new user
-      logger({ user }, 'Updating User: ');
-      await prisma.profile.update({
-        where: { userId: user.id },
-        data: {
-          userId: user.id,
-          // Add any other default fields you want for new profiles
-        },
-      });
     },
   },
 };
