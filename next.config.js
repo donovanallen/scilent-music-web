@@ -29,6 +29,11 @@ const nextConfig = {
         hostname: 'coverartarchive.org',
         port: '',
       },
+      {
+        protocol: 'https',
+        hostname: 'i.pravatar.cc',
+        port: '',
+      },
     ],
   },
   webpack(config) {
