@@ -21,7 +21,6 @@ import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { getSourceIcon } from '@/lib/utils';
 
 import Box from '@/components/Box';
-import Button from '@/components/buttons/Button';
 import Header from '@/components/Header';
 import IconLink from '@/components/links/IconLink';
 import Skeleton from '@/components/Skeleton';
@@ -39,34 +38,40 @@ const Profile = ({ params }: { params: { id: string } }) => {
     ScilentUser & { profile: ScilentProfile }
   >();
   const [isFollowing, setIsFollowing] = useState(false);
-  const handleFollow = useCallback(async () => {
-    const method = isFollowing ? 'DELETE' : 'POST';
-
-    if (currentUser?.id) {
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+  const fetchFollowStatus = useCallback(async () => {
+    if (currentUser?.profile?.id) {
       const response = await fetch(
-        `/api/db/${params.id}/follow?follower=${currentUser?.id}`,
-        { method },
+        `/api/db/${params.id}/follow?follower=${currentUser.profile.id}`,
+        { method: 'GET' },
       );
-
       if (response.ok) {
-        setIsFollowing(!isFollowing);
+        const data = await response.json();
+        setIsFollowing(data.isFollowing);
       }
     }
-  }, [isFollowing, currentUser, params.id]);
+  }, [currentUser, params.id]);
+  const handleFollow = async () => {
+    const method = isFollowing ? 'DELETE' : 'POST';
+
+    // if (currentUser?.profile?.id) {
+    //   const response = await fetch(
+    //     `/api/db/${params.id}/follow?follower=${currentUser.profile.id}`,
+    //     { method },
+    //   );
+
+    //   if (response.ok) {
+    //     const data = await response.json();
+    //     setIsFollowing(!data.follow);
+    //     // setFollowersCount(data.followersCount);
+    //   }
+    // }
+  };
 
   useEffect(() => {
-    (async () => {
-      if (params.id && currentUser && currentUser.id) {
-        const followStatus = await fetch(
-          `/api/db/${params.id}/follow?follower=${currentUser?.id}`,
-          { method: 'GET' },
-        ).then((res) => {
-          if (res.ok) return res.json();
-        });
-        setIsFollowing(!!followStatus);
-      }
-    })();
-  }, [params.id, currentUser]);
+    fetchFollowStatus();
+  }, [fetchFollowStatus]);
 
   useEffect(() => {
     (async () => {
@@ -74,8 +79,10 @@ const Profile = ({ params }: { params: { id: string } }) => {
         res.json(),
       );
       setProfile(dbProfile);
+      setFollowersCount(dbProfile?.followers.length);
+      setFollowingCount(dbProfile?.following.length);
     })();
-  }, [params.id]);
+  }, [params.id, fetchFollowStatus, isFollowing]);
 
   useEffect(() => {
     (async () => {
@@ -124,21 +131,23 @@ const Profile = ({ params }: { params: { id: string } }) => {
           <h4 className='text-dark/50 dark:text-light/50'>Profile</h4>
           <div className='inline-flex items-center gap-x-2'>
             {/* FOLLOW BUTTON */}
-            {currentUser && currentUser.profile?.id !== params.id && (
+            {/* {currentUser && currentUser.profile?.id !== params.id && (
               <Tooltip
+                isDisabled
                 content={`${isFollowing ? 'Unfollow' : 'Follow'} ${profile?.user.name}'s profile`}
               >
-                <Button size='sm' onClick={handleFollow}>
+                <Button size='sm' disabled onClick={handleFollow}>
                   {isFollowing ? 'Unfollow -' : 'Follow +'}
                 </Button>
               </Tooltip>
-            )}
+            )} */}
 
             {/* LINK TO SOURCE ACCOUNT */}
             {profile?.user.accounts.map((account) => (
               <Tooltip
                 key={account.provider}
                 content={`Go to user's ${account.provider} profile`}
+                isDisabled={!getAccountUrl(account)}
                 delay={1000}
                 classNames={{
                   content:
@@ -167,7 +176,7 @@ const Profile = ({ params }: { params: { id: string } }) => {
                   {profile.following && (
                     <div className='flex gap-x-1 items-center'>
                       <TbUserHeart className='text-dark/50 dark:text-light/50' />
-                      <p>{profile.following.length}</p>
+                      <p>{followingCount}</p>
                       <p className='subtitle text-dark/50 dark:text-light/50'>
                         Following
                       </p>
@@ -176,7 +185,7 @@ const Profile = ({ params }: { params: { id: string } }) => {
                   {profile.followers && (
                     <div className='flex gap-x-1 items-center'>
                       <TbUserCheck className='text-dark/50 dark:text-light/50' />
-                      <p>{profile.followers.length}</p>
+                      <p>{followersCount}</p>
                       <p className='subtitle text-dark/50 dark:text-light/50'>
                         Followers
                       </p>

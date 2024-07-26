@@ -26,7 +26,7 @@ export async function POST(
     const response = await prisma.follow.create({
       data: follow,
     });
-    return NextResponse.json(response, { status: 200 });
+    return NextResponse.json({ follow: response }, { status: 200 });
   } catch (error) {
     logger({ error }, 'API ERROR: Error following profile' + params.id);
     return NextResponse.json(
@@ -92,7 +92,7 @@ export async function GET(
         },
       },
     });
-    return NextResponse.json(response, { status: 200 });
+    return NextResponse.json({ isFollowing: !!response }, { status: 200 });
   } catch (error) {
     logger({ error }, 'API ERROR: Error getting follow status' + params.id);
     return NextResponse.json(
