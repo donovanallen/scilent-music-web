@@ -6,6 +6,7 @@ import { PlayHistory, Track, TrackItem } from '@spotify/web-api-ts-sdk';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { BiSearch } from 'react-icons/bi';
 import { FaPlay } from 'react-icons/fa6';
@@ -32,6 +33,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ children }) => {
+  const { data: session } = useSession();
   const isSmallDevice = useMediaQuery('only screen and (max-width : 769px)');
   const { currentTrack, setCurrentTrack } = useStore();
   const pathname = usePathname();
@@ -80,11 +82,55 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   );
 
   useEffect(() => {
-    (async () => {
-      const result = await sdk.player.getRecentlyPlayedTracks();
-      setHistory(() => result.items.map((item) => item));
-    })();
-  }, []);
+    const fetchRecentlyPlayed = async () => {
+      if (session?.user?.id) {
+        try {
+          const response = await fetch(`/api/db/${session.user.id}/history`);
+          if (response.ok) {
+            const data = await response.json();
+            setHistory(data.tracks as PlayHistory[]);
+          }
+        } catch (error) {
+          console.error('Error fetching recently played:', error);
+        }
+      }
+    };
+
+    fetchRecentlyPlayed();
+  }, [session]);
+
+  useEffect(() => {
+    const updateRecentlyPlayed = async () => {
+      if (session?.user?.id) {
+        try {
+          const result = await sdk.player.getRecentlyPlayedTracks();
+          const tracks = result.items.map((item) => item);
+
+          await fetch(`/api/db/${session.user.id}/history`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ tracks }),
+          });
+
+          setHistory(tracks);
+        } catch (error) {
+          console.error('Error updating recently played:', error);
+        }
+      }
+    };
+
+    updateRecentlyPlayed();
+  }, [session]);
+
+  // useEffect(() => {
+  //   (async () => {
+  //     const result = await sdk.player.getRecentlyPlayedTracks();
+  //     const playHistory: PlayHistory[] = result.items.map((item) => item);
+  //     setHistory(() => playHistory);
+  //   })();
+  // }, []);
 
   useEffect(() => {
     (async () => {

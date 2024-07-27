@@ -108,18 +108,21 @@ const authOptions: AuthOptions = {
 
       if (isNewUser) {
         logger({ user, profile, isNewUser }, 'New user sign in: ');
+        await prisma.profile.create({
+          data: {
+            id: user.id,
+          },
+        });
       }
 
-      // Create a profile for the new user
+      // ** Create a profile for the new user
       await prisma.user.update({
         where: { id: user.id },
         data: {
           profile: {
             connectOrCreate: {
-              where: { userId: user.id },
-              create: {
-                id: user.id,
-              },
+              where: { id: user.id },
+              create: {},
             },
           },
         },
@@ -128,7 +131,7 @@ const authOptions: AuthOptions = {
     signOut: async ({ token, session }) => {
       logger({ user: session }, 'SIGNING OUT - Session: ');
       if (token.sub) {
-        // Clear all tokens for the user
+        // * Clear all tokens for the user
         await prisma.account.updateMany({
           where: { userId: token.sub },
           data: {

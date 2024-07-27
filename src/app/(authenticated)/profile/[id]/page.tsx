@@ -7,12 +7,18 @@ import { ScrollShadow, Tooltip, User } from '@nextui-org/react';
 import {
   Account,
   Follow,
+  PlayHistory as PlayHistoryModel,
   Profile as ScilentProfile,
+  RecentlyPlayed,
   TopArtists,
   TopTracks,
   User as ScilentUser,
 } from '@prisma/client';
-import { User as SpotifyUser } from '@spotify/web-api-ts-sdk';
+import {
+  PlayHistory,
+  Track,
+  User as SpotifyUser,
+} from '@spotify/web-api-ts-sdk';
 import { useSession } from 'next-auth/react';
 import React, { Suspense, useCallback, useEffect, useState } from 'react';
 import { FaUser } from 'react-icons/fa6';
@@ -21,24 +27,30 @@ import { TbUserCheck, TbUserHeart } from 'react-icons/tb';
 import logger from '@/lib/logger';
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { getSourceIcon } from '@/lib/utils';
-import { useTopMusic } from '@/hooks/useTopMusic';
 
 import Box from '@/components/Box';
 import Header from '@/components/Header';
+import ListLayout from '@/components/layouts/ListLayout';
 import IconLink from '@/components/links/IconLink';
 import Skeleton from '@/components/Skeleton';
-import TopItems from '@/components/TopItems';
+import TrackItem from '@/components/TrackItem';
 
 const Profile = ({ params }: { params: { id: string } }) => {
   const { data: session } = useSession();
   const [profile, setProfile] = useState<
-    ScilentProfile & { topArtists: TopArtists[]; topTracks: TopTracks[] } & {
-      followers: Follow[];
-    } & { following: Follow[] } & {
+    ScilentProfile & {
+      recentlyPlayed?: RecentlyPlayed[] & { tracks?: PlayHistoryModel[] };
+    } & {
+      topArtists?: TopArtists[];
+      topTracks?: TopTracks[];
+    } & {
+      followers?: Follow[];
+    } & { following?: Follow[] } & {
       user: ScilentUser & { accounts: Account[] };
     }
   >();
   const [accounts, setAccounts] = useState<SpotifyUser[]>([] as SpotifyUser[]);
+  const [recentlyPlayed, setRecentlyPlayed] = useState<PlayHistory[]>([]);
 
   const [currentUser, setCurrentUser] = useState<
     ScilentUser & { profile: ScilentProfile }
@@ -75,15 +87,15 @@ const Profile = ({ params }: { params: { id: string } }) => {
     // }
   };
 
-  const {
-    artists: topArtists,
-    tracks: topTracks,
-    albums: topAlbums,
-    filterOptions,
-    selectedFilter,
-    setSelectedFilter,
-    isLoading,
-  } = useTopMusic('short_term', params.id);
+  // const {
+  //   artists: topArtists,
+  //   tracks: topTracks,
+  //   albums: topAlbums,
+  //   filterOptions,
+  //   selectedFilter,
+  //   setSelectedFilter,
+  //   isLoading,
+  // } = useTopMusic('short_term', params.id);
 
   useEffect(() => {
     fetchFollowStatus();
@@ -91,17 +103,20 @@ const Profile = ({ params }: { params: { id: string } }) => {
 
   useEffect(() => {
     (async () => {
-      const dbProfile: ScilentProfile & {
-        topArtists: TopArtists[];
-        topTracks: TopTracks[];
-      } & {
-        followers: Follow[];
-      } & { following: Follow[] } & {
-        user: ScilentUser & { accounts: Account[] };
-      } = await fetch(`/api/db/${params.id}`).then((res) => res.json());
+      const dbProfile = await fetch(`/api/db/${params.id}`).then((res) =>
+        res.json(),
+      );
       setProfile(dbProfile);
-      setFollowersCount(dbProfile?.followers.length);
-      setFollowingCount(dbProfile?.following.length);
+      setRecentlyPlayed(
+        dbProfile?.recentlyPlayed?.tracks?.map((t: any) => {
+          return {
+            ...t,
+            track: t.track as Track,
+          } as PlayHistory;
+        }) ?? [],
+      );
+      setFollowersCount(dbProfile?.followers?.length ?? 0);
+      setFollowingCount(dbProfile?.following?.length ?? 0);
     })();
   }, [params.id, fetchFollowStatus, isFollowing]);
 
@@ -230,9 +245,20 @@ const Profile = ({ params }: { params: { id: string } }) => {
           )}
         </Suspense>
       </Header>
-      <div className='overflow-y-auto overflow-x-hidden px-6 no-scrollbar'>
-        {topArtists && topTracks && topAlbums && (
-          <ScrollShadow hideScrollBar>
+      <ScrollShadow
+        hideScrollBar
+        className='overflow-y-auto overflow-x-hidden px-6'
+      >
+        <ListLayout>
+          {recentlyPlayed.map((track, i) => (
+            <TrackItem
+              key={track?.played_at + i}
+              track={track.track as Track}
+              timestamp={new Date(track.played_at)}
+            />
+          ))}
+        </ListLayout>
+        {/* {topArtists && topTracks && topAlbums && (
             <Suspense fallback={<Skeleton />}>
               <TopItems
                 artists={topArtists}
@@ -244,9 +270,8 @@ const Profile = ({ params }: { params: { id: string } }) => {
                 isLoading={isLoading}
               />
             </Suspense>
-          </ScrollShadow>
-        )}
-      </div>
+        )} */}
+      </ScrollShadow>
     </Box>
   );
 };

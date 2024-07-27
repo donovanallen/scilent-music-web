@@ -52,15 +52,22 @@ model Account {
 }
 
 model Profile {
-  id         String       @id @default(cuid())
-  bio        String?
-  followers  Follow[]     @relation("Follower")
-  following  Follow[]     @relation("Following")
-  topArtists TopArtists[]
-  topTracks  TopTracks[]
+  id               String            @id
+  // id         String       @id @default(cuid())
+  bio              String?
+  followers        Follow[]          @relation("Follower")
+  following        Follow[]          @relation("Following")
+  topArtists       TopArtists[]
+  topTracks        TopTracks[]
+  type             ProfileType       @default(USER)
+  persona          Persona?
+  currentlyPlaying CurrentlyPlaying?
+  recentlyPlayed   RecentlyPlayed?
+  username         String?
 
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
+  // userId String @unique
+  // user   User   @relation(fields: [userId], references: [id])
+  user User @relation(fields: [id], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -119,6 +126,70 @@ model TopTracks {
   profile Profile @relation(fields: [profileId], references: [id])
 
   @@unique([profileId, timeRange])
+}
+
+model CurrentlyPlaying {
+  id String @id @default(cuid())
+
+  track       Json?
+  isPlaying   Boolean @default(false)
+  currentTime Float?  @default(0)
+  duration    Float   @default(0)
+
+  queue Json[]
+
+  profileId String  @unique
+  profile   Profile @relation(fields: [profileId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RecentlyPlayed {
+  id String @id @default(cuid())
+
+  tracks PlayHistory[]
+
+  profileId String  @unique
+  profile   Profile @relation(fields: [profileId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PlayHistory {
+  id               String @id @default(cuid())
+  recentlyPlayedId String
+
+  played_at DateTime
+  track     Json
+  context   Json
+
+  recentlyPlayed RecentlyPlayed @relation(fields: [recentlyPlayedId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Persona {
+  id String @id @default(cuid())
+
+  value       String
+  label       String
+  description String
+
+  profileId String  @unique
+  profile   Profile @relation(fields: [profileId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ProfileType {
+  USER
+  ARTIST
+  VOICE
+  ADMIN
 }
 
 enum TimeRange {
