@@ -38,12 +38,9 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const isSmallDevice = useMediaQuery('only screen and (max-width : 769px)');
   const pathname = usePathname();
   const queryClient = new QueryClient();
-  const [parent] = useAutoAnimate(/* optional config */);
+  const [parent] = useAutoAnimate();
 
-  // --------
   const { currentTrack, setCurrentTrack } = useStore();
-  // --------
-
   const [history, setHistory] = useState<PlayHistory[] | null>();
   const [sidebarOpen, setSidebarOpen] = useState<boolean>();
 
@@ -104,14 +101,8 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
 
         if (dbResponse.ok) {
           const data = await dbResponse.json();
-          console.log('db updated : profile with recentlyPlayed.tracks', {
-            data,
-          });
           setHistory(data.recentlyPlayed.tracks as PlayHistory[]);
         } else {
-          console.log('spotify playHistory (no db update)', {
-            playHistory,
-          });
           setHistory(playHistory);
         }
       })();
@@ -138,18 +129,10 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
 
         if (dbResponse.ok) {
           const data: { track: TrackItem } = await dbResponse.json();
-          console.log('db updated : profile with cp.tracks', {
-            data,
-          });
           setCurrentTrack(data.track as TrackItem);
         } else {
-          console.log('spotify cpTrack (no db update)', {
-            track,
-          });
           setCurrentTrack(track as TrackItem);
         }
-
-        // setCurrentTrack(track as TrackItem);
       })();
     }
   }, [session, setCurrentTrack]);

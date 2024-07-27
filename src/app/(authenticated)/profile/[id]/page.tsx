@@ -22,7 +22,7 @@ import {
 } from '@spotify/web-api-ts-sdk';
 import React, { Suspense, useCallback, useEffect, useState } from 'react';
 import { FaUser } from 'react-icons/fa6';
-import { TbUserCheck, TbUserHeart } from 'react-icons/tb';
+import { TbUserCheck, TbUserHeart, TbUsers } from 'react-icons/tb';
 
 import logger from '@/lib/logger';
 import sdk from '@/lib/spotify-sdk/ClientInstance';
@@ -134,7 +134,7 @@ const Profile = ({ params }: { params: { id: string } }) => {
     <Box className='h-full flex flex-col overflow-y-auto overflow-x-hidden'>
       <Header>
         <div className='flex w-full items-center justify-between'>
-          <h4 className='text-dark/50 dark:text-light/50'>Profile</h4>
+          <h4 className='text-dark/50 dark:text-light/50'>{`Profile | ${profile?.type}`}</h4>
           <div className='inline-flex items-center gap-x-2'>
             {/* LINK TO SOURCE ACCOUNT */}
             {profile?.user.accounts.map((account) => (
@@ -167,6 +167,12 @@ const Profile = ({ params }: { params: { id: string } }) => {
               name={profile.user.name}
               description={
                 <>
+                  {profile.username && (
+                    <div className='flex gap-x-1 items-center'>
+                      <TbUserCheck className='text-dark/50 dark:text-light/50' />
+                      <h4 className='subtitle'>{profile.username}</h4>
+                    </div>
+                  )}
                   {profile.following && (
                     <div className='flex gap-x-1 items-center'>
                       <TbUserHeart className='text-dark/50 dark:text-light/50' />
@@ -178,7 +184,7 @@ const Profile = ({ params }: { params: { id: string } }) => {
                   )}
                   {profile.followers && (
                     <div className='flex gap-x-1 items-center'>
-                      <TbUserCheck className='text-dark/50 dark:text-light/50' />
+                      <TbUsers className='text-dark/50 dark:text-light/50' />
                       <p>{followersCount}</p>
                       <p className='subtitle text-dark/50 dark:text-light/50'>
                         Followers

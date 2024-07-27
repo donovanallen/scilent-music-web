@@ -2,6 +2,7 @@ import { PlayHistory } from '@spotify/web-api-ts-sdk';
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/lib/prisma';
 
 import authOptions from '@/app/api/auth/[...nextauth]/authOptions';
@@ -61,8 +62,8 @@ export async function POST(
     });
 
     return NextResponse.json(updatedRecentlyPlayed);
-  } catch (error) {
-    console.error('Error updating recently played:', error);
+  } catch (e) {
+    logger({ errorMessage: 'Error updating recently played:', error: e });
     return new NextResponse(
       JSON.stringify({ error: 'Internal Server Error' }),
       {
@@ -95,8 +96,9 @@ export async function GET(
     }
 
     return NextResponse.json(recentlyPlayed);
-  } catch (error) {
-    console.error('Error fetching recently played:', error);
+  } catch (e) {
+    logger({ errorMessage: 'Error fetching recently played:', error: e });
+
     return new NextResponse(
       JSON.stringify({ error: 'Internal Server Error' }),
       {

@@ -4,7 +4,7 @@ import { User } from '@nextui-org/react';
 import { UserProfile } from '@spotify/web-api-ts-sdk';
 import { useRouter } from 'next/navigation';
 import { FaUser } from 'react-icons/fa6';
-import { TbMapPin, TbUserCheck, TbUserHeart } from 'react-icons/tb';
+import { TbMapPin, TbUserHeart, TbUsers } from 'react-icons/tb';
 
 import { useFollowedArtists } from '@/hooks/useFollowedArtists';
 
@@ -28,7 +28,7 @@ const ProfileInfo: React.FC<UserProfile> = (profile) => {
             </p>
           </div>
           <div className='flex gap-x-1 items-center'>
-            <TbUserCheck className='text-dark/50 dark:text-light/50' />
+            <TbUsers className='text-dark/50 dark:text-light/50' />
             <p>{profile.followers.total}</p>
             <p className='subtitle text-dark/50 dark:text-light/50'>
               Followers
