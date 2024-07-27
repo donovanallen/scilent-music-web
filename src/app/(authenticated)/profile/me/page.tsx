@@ -7,6 +7,7 @@ import React, { Suspense, useEffect, useState } from 'react';
 
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { getSourceIcon } from '@/lib/utils';
+import { useTopMusic } from '@/hooks/useTopMusic';
 
 import Box from '@/components/Box';
 import Header from '@/components/Header';
@@ -18,8 +19,17 @@ import ProfileAura from '@/app/(authenticated)/profile/components/ProfileAura';
 
 import ProfileInfo from '../components/ProfileInfo';
 
-const Profile = async () => {
+const Profile = () => {
   const [profile, setProfile] = useState<UserProfile | ScilentProfile>();
+  const {
+    artists: topArtists,
+    tracks: topTracks,
+    albums: topAlbums,
+    filterOptions,
+    selectedFilter,
+    setSelectedFilter,
+    isLoading,
+  } = useTopMusic('short_term');
 
   useEffect(() => {
     (async () => {
@@ -70,7 +80,15 @@ const Profile = async () => {
             <ProfileAura />
           </Suspense>
           <Suspense fallback={<Skeleton />}>
-            <TopItems />
+            <TopItems
+              artists={topArtists}
+              tracks={topTracks}
+              albums={topAlbums}
+              filterOptions={filterOptions}
+              selectedFilter={selectedFilter}
+              onFilterSelect={setSelectedFilter as () => void}
+              isLoading={isLoading}
+            />
           </Suspense>
         </div>
       </ScrollShadow>

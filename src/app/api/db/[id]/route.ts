@@ -14,6 +14,8 @@ export async function GET(
         user: { include: { accounts: true } },
         followers: true,
         following: true,
+        topArtists: true,
+        topTracks: true,
       },
     });
     return NextResponse.json(response, { status: 200 });

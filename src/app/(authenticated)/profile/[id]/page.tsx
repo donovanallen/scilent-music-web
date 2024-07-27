@@ -8,6 +8,8 @@ import {
   Account,
   Follow,
   Profile as ScilentProfile,
+  TopArtists,
+  TopTracks,
   User as ScilentUser,
 } from '@prisma/client';
 import { User as SpotifyUser } from '@spotify/web-api-ts-sdk';
@@ -19,16 +21,20 @@ import { TbUserCheck, TbUserHeart } from 'react-icons/tb';
 import logger from '@/lib/logger';
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { getSourceIcon } from '@/lib/utils';
+import { useTopMusic } from '@/hooks/useTopMusic';
 
 import Box from '@/components/Box';
 import Header from '@/components/Header';
 import IconLink from '@/components/links/IconLink';
 import Skeleton from '@/components/Skeleton';
+import TopItems from '@/components/TopItems';
 
 const Profile = ({ params }: { params: { id: string } }) => {
   const { data: session } = useSession();
   const [profile, setProfile] = useState<
-    ScilentProfile & { followers: Follow[] } & { following: Follow[] } & {
+    ScilentProfile & { topArtists: TopArtists[]; topTracks: TopTracks[] } & {
+      followers: Follow[];
+    } & { following: Follow[] } & {
       user: ScilentUser & { accounts: Account[] };
     }
   >();
@@ -69,15 +75,30 @@ const Profile = ({ params }: { params: { id: string } }) => {
     // }
   };
 
+  const {
+    artists: topArtists,
+    tracks: topTracks,
+    albums: topAlbums,
+    filterOptions,
+    selectedFilter,
+    setSelectedFilter,
+    isLoading,
+  } = useTopMusic('short_term', params.id);
+
   useEffect(() => {
     fetchFollowStatus();
   }, [fetchFollowStatus]);
 
   useEffect(() => {
     (async () => {
-      const dbProfile = await fetch(`/api/db/${params.id}`).then((res) =>
-        res.json(),
-      );
+      const dbProfile: ScilentProfile & {
+        topArtists: TopArtists[];
+        topTracks: TopTracks[];
+      } & {
+        followers: Follow[];
+      } & { following: Follow[] } & {
+        user: ScilentUser & { accounts: Account[] };
+      } = await fetch(`/api/db/${params.id}`).then((res) => res.json());
       setProfile(dbProfile);
       setFollowersCount(dbProfile?.followers.length);
       setFollowingCount(dbProfile?.following.length);
@@ -209,16 +230,23 @@ const Profile = ({ params }: { params: { id: string } }) => {
           )}
         </Suspense>
       </Header>
-      <ScrollShadow hideScrollBar>
-        <div className='overflow-y-auto overflow-x-hidden px-6 no-scrollbar'>
-          {/* <Suspense fallback={<Skeleton />}>
-            <ProfileAura />
-          </Suspense> */}
-          {/* <Suspense fallback={<Skeleton />}>
-            <TopItems />
-          </Suspense> */}
-        </div>
-      </ScrollShadow>
+      <div className='overflow-y-auto overflow-x-hidden px-6 no-scrollbar'>
+        {topArtists && topTracks && topAlbums && (
+          <ScrollShadow hideScrollBar>
+            <Suspense fallback={<Skeleton />}>
+              <TopItems
+                artists={topArtists}
+                tracks={topTracks}
+                albums={topAlbums}
+                filterOptions={filterOptions}
+                selectedFilter={selectedFilter}
+                onFilterSelect={setSelectedFilter as () => void}
+                isLoading={isLoading}
+              />
+            </Suspense>
+          </ScrollShadow>
+        )}
+      </div>
     </Box>
   );
 };
