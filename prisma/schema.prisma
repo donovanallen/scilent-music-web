@@ -53,8 +53,8 @@ model Account {
 
 model Profile {
   id               String            @id
-  // id         String       @id @default(cuid())
   bio              String?
+  username         String?
   followers        Follow[]          @relation("Follower")
   following        Follow[]          @relation("Following")
   topArtists       TopArtists[]
@@ -63,10 +63,7 @@ model Profile {
   persona          Persona?
   currentlyPlaying CurrentlyPlaying?
   recentlyPlayed   RecentlyPlayed?
-  username         String?
 
-  // userId String @unique
-  // user   User   @relation(fields: [userId], references: [id])
   user User @relation(fields: [id], references: [id])
 
   createdAt DateTime @default(now())
@@ -158,14 +155,14 @@ model RecentlyPlayed {
 }
 
 model PlayHistory {
-  id               String @id @default(cuid())
-  recentlyPlayedId String
+  id String @id @default(cuid())
 
   played_at DateTime
   track     Json
   context   Json
 
-  recentlyPlayed RecentlyPlayed @relation(fields: [recentlyPlayedId], references: [id])
+  recentlyPlayedId String
+  recentlyPlayed   RecentlyPlayed @relation(fields: [recentlyPlayedId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
