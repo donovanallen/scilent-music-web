@@ -17,6 +17,7 @@ export async function GET(
         topArtists: true,
         topTracks: true,
         recentlyPlayed: { include: { tracks: true } },
+        currentlyPlaying: true,
       },
     });
     return NextResponse.json(response, { status: 200 });

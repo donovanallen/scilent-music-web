@@ -17,6 +17,7 @@ import {
 import {
   PlayHistory,
   Track,
+  TrackItem as SpotifyTrackItem,
   User as SpotifyUser,
 } from '@spotify/web-api-ts-sdk';
 import { useSession } from 'next-auth/react';
@@ -28,12 +29,16 @@ import logger from '@/lib/logger';
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 import { getSourceIcon } from '@/lib/utils';
 
+import AlbumCard from '@/components/AlbumCard';
 import Box from '@/components/Box';
+import CurrentlyPlaying from '@/components/CurrentlyPlaying';
 import Header from '@/components/Header';
 import ListLayout from '@/components/layouts/ListLayout';
 import IconLink from '@/components/links/IconLink';
 import Skeleton from '@/components/Skeleton';
 import TrackItem from '@/components/TrackItem';
+
+import TrackPlayerProvider from '@/providers/TrackPlayerProvider';
 
 const Profile = ({ params }: { params: { id: string } }) => {
   const { data: session } = useSession();
@@ -50,7 +55,11 @@ const Profile = ({ params }: { params: { id: string } }) => {
     }
   >();
   const [accounts, setAccounts] = useState<SpotifyUser[]>([] as SpotifyUser[]);
-  const [recentlyPlayed, setRecentlyPlayed] = useState<PlayHistory[]>([]);
+  const [recentlyPlayed, setRecentlyPlayed] = useState<PlayHistory[] | null>(
+    [],
+  );
+  const [currentlyPlaying, setCurrentlyPlaying] =
+    useState<SpotifyTrackItem | null>();
 
   const [currentUser, setCurrentUser] = useState<
     ScilentUser & { profile: ScilentProfile }
@@ -107,6 +116,9 @@ const Profile = ({ params }: { params: { id: string } }) => {
         res.json(),
       );
       setProfile(dbProfile);
+      setCurrentlyPlaying(
+        (dbProfile?.currentlyPlaying?.track as SpotifyTrackItem) ?? null,
+      );
       setRecentlyPlayed(
         dbProfile?.recentlyPlayed?.tracks?.map((t: any) => {
           return {
@@ -244,20 +256,49 @@ const Profile = ({ params }: { params: { id: string } }) => {
             />
           )}
         </Suspense>
+
+        {/* CURRENTLY PLAYING */}
+        <TrackPlayerProvider>
+          <Suspense fallback={<Skeleton />}>
+            {currentlyPlaying && (
+              <div className='flex w-full items-center justify-between'>
+                <AlbumCard
+                  id={
+                    'album' in currentlyPlaying
+                      ? currentlyPlaying.album.id
+                      : currentlyPlaying.show.id || currentlyPlaying.id
+                  }
+                  name={currentlyPlaying.name}
+                  image={
+                    'album' in currentlyPlaying
+                      ? currentlyPlaying.album.images[0].url
+                      : currentlyPlaying.images[0].url
+                  }
+                  type={currentlyPlaying.type}
+                  icon={getSourceIcon('spotify')}
+                  title='Now Playing'
+                />
+                <CurrentlyPlaying />
+              </div>
+            )}
+          </Suspense>
+        </TrackPlayerProvider>
       </Header>
       <ScrollShadow
         hideScrollBar
         className='overflow-y-auto overflow-x-hidden px-6'
       >
-        <ListLayout>
-          {recentlyPlayed.map((track, i) => (
-            <TrackItem
-              key={track?.played_at + i}
-              track={track.track as Track}
-              timestamp={new Date(track.played_at)}
-            />
-          ))}
-        </ListLayout>
+        {recentlyPlayed && recentlyPlayed.length > 0 && (
+          <ListLayout>
+            {recentlyPlayed.map((track, i) => (
+              <TrackItem
+                key={track?.played_at + i}
+                track={track.track as Track}
+                timestamp={new Date(track.played_at)}
+              />
+            ))}
+          </ListLayout>
+        )}
         {/* {topArtists && topTracks && topAlbums && (
             <Suspense fallback={<Skeleton />}>
               <TopItems

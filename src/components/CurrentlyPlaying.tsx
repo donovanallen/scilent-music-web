@@ -2,6 +2,7 @@
 
 import { Tooltip } from '@nextui-org/react';
 import { Track } from '@spotify/web-api-ts-sdk';
+import { useSession } from 'next-auth/react';
 import { IoPlay } from 'react-icons/io5';
 
 import { getSourceIcon } from '@/lib/utils';
@@ -12,22 +13,32 @@ import IconLink from '@/components/links/IconLink';
 import { usePlayer } from '@/providers/TrackPlayerProvider';
 
 export default function CurrentlyPlaying() {
+  const { data: session } = useSession();
+
   const {
-    // currentTrackAudio,
-    // isPlaying,
     // play,
     // pause,
     // togglePlay,
-    // duration,
-    // currentTime,
     // slider,
     // setSlider,
     // drag,
     // setDrag,
+    currentTrackAudio,
+    isPlaying,
+    duration,
+    currentTime,
     currentTrack,
   } = usePlayer();
 
-  if (!currentTrack) {
+  console.log('CP COMPONENT HOOK', {
+    currentTrack,
+    currentTime,
+    duration,
+    isPlaying,
+    currentTrackAudio,
+  });
+
+  if (!currentTrack || !session) {
     return null;
   }
 
