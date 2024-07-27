@@ -24,6 +24,7 @@ import Feed from '@/components/Feed';
 import NextPill from '@/components/Pill';
 import SidebarItem from '@/components/SidebarItem';
 
+import TrackPlayerProvider from '@/providers/TrackPlayerProvider';
 import { useStore } from '@/providers/zustand';
 
 import Logo from '~/svg/Logo_Wordmark_Gray.svg';
@@ -35,10 +36,13 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const { data: session } = useSession();
   const isSmallDevice = useMediaQuery('only screen and (max-width : 769px)');
-  const { currentTrack, setCurrentTrack } = useStore();
   const pathname = usePathname();
   const queryClient = new QueryClient();
   const [parent] = useAutoAnimate(/* optional config */);
+
+  // --------
+  const { currentTrack, setCurrentTrack } = useStore();
+  // --------
 
   const [history, setHistory] = useState<PlayHistory[] | null>();
   const [sidebarOpen, setSidebarOpen] = useState<boolean>();
@@ -81,65 +85,74 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
     [pathname],
   );
 
+  // RECENTLY PLAYED
   useEffect(() => {
-    const fetchRecentlyPlayed = async () => {
-      if (session?.user?.id) {
-        try {
-          const response = await fetch(`/api/db/${session.user.id}/history`, {
-            method: 'GET',
-          });
-          if (response.ok) {
-            const data = await response.json();
-            setHistory(data.tracks as PlayHistory[]);
-          }
-        } catch (error) {
-          console.error('Error fetching recently played:', error);
-        }
-      }
-    };
+    if (session?.user?.id) {
+      (async () => {
+        // FETCH FROM SPOTIFY
+        const result = await sdk.player.getRecentlyPlayedTracks();
+        const playHistory: PlayHistory[] = result.items.map((item) => item);
 
-    fetchRecentlyPlayed();
+        // UPDATE IN DB
+        const dbResponse = await fetch(`/api/db/${session?.user.id}/history`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ tracks: playHistory }),
+        });
+
+        if (dbResponse.ok) {
+          const data = await dbResponse.json();
+          console.log('db updated : profile with recentlyPlayed.tracks', {
+            data,
+          });
+          setHistory(data.recentlyPlayed.tracks as PlayHistory[]);
+        } else {
+          console.log('spotify playHistory (no db update)', {
+            playHistory,
+          });
+          setHistory(playHistory);
+        }
+      })();
+    }
   }, [session]);
 
+  // CURRENTLY PLAYING
   useEffect(() => {
-    const updateRecentlyPlayed = async () => {
-      if (session?.user?.id) {
-        try {
-          const result = await sdk.player.getRecentlyPlayedTracks();
-          const tracks = result.items.map((item) => item);
+    if (session?.user?.id) {
+      (async () => {
+        const result = await sdk.player.getUsersQueue();
+        const track: TrackItem | null = result.currently_playing;
 
-          await fetch(`/api/db/${session.user.id}/history`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ tracks }),
+        if (!track) return;
+
+        // UPDATE IN DB
+        const dbResponse = await fetch(`/api/db/${session?.user.id}/cp`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ track }),
+        });
+
+        if (dbResponse.ok) {
+          const data: { track: TrackItem } = await dbResponse.json();
+          console.log('db updated : profile with cp.tracks', {
+            data,
           });
-
-          setHistory(tracks);
-        } catch (error) {
-          console.error('Error updating recently played:', error);
+          setCurrentTrack(data.track as TrackItem);
+        } else {
+          console.log('spotify cpTrack (no db update)', {
+            track,
+          });
+          setCurrentTrack(track as TrackItem);
         }
-      }
-    };
 
-    updateRecentlyPlayed();
-  }, [session]);
-
-  // useEffect(() => {
-  //   (async () => {
-  //     const result = await sdk.player.getRecentlyPlayedTracks();
-  //     const playHistory: PlayHistory[] = result.items.map((item) => item);
-  //     setHistory(() => playHistory);
-  //   })();
-  // }, []);
-
-  useEffect(() => {
-    (async () => {
-      const result = await sdk.player.getUsersQueue();
-      setCurrentTrack(result.currently_playing as TrackItem);
-    })();
-  }, [setCurrentTrack]);
+        // setCurrentTrack(track as TrackItem);
+      })();
+    }
+  }, [session, setCurrentTrack]);
 
   return (
     <div ref={parent} className='flex h-[100vh]'>
@@ -200,12 +213,16 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
               </div>
             </div>
           </Box>
-          <Feed
-            title='Live Mix'
-            cpTrack={currentTrack as Track}
-            history={history as PlayHistory[]}
-            className='hidden md:flex h-full overflow-y-scroll no-scrollbar'
-          />
+
+          <TrackPlayerProvider>
+            <Feed
+              title='Live Mix'
+              cpTrack={currentTrack as Track}
+              history={history as PlayHistory[]}
+              className='hidden md:flex h-full overflow-y-scroll no-scrollbar'
+            />
+          </TrackPlayerProvider>
+
           <Box className='md:hidden flex flex-col h-[100%] w-full'>
             <Logo className='transform -rotate-90 align-middle origin-center my-auto' />
           </Box>

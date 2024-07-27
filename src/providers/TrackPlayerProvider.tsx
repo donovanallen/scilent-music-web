@@ -7,6 +7,7 @@ import {
   // SetStateAction,
   // useCallback,
   useContext,
+  useEffect,
   useState,
 } from 'react';
 
@@ -27,7 +28,9 @@ interface TrackProviderState {
   // setDrag: Dispatch<SetStateAction<number>>;
 }
 
-const PlayerContext = createContext<TrackProviderState>({} as any);
+const PlayerContext = createContext<TrackProviderState>(
+  {} as TrackProviderState,
+);
 
 interface Props {
   children: React.ReactNode;
@@ -36,11 +39,11 @@ interface Props {
 export default function TrackPlayerProvider({ children }: Props) {
   const { currentTrack } = useStore();
 
-  const [currentTrackAudio, _setCurrentTrackAudio] =
+  const [currentTrackAudio, setCurrentTrackAudio] =
     useState<HTMLAudioElement | null>(null);
-  const [isPlaying, _setIsPlaying] = useState(false);
-  const [duration, _setDuration] = useState(0);
-  const [currentTime, _setCurrentTime] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
   // const [slider, setSlider] = useState(1);
   // const [drag, setDrag] = useState(0);
 
@@ -60,45 +63,6 @@ export default function TrackPlayerProvider({ children }: Props) {
   // }, [currentTrackAudio]);
 
   // useEffect(() => {
-  //   if (!currentTrack) return;
-  //   if (isPlaying) {
-  //     pause();
-  //     setCurrentTrackAudio(null);
-  //   }
-  //   const tempAudio = new Audio(
-  //     'preview_url' in currentTrack
-  //       ? currentTrack.preview_url || undefined
-  //       : undefined,
-  //   );
-
-  //   const setAudioData = () => {
-  //     setDuration(tempAudio.duration);
-  //     setCurrentTime(tempAudio.currentTime);
-  //   };
-
-  //   const setAudioTime = () => {
-  //     const currTime = tempAudio.currentTime;
-  //     setCurrentTime(currTime);
-  //     setSlider(
-  //       currTime
-  //         ? Number(((currTime * 100) / tempAudio.duration).toFixed(1))
-  //         : 0,
-  //     );
-  //   };
-
-  //   tempAudio.addEventListener('loadeddata', setAudioData);
-  //   tempAudio.addEventListener('timeupdate', setAudioTime);
-  //   tempAudio.preload = 'none';
-
-  //   setCurrentTrackAudio(tempAudio);
-
-  //   return () => {
-  //     pause();
-  //     setCurrentTrackAudio(null);
-  //   };
-  // }, [currentTrack, isPlaying, pause]);
-
-  // useEffect(() => {
   //   const handlePlay = async () => {
   //     if (currentTrackAudio) {
   //       await play();
@@ -114,6 +78,52 @@ export default function TrackPlayerProvider({ children }: Props) {
   //     );
   //   }
   // }, [currentTrackAudio, drag]);
+
+  useEffect(() => {
+    if (!currentTrack) return;
+    // if (isPlaying) {
+    //   pause();
+    //   setCurrentTrackAudio(null);
+    // }
+    const tempAudio = new Audio(
+      'preview_url' in currentTrack
+        ? currentTrack.preview_url || undefined
+        : undefined,
+    );
+
+    const setAudioData = () => {
+      setDuration(tempAudio.duration);
+      setCurrentTime(tempAudio.currentTime);
+    };
+
+    const setAudioTime = () => {
+      const currTime = tempAudio.currentTime;
+      setCurrentTime(currTime);
+      // setSlider(
+      //   currTime
+      //     ? Number(((currTime * 100) / tempAudio.duration).toFixed(1))
+      //     : 0,
+      // );
+    };
+
+    tempAudio.addEventListener('loadeddata', setAudioData);
+    tempAudio.addEventListener('timeupdate', setAudioTime);
+    tempAudio.preload = 'none';
+
+    setCurrentTrackAudio(tempAudio);
+
+    return () => {
+      // pause();
+      setCurrentTrackAudio(null);
+    };
+  }, [currentTrack, isPlaying]);
+
+  // IS PLAYING
+  useEffect(() => {
+    if (currentTrack) {
+      setIsPlaying(true);
+    }
+  }, [currentTrack]);
 
   return (
     <PlayerContext.Provider
