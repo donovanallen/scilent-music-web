@@ -52,10 +52,12 @@ model Account {
 }
 
 model Profile {
-  id        String   @id @default(cuid())
-  bio       String?
-  followers Follow[] @relation("Follower")
-  following Follow[] @relation("Following")
+  id         String       @id @default(cuid())
+  bio        String?
+  followers  Follow[]     @relation("Follower")
+  following  Follow[]     @relation("Following")
+  topArtists TopArtists[]
+  topTracks  TopTracks[]
 
   userId String @unique
   user   User   @relation(fields: [userId], references: [id])
@@ -91,4 +93,36 @@ model Follow {
   createdAt   DateTime @default(now())
 
   @@unique([followerId, followingId])
+}
+
+model TopArtists {
+  id        String    @id @default(cuid())
+  profileId String
+  timeRange TimeRange
+  artists   Json[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  profile Profile @relation(fields: [profileId], references: [id])
+
+  @@unique([profileId, timeRange])
+}
+
+model TopTracks {
+  id        String    @id @default(cuid())
+  profileId String
+  timeRange TimeRange
+  tracks    Json[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  profile Profile @relation(fields: [profileId], references: [id])
+
+  @@unique([profileId, timeRange])
+}
+
+enum TimeRange {
+  SHORT_TERM
+  MEDIUM_TERM
+  LONG_TERM
 }
