@@ -3,7 +3,7 @@ import { AuthOptions } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 
 import logger from '@/lib/logger';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 import spotifyProfile from './SpotifyProfile';
 
@@ -103,9 +103,32 @@ const authOptions: AuthOptions = {
     signIn: '/login',
   },
   events: {
+    signIn: async ({ user, account, profile, isNewUser }) => {
+      logger({ user, account, profile, isNewUser }, 'Signing in user: ');
+
+      if (isNewUser) {
+        logger({ user, profile, isNewUser }, 'New user sign in: ');
+      }
+
+      // Create a profile for the new user
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          profile: {
+            connectOrCreate: {
+              where: { userId: user.id },
+              create: {
+                id: user.id,
+              },
+            },
+          },
+        },
+      });
+    },
     signOut: async ({ token, session }) => {
-      logger({ user: session.user }, 'SIGNING OUT - User: ');
+      logger({ user: session }, 'SIGNING OUT - Session: ');
       if (token.sub) {
+        // Clear all tokens for the user
         await prisma.account.updateMany({
           where: { userId: token.sub },
           data: {
