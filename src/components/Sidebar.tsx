@@ -85,7 +85,9 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
     const fetchRecentlyPlayed = async () => {
       if (session?.user?.id) {
         try {
-          const response = await fetch(`/api/db/${session.user.id}/history`);
+          const response = await fetch(`/api/db/${session.user.id}/history`, {
+            method: 'GET',
+          });
           if (response.ok) {
             const data = await response.json();
             setHistory(data.tracks as PlayHistory[]);
