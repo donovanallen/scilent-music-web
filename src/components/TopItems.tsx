@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { IconType } from 'react-icons';
-import { BiAlbum } from 'react-icons/bi';
 import { FaChevronUp, FaMinus, FaPlus } from 'react-icons/fa6';
 import { TbMusicHeart, TbUserHeart } from 'react-icons/tb';
 
@@ -159,7 +158,6 @@ const TopItems: React.FC<{
   initExpanded?: boolean;
   artists?: Artist[];
   tracks?: Track[];
-  albums?: Album[];
   filterOptions?: FilterOption[];
   selectedFilter?: FilterValue;
   onFilterSelect?: (filterValue?: FilterValue) => void;
@@ -168,7 +166,6 @@ const TopItems: React.FC<{
   initExpanded = false,
   artists,
   tracks,
-  albums,
   filterOptions,
   selectedFilter,
   onFilterSelect,
@@ -205,7 +202,7 @@ const TopItems: React.FC<{
         </div>
 
         {/* TOP ITEMS FILTER OPTIONS */}
-        {filterOptions && (artists || albums || tracks) && (
+        {filterOptions && (artists || tracks) && (
           <div className='inline-flex items-center gap-x-4'>
             <FilterOptions
               filterOptions={filterOptions}
@@ -227,12 +224,13 @@ const TopItems: React.FC<{
             {/* TOP ARTISTS */}
             <div className='w-full flex-1'>
               {artists &&
+                artists.length > 0 &&
                 (!expanded ? (
                   <HeaderItem
                     title='Top Artist'
                     name={artists[0].name}
                     icon={TbUserHeart}
-                    image={artists[0].images[0].url}
+                    image={artists[0].images[0]?.url}
                     onClick={() => router.push(`/artist/${artists[0].id}`)}
                   />
                 ) : (
@@ -247,6 +245,7 @@ const TopItems: React.FC<{
             {/* TOP TRACKS */}
             <div className='w-full flex-1'>
               {tracks &&
+                tracks.length > 0 &&
                 (!expanded ? (
                   <HeaderItem
                     title='Top Track'
@@ -265,30 +264,11 @@ const TopItems: React.FC<{
                   />
                 ))}
             </div>
-
-            {/* TOP ALBUMS */}
-            <div className='w-full flex-1'>
-              {albums &&
-                (!expanded ? (
-                  <HeaderItem
-                    title='Top Album'
-                    name='Coming Soon'
-                    icon={BiAlbum}
-                    disabled
-                  />
-                ) : (
-                  <ExpandedTopItem
-                    title='Top Albums'
-                    items={albums}
-                    icon={BiAlbum}
-                  />
-                ))}
-            </div>
           </div>
         )}
 
         {/* SHOW MORE BUTTON */}
-        {!isLoading && expanded && (artists || albums || tracks) && (
+        {!isLoading && expanded && (artists || tracks) && (
           <FaChevronUp
             onClick={() => setExpanded(!expanded)}
             size={24}

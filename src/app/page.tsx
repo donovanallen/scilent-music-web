@@ -25,7 +25,6 @@ export default async function HomePage() {
         <TopItems
               artists={topArtists}
               tracks={topTracks}
-              albums={topAlbums}              
               filterOptions={filterOptions}
               selectedFilter={selectedFilter}
               onFilterSelect={setSelectedFilter as () => void}

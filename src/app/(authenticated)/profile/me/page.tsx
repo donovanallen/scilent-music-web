@@ -24,7 +24,6 @@ const Profile = () => {
   const {
     artists: topArtists,
     tracks: topTracks,
-    albums: topAlbums,
     filterOptions,
     selectedFilter,
     setSelectedFilter,
@@ -83,7 +82,6 @@ const Profile = () => {
             <TopItems
               artists={topArtists}
               tracks={topTracks}
-              albums={topAlbums}
               filterOptions={filterOptions}
               selectedFilter={selectedFilter}
               onFilterSelect={setSelectedFilter as () => void}
