@@ -52,7 +52,7 @@ model Account {
 }
 
 model Profile {
-  id               String            @id
+  id               String            @id @unique
   bio              String?
   username         String?
   followers        Follow[]          @relation("Follower")
@@ -131,9 +131,7 @@ model CurrentlyPlaying {
   track       Json?
   isPlaying   Boolean @default(false)
   currentTime Float?  @default(0)
-  duration    Float   @default(0)
-
-  queue Json[]
+  duration    Float?  @default(0)
 
   profileId String  @unique
   profile   Profile @relation(fields: [profileId], references: [id])
