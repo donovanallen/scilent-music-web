@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
 
-export default async function handler() {
+export async function GET() {
   try {
     return NextResponse.json({ message: 'Success' }, { status: 200 });
   } catch (error) {
@@ -13,5 +13,3 @@ export default async function handler() {
     );
   }
 }
-
-export { handler as GET };

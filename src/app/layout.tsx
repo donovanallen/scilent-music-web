@@ -7,7 +7,6 @@ import AuthenticatedLayout from '@/components/AuthenticatedLayout';
 
 import { Providers } from '@/app/providers';
 import { siteConfig } from '@/constant/config';
-import TrackPlayerProvider from '@/providers/TrackPlayerProvider';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -33,9 +32,7 @@ export default function RootLayout({
     <html suppressHydrationWarning>
       <body>
         <Providers>
-          <TrackPlayerProvider>
-            <AuthenticatedLayout>{children}</AuthenticatedLayout>
-          </TrackPlayerProvider>
+          <AuthenticatedLayout>{children}</AuthenticatedLayout>
         </Providers>
       </body>
     </html>
