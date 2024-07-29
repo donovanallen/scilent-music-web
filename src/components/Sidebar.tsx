@@ -65,17 +65,16 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         href: '/artists',
       },
       {
-        icon: TbUsers,
-        label: 'Users',
-        active: pathname === '/users',
-        href: '/users',
-      },
-      {
         icon: TbMusicStar,
         label: 'Releases',
         active: pathname === '/releases',
         href: '/releases',
-        disabled: false,
+      },
+      {
+        icon: TbUsers,
+        label: 'Users',
+        active: pathname === '/users',
+        href: '/users',
         pill: 'New',
       },
     ],
@@ -160,7 +159,6 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                           content:
                             'font-medium text-dark dark:text-brand-primary',
                         }}
-                        disabled={item.disabled}
                       />
                     )
                   }
