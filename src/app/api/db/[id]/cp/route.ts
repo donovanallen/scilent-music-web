@@ -2,6 +2,7 @@ import { TrackItem } from '@spotify/web-api-ts-sdk';
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/lib/prisma';
 
 import authOptions from '@/app/api/auth/[...nextauth]/authOptions';
@@ -30,8 +31,6 @@ export async function POST(
     const body = await request.json();
     const { track }: { track: TrackItem } = body;
 
-    console.log('WRITING CP TRACK TO DB', { track });
-
     const updatedProfile = await prisma.profile.update({
       where: { id: profileId },
       data: {
@@ -50,14 +49,10 @@ export async function POST(
       },
       include: { currentlyPlaying: true },
     });
-    console.log('/CP UPDATE SUCCESSFUL', {
-      playing: updatedProfile.currentlyPlaying,
-    });
 
     return NextResponse.json({ track: updatedProfile.currentlyPlaying?.track });
-    // return NextResponse.json({track});
   } catch (error) {
-    console.error('Error updating recently played:', error);
+    logger({ errorMessage: 'Error updating recently played', error });
     return new NextResponse(
       JSON.stringify({ error: 'Internal Server Error' }),
       {

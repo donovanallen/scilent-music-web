@@ -1,5 +1,3 @@
-'use client'; // ! TODO: remove client
-
 import { ScrollShadow } from '@nextui-org/react';
 import { PlayHistory } from '@spotify/web-api-ts-sdk';
 import React from 'react';
@@ -19,13 +17,6 @@ interface FeedProps {
 }
 
 const Feed: React.FC<FeedProps> = ({ title, history, className }) => {
-  // useEffect(() => {
-  //   (async () => {
-  //     const feedData = await fetch('/api/db/feed').then((res) => res.json());
-  //     console.log('feedData', feedData);
-  //   })();
-  // }, []);
-
   return (
     <Box className={cn('flex flex-col px-6 py-6 relative', className)}>
       <div className='sticky top-0 bg-light dark:bg-dark z-10'>
