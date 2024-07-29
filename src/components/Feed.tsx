@@ -1,7 +1,7 @@
-'use client';
+'use client'; // ! TODO: remove client
 
 import { ScrollShadow } from '@nextui-org/react';
-import { PlayHistory, Track } from '@spotify/web-api-ts-sdk';
+import { PlayHistory } from '@spotify/web-api-ts-sdk';
 import React from 'react';
 import { GiBackwardTime } from 'react-icons/gi';
 import { TbPlaylist } from 'react-icons/tb';
@@ -9,18 +9,23 @@ import { TbPlaylist } from 'react-icons/tb';
 import { cn } from '@/lib/utils';
 
 import Box from '@/components/Box';
-import CurrentlyPlaying from '@/components/CurrentlyPlaying';
 import FeedItem from '@/components/FeedItem';
 import InfoIcon from '@/components/InfoIcon';
 
 interface FeedProps {
   title?: string;
-  cpTrack?: Track;
   history?: PlayHistory[];
   className?: string;
 }
 
-const Feed: React.FC<FeedProps> = ({ title, cpTrack, history, className }) => {
+const Feed: React.FC<FeedProps> = ({ title, history, className }) => {
+  // useEffect(() => {
+  //   (async () => {
+  //     const feedData = await fetch('/api/db/feed').then((res) => res.json());
+  //     console.log('feedData', feedData);
+  //   })();
+  // }, []);
+
   return (
     <Box className={cn('flex flex-col px-6 py-6 relative', className)}>
       <div className='sticky top-0 bg-light dark:bg-dark z-10'>
@@ -40,9 +45,6 @@ const Feed: React.FC<FeedProps> = ({ title, cpTrack, history, className }) => {
             </div>
           </div>
         )}
-
-        {/* LIVE/CP TRACK */}
-        <>{cpTrack && <CurrentlyPlaying />}</>
       </div>
 
       {/* LISTEN HISTORY */}

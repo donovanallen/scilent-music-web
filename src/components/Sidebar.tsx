@@ -2,7 +2,7 @@
 
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { Tooltip } from '@nextui-org/react';
-import { PlayHistory, Track, TrackItem } from '@spotify/web-api-ts-sdk';
+import { PlayHistory, TrackItem } from '@spotify/web-api-ts-sdk';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import { usePathname } from 'next/navigation';
@@ -119,7 +119,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         if (!track) return;
 
         // UPDATE IN DB
-        const dbResponse = await fetch(`/api/db/${session?.user.id}/cp`, {
+        await fetch(`/api/db/${session?.user.id}/cp`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -127,12 +127,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
           body: JSON.stringify({ track }),
         });
 
-        if (dbResponse.ok) {
-          const data: { track: TrackItem } = await dbResponse.json();
-          setCurrentTrack(data.track as TrackItem);
-        } else {
-          setCurrentTrack(track as TrackItem);
-        }
+        setCurrentTrack(track);
       })();
     }
   }, [session, setCurrentTrack]);
@@ -194,18 +189,21 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                   />
                 </Tooltip>
               </div>
+              {currentTrack && (
+                <div className='w-full pt-4 border-t-1 border-dark dark:border-light'>
+                  <TrackPlayerProvider>
+                    <CurrentlyPlaying />
+                  </TrackPlayerProvider>
+                </div>
+              )}
             </div>
           </Box>
 
-          <TrackPlayerProvider>
-            <Feed
-              title='Live Mix'
-              cpTrack={currentTrack as Track}
-              history={history as PlayHistory[]}
-              className='hidden md:flex h-full overflow-y-scroll no-scrollbar'
-            />
-          </TrackPlayerProvider>
-
+          <Feed
+            title='Live Mix'
+            history={history as PlayHistory[]}
+            className='hidden md:flex h-full overflow-y-scroll no-scrollbar'
+          />
           <Box className='md:hidden flex flex-col h-[100%] w-full'>
             <Logo className='transform -rotate-90 align-middle origin-center my-auto' />
           </Box>

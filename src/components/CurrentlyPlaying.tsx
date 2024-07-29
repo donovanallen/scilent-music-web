@@ -24,29 +24,22 @@ export default function CurrentlyPlaying() {
     // drag,
     // setDrag,
     currentTrackAudio,
-    isPlaying,
     duration,
     currentTime,
+    isPlaying,
     currentTrack,
   } = usePlayer();
 
-  console.log('CP COMPONENT HOOK', {
-    currentTrack,
-    currentTime,
-    duration,
-    isPlaying,
-    currentTrackAudio,
-  });
-
-  if (!currentTrack || !session) {
+  if (!currentTrack || !session || !isPlaying) {
     return null;
   }
 
   return (
-    <div className='py-2 -mx-2 gap-y-2 border-b-2 border-dark dark:border-light'>
-      <div className='flex items-center text-brand-dark dark:text-brand-primary mb-2 w-full justify-between'>
+    <div className='flex flex-col w-full'>
+      {/* TITLE */}
+      <div className='flex items-center text-dark dark:text-brand-dark mb-2 w-full justify-between'>
         <div className='flex items-center gap-x-1'>
-          <IoPlay className='animate-pulse' />
+          <IoPlay className='animate-pulse text-brand-dark dark:text-brand-primary' />
           <h4 className='subtitle'>Currently Playing</h4>
         </div>
         {currentTrack.external_urls.spotify && (
@@ -74,6 +67,7 @@ export default function CurrentlyPlaying() {
         )}
       </div>
 
+      {/* TRACK */}
       <FeedItem data={currentTrack as Track} />
     </div>
   );

@@ -175,7 +175,7 @@ const TopItems: React.FC<{
   const [expanded, setExpanded] = useState(initExpanded);
 
   return (
-    <div className={cn('w-full h-auto py-6 border-b-2')}>
+    <div className={cn('w-full h-auto py-6')}>
       {/* HEADER */}
       <div className='flex items-center justify-between text-dark dark:text-light mb-4 cursor-pointer gap-x-1'>
         {/* TITLE */}

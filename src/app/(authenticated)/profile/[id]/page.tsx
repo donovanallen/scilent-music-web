@@ -22,11 +22,11 @@ import {
 } from '@spotify/web-api-ts-sdk';
 import React, { Suspense, useCallback, useEffect, useState } from 'react';
 import { FaUser } from 'react-icons/fa6';
-import { TbUserCheck, TbUserHeart, TbUsers } from 'react-icons/tb';
+import { TbInfoCircleFilled, TbUserHeart, TbUsers } from 'react-icons/tb';
 
 import logger from '@/lib/logger';
 import sdk from '@/lib/spotify-sdk/ClientInstance';
-import { getSourceIcon } from '@/lib/utils';
+import { firstName, getSourceIcon } from '@/lib/utils';
 import { useTopMusic } from '@/hooks/useTopMusic';
 
 import Box from '@/components/Box';
@@ -133,7 +133,7 @@ const Profile = ({ params }: { params: { id: string } }) => {
   return (
     <Box className='h-full flex flex-col overflow-y-auto overflow-x-hidden'>
       <Header>
-        <div className='flex w-full items-center justify-between'>
+        <div className='flex w-full items-center gap-x-2'>
           <h4 className='text-dark/50 dark:text-light/50'>{`Profile | ${profile?.type}`}</h4>
           <div className='inline-flex items-center gap-x-2'>
             {/* LINK TO SOURCE ACCOUNT */}
@@ -161,19 +161,23 @@ const Profile = ({ params }: { params: { id: string } }) => {
           </div>
         </div>
 
-        <Suspense fallback={<Skeleton />}>
-          {profile && (
+        <div className='flex gap-x-12 w-full items-start'>
+          {/* PROFILE INFO */}
+          <Suspense fallback={<Skeleton />}>
             <User
-              name={profile.user.name}
+              name={
+                <div className='flex w-full items-center justify-start gap-x-2'>
+                  <p>{profile?.user.name}</p>
+                  {profile?.username && (
+                    <h3 className='text-dark/70 dark:text-light/70'>
+                      @{profile.username}
+                    </h3>
+                  )}
+                </div>
+              }
               description={
                 <>
-                  {profile.username && (
-                    <div className='flex gap-x-1 items-center'>
-                      <TbUserCheck className='text-dark/50 dark:text-light/50' />
-                      <h4 className='subtitle'>{profile.username}</h4>
-                    </div>
-                  )}
-                  {profile.following && (
+                  {profile?.following && (
                     <div className='flex gap-x-1 items-center'>
                       <TbUserHeart className='text-dark/50 dark:text-light/50' />
                       <p>{followingCount}</p>
@@ -182,7 +186,7 @@ const Profile = ({ params }: { params: { id: string } }) => {
                       </p>
                     </div>
                   )}
-                  {profile.followers && (
+                  {profile?.followers && (
                     <div className='flex gap-x-1 items-center'>
                       <TbUsers className='text-dark/50 dark:text-light/50' />
                       <p>{followersCount}</p>
@@ -191,25 +195,46 @@ const Profile = ({ params }: { params: { id: string } }) => {
                       </p>
                     </div>
                   )}
+                  {profile?.bio && (
+                    <div className='flex gap-x-1 items-center'>
+                      <TbInfoCircleFilled className='text-dark/50 dark:text-light/50' />
+                      <p className='text-sm text-dark/70 dark:text-light/70 line-clamp-3'>
+                        {profile?.bio}
+                      </p>
+                    </div>
+                  )}
                 </>
               }
               avatarProps={{
-                src: profile.user.image ?? '',
+                src: profile?.user.image ?? '',
                 fallback: <FaUser />,
                 radius: 'sm',
                 size: 'lg',
+                classNames: {
+                  img: '',
+                  base: 'self-stretch',
+                },
               }}
               classNames={{
                 name: 'text-brand-dark dark:text-brand-primary w-full line-clamp-1 text-lg sm:h2',
                 description: '',
-                base: 'justify-start',
+                base: 'flex-1 justify-start',
                 wrapper: '',
               }}
             />
-          )}
-        </Suspense>
+          </Suspense>
 
-        {topArtists && topTracks && (
+          {/* CURRENTLY PLAYING */}
+          {currentlyPlaying && (
+            <div className='flex flex-1'>
+              <TrackPlayerProvider>
+                {/* TODO: Update to HeaderItem */}
+                <CurrentlyPlaying />
+              </TrackPlayerProvider>
+            </div>
+          )}
+        </div>
+        {(topArtists || topTracks) && (
           <Suspense fallback={<Skeleton />}>
             <TopItems
               artists={topArtists}
@@ -221,28 +246,26 @@ const Profile = ({ params }: { params: { id: string } }) => {
             />
           </Suspense>
         )}
-
-        {/* CURRENTLY PLAYING */}
-        <TrackPlayerProvider>
-          <Suspense fallback={<Skeleton />}>
-            {currentlyPlaying && <CurrentlyPlaying />}
-          </Suspense>
-        </TrackPlayerProvider>
       </Header>
       <ScrollShadow
         hideScrollBar
-        className='overflow-y-auto overflow-x-hidden px-6'
+        className='overflow-y-auto overflow-x-hidden p-6'
       >
         {recentlyPlayed && recentlyPlayed.length > 0 && (
-          <ListLayout>
-            {recentlyPlayed.map((track, i) => (
-              <TrackItem
-                key={track?.played_at + i}
-                track={track.track as Track}
-                timestamp={new Date(track.played_at)}
-              />
-            ))}
-          </ListLayout>
+          <>
+            <h3 className='text-dark/80 dark:text-light/80 mb-4'>
+              {`${firstName(profile?.user?.name as string)}'s Mix`}
+            </h3>
+            <ListLayout>
+              {recentlyPlayed.map((track, i) => (
+                <TrackItem
+                  key={track?.played_at + i}
+                  track={track.track as Track}
+                  timestamp={new Date(track.played_at)}
+                />
+              ))}
+            </ListLayout>
+          </>
         )}
       </ScrollShadow>
     </Box>
