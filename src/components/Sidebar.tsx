@@ -2,10 +2,11 @@
 
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { Tooltip } from '@nextui-org/react';
-import { PlayHistory, Track, TrackItem } from '@spotify/web-api-ts-sdk';
+import { PlayHistory, TrackItem } from '@spotify/web-api-ts-sdk';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { BiSearch } from 'react-icons/bi';
 import { FaPlay } from 'react-icons/fa6';
@@ -23,6 +24,7 @@ import Feed from '@/components/Feed';
 import NextPill from '@/components/Pill';
 import SidebarItem from '@/components/SidebarItem';
 
+import TrackPlayerProvider from '@/providers/TrackPlayerProvider';
 import { useStore } from '@/providers/zustand';
 
 import Logo from '~/svg/Logo_Wordmark_Gray.svg';
@@ -32,12 +34,13 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ children }) => {
+  const { data: session } = useSession();
   const isSmallDevice = useMediaQuery('only screen and (max-width : 769px)');
-  const { currentTrack, setCurrentTrack } = useStore();
   const pathname = usePathname();
   const queryClient = new QueryClient();
-  const [parent] = useAutoAnimate(/* optional config */);
+  const [parent] = useAutoAnimate();
 
+  const { currentTrack, setCurrentTrack } = useStore();
   const [history, setHistory] = useState<PlayHistory[] | null>();
   const [sidebarOpen, setSidebarOpen] = useState<boolean>();
 
@@ -79,19 +82,55 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
     [pathname],
   );
 
+  // RECENTLY PLAYED
   useEffect(() => {
-    (async () => {
-      const result = await sdk.player.getRecentlyPlayedTracks();
-      setHistory(() => result.items.map((item) => item));
-    })();
-  }, []);
+    if (session?.user?.id) {
+      (async () => {
+        // FETCH FROM SPOTIFY
+        const result = await sdk.player.getRecentlyPlayedTracks();
+        const playHistory: PlayHistory[] = result.items.map((item) => item);
 
+        // UPDATE IN DB
+        const dbResponse = await fetch(`/api/db/${session?.user.id}/history`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ tracks: playHistory }),
+        });
+
+        if (dbResponse.ok) {
+          const data = await dbResponse.json();
+          setHistory(data.recentlyPlayed.tracks as PlayHistory[]);
+        } else {
+          setHistory(playHistory);
+        }
+      })();
+    }
+  }, [session]);
+
+  // CURRENTLY PLAYING
   useEffect(() => {
-    (async () => {
-      const result = await sdk.player.getUsersQueue();
-      setCurrentTrack(result.currently_playing as TrackItem);
-    })();
-  }, [setCurrentTrack]);
+    if (session?.user?.id) {
+      (async () => {
+        const result = await sdk.player.getUsersQueue();
+        const track: TrackItem | null = result.currently_playing;
+
+        if (!track) return;
+
+        // UPDATE IN DB
+        await fetch(`/api/db/${session?.user.id}/cp`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ track }),
+        });
+
+        setCurrentTrack(track);
+      })();
+    }
+  }, [session, setCurrentTrack]);
 
   return (
     <div ref={parent} className='flex h-[100vh]'>
@@ -150,11 +189,18 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                   />
                 </Tooltip>
               </div>
+              {currentTrack && (
+                <div className='w-full pt-4 border-t-1 border-dark dark:border-light'>
+                  <TrackPlayerProvider>
+                    <CurrentlyPlaying />
+                  </TrackPlayerProvider>
+                </div>
+              )}
             </div>
           </Box>
+
           <Feed
             title='Live Mix'
-            cpTrack={currentTrack as Track}
             history={history as PlayHistory[]}
             className='hidden md:flex h-full overflow-y-scroll no-scrollbar'
           />

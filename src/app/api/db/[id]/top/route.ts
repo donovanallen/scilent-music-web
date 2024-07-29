@@ -10,13 +10,13 @@ export async function POST(
   { params }: { params: { id: string } },
 ) {
   const profileId = params.id;
-  const {
-    tracks,
-    artists,
-    filter,
-  }: { tracks: Track[]; artists: Artist[]; filter: string } =
+  const { searchParams } = new URL(request.url);
+  const timeRange = searchParams
+    .get('filter')
+    ?.toLocaleUpperCase() as TimeRange;
+
+  const { tracks, artists }: { tracks: Track[]; artists: Artist[] } =
     await request.json();
-  const timeRange = filter.toLocaleUpperCase() as TimeRange;
 
   if (!profileId) {
     return NextResponse.json(

@@ -30,13 +30,13 @@ class NextAuthStrategy implements IAuthStrategy {
   public async getAccessToken(): Promise<AccessToken> {
     const session = (await getSession()) as ExtendedSession | null;
     if (!session) {
-      throw new Error('No session found');
+      logger({ error: 'No session found' });
     }
-    if (session.error === 'RefreshAccessTokenError') {
+    if (session?.error === 'RefreshAccessTokenError') {
       await signIn('spotify'); // Re-authenticate
       throw new Error('Failed to refresh access token');
     }
-    if (!session.accessToken) {
+    if (!session?.accessToken) {
       throw new Error('No access token found in session');
     }
 
@@ -50,17 +50,11 @@ class NextAuthStrategy implements IAuthStrategy {
   }
 
   public removeAccessToken(): void {
-    logger(
-      { WARNING: '[Spotify-SDK][WARN]\nremoveAccessToken not implemented' },
-      'WARNING - ClientInstance.tsx line 47',
-    );
+    logger({ warn: '[Spotify-SDK][WARN] removeAccessToken not implemented' });
   }
 
   public setConfiguration(_configuration: SdkConfiguration): void {
-    logger(
-      { WARNING: '[Spotify-SDK][WARN]\nsetConfiguration not implemented' },
-      'WARNING - ClientInstance.tsx line 56',
-    );
+    logger({ warn: '[Spotify-SDK][WARN] setConfiguration not implemented' });
   }
 }
 

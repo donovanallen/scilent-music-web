@@ -14,7 +14,7 @@ export async function GET(
           following: Follow[];
         })
       | null = await prisma.profile.findFirst({
-      where: { userId: params.id },
+      where: { id: params.id },
       include: {
         user: { include: { accounts: true } },
         followers: true,

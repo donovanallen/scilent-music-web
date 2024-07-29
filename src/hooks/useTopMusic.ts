@@ -1,4 +1,4 @@
-import { Album, Artist, Track } from '@spotify/web-api-ts-sdk';
+import { Artist, Track } from '@spotify/web-api-ts-sdk';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -15,7 +15,6 @@ export const useTopMusic = (filter?: FilterValue, profileId?: string) => {
   );
   const [artists, setArtists] = useState<Artist[]>();
   const [tracks, setTracks] = useState<Track[]>();
-  const [albums, setAlbums] = useState<Album[]>([] as Album[]);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
@@ -23,7 +22,6 @@ export const useTopMusic = (filter?: FilterValue, profileId?: string) => {
   type TopItems = {
     tracks: Track[];
     artists: Artist[];
-    filter?: FilterValue;
   };
 
   const fetchTopItemsFromDB = useCallback(
@@ -52,17 +50,19 @@ export const useTopMusic = (filter?: FilterValue, profileId?: string) => {
     async ({
       tracks,
       artists,
-      filter,
       profileId,
     }: TopItems & { profileId: string }) => {
       if (profileId) {
-        const response = await fetch(`/api/db/${profileId}/top`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+        const response = await fetch(
+          `/api/db/${profileId}/top?filter=${selectedFilter}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ tracks, artists }),
           },
-          body: JSON.stringify({ tracks, artists, filter }),
-        });
+        );
         if (!response.ok) {
           throw new Error('Failed to update top items');
         }
@@ -74,41 +74,37 @@ export const useTopMusic = (filter?: FilterValue, profileId?: string) => {
         return {
           tracks: trackResponse.tracks,
           artists: artistsResponse.artists,
-          filter,
+          selectedFilter,
         } as TopItems;
       }
     },
-    [],
+    [selectedFilter],
   );
 
   useEffect(() => {
     (async () => {
       setIsLoading(true);
+
       if (profileId) {
         const result = await fetchTopItemsFromDB(
           profileId,
           selectedFilter || 'short_term',
         );
-        const { artists: artistsResponse, tracks: trackResponse } = result;
-
-        setArtists(() => artistsResponse);
-        setTracks(() => trackResponse);
-        setAlbums(() => [] as Album[]);
+        setArtists(() => result.artists || []);
+        setTracks(() => result.tracks || []);
       } else {
+        const tracks = await sdk.currentUser.topItems('tracks', selectedFilter);
         const artists = await sdk.currentUser.topItems(
           'artists',
           selectedFilter,
         );
-        const tracks = await sdk.currentUser.topItems('tracks', selectedFilter);
         const top = await updateTopItems({
           profileId: session?.user.id as string,
           tracks: tracks.items,
           artists: artists.items,
-          filter: selectedFilter as FilterValue,
         });
         setArtists(() => top?.artists);
         setTracks(() => top?.tracks);
-        setAlbums(() => [] as Album[]);
       }
     })()
       .catch((e) => {
@@ -128,7 +124,6 @@ export const useTopMusic = (filter?: FilterValue, profileId?: string) => {
     // Data
     artists,
     tracks,
-    albums,
     filterOptions: TOP_ITEMS_FILTER_OPTIONS,
     selectedFilter,
     setSelectedFilter,
