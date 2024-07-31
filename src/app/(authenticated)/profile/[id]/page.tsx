@@ -1,9 +1,6 @@
 'use client';
 
-import { ScrollShadow, Tooltip, User } from '@nextui-org/react';
-// import TopItems from '@/components/TopItems';
-// import ProfileAura from '@/app/(authenticated)/profile/components/ProfileAura';
-// import ProfileInfo from '../components/ProfileInfo';
+import { ScrollShadow, Tooltip } from '@nextui-org/react';
 import {
   Account,
   Follow,
@@ -21,8 +18,6 @@ import {
   User as SpotifyUser,
 } from '@spotify/web-api-ts-sdk';
 import React, { Suspense, useCallback, useEffect, useState } from 'react';
-import { FaUser } from 'react-icons/fa6';
-import { TbInfoCircleFilled, TbUserHeart, TbUsers } from 'react-icons/tb';
 
 import logger from '@/lib/logger';
 import sdk from '@/lib/spotify-sdk/ClientInstance';
@@ -38,6 +33,7 @@ import Skeleton from '@/components/Skeleton';
 import TopItems from '@/components/TopItems';
 import TrackItem from '@/components/TrackItem';
 
+import ProfileInfo from '@/app/(authenticated)/profile/components/ProfileInfo';
 import TrackPlayerProvider from '@/providers/TrackPlayerProvider';
 
 const Profile = ({ params }: { params: { id: string } }) => {
@@ -54,15 +50,13 @@ const Profile = ({ params }: { params: { id: string } }) => {
       })
     | null
   >();
+
   const [accounts, setAccounts] = useState<SpotifyUser[]>([] as SpotifyUser[]);
   const [recentlyPlayed, setRecentlyPlayed] = useState<PlayHistory[] | null>(
     [],
   );
   const [currentlyPlaying, setCurrentlyPlaying] =
     useState<SpotifyTrackItem | null>();
-
-  const [followersCount, setFollowersCount] = useState(0);
-  const [followingCount, setFollowingCount] = useState(0);
 
   const {
     artists: topArtists,
@@ -91,8 +85,6 @@ const Profile = ({ params }: { params: { id: string } }) => {
             } as PlayHistory;
           }) ?? [],
         );
-        setFollowersCount(dbProfile.followers?.length ?? 0);
-        setFollowingCount(dbProfile.following?.length ?? 0);
       }
     })();
   }, [params.id]);
@@ -163,66 +155,11 @@ const Profile = ({ params }: { params: { id: string } }) => {
 
         <div className='flex gap-x-12 w-full items-start'>
           {/* PROFILE INFO */}
-          <Suspense fallback={<Skeleton />}>
-            <User
-              name={
-                <div className='flex w-full items-center justify-start gap-x-2'>
-                  <p>{profile?.user.name}</p>
-                  {profile?.username && (
-                    <h3 className='text-dark/70 dark:text-light/70'>
-                      @{profile.username}
-                    </h3>
-                  )}
-                </div>
-              }
-              description={
-                <>
-                  {profile?.following && (
-                    <div className='flex gap-x-1 items-center'>
-                      <TbUserHeart className='text-dark/50 dark:text-light/50' />
-                      <p>{followingCount}</p>
-                      <p className='subtitle text-dark/50 dark:text-light/50'>
-                        Following
-                      </p>
-                    </div>
-                  )}
-                  {profile?.followers && (
-                    <div className='flex gap-x-1 items-center'>
-                      <TbUsers className='text-dark/50 dark:text-light/50' />
-                      <p>{followersCount}</p>
-                      <p className='subtitle text-dark/50 dark:text-light/50'>
-                        Followers
-                      </p>
-                    </div>
-                  )}
-                  {profile?.bio && (
-                    <div className='flex gap-x-1 items-center'>
-                      <TbInfoCircleFilled className='text-dark/50 dark:text-light/50' />
-                      <p className='text-sm text-dark/70 dark:text-light/70 line-clamp-3'>
-                        {profile?.bio}
-                      </p>
-                    </div>
-                  )}
-                </>
-              }
-              avatarProps={{
-                src: profile?.user.image ?? '',
-                fallback: <FaUser />,
-                radius: 'sm',
-                size: 'lg',
-                classNames: {
-                  img: '',
-                  base: 'self-stretch',
-                },
-              }}
-              classNames={{
-                name: 'text-brand-dark dark:text-brand-primary w-full line-clamp-1 text-lg sm:h2',
-                description: '',
-                base: 'flex-1 justify-start',
-                wrapper: '',
-              }}
-            />
-          </Suspense>
+          <ProfileInfo
+            {...(profile as ScilentProfile & { user: ScilentUser } & {
+              followers: Follow[];
+            } & { following: Follow[] })}
+          />
 
           {/* CURRENTLY PLAYING */}
           {currentlyPlaying && (
@@ -234,6 +171,8 @@ const Profile = ({ params }: { params: { id: string } }) => {
             </div>
           )}
         </div>
+
+        {/* TOP ITEMS */}
         {(topArtists || topTracks) && (
           <Suspense fallback={<Skeleton />}>
             <TopItems
