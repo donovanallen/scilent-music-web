@@ -14,6 +14,8 @@ import {
   TbX,
 } from 'react-icons/tb';
 
+import { cn } from '@/lib/utils';
+
 import IconButton from '@/components/buttons/IconButton';
 
 const ProfileInfo: React.FC<
@@ -30,6 +32,54 @@ const ProfileInfo: React.FC<
   const [bio, setBio] = useState<string>(profile.bio ?? '');
   const [usernameEditable, setUsernameEditable] = useState<boolean>(false);
   const [bioEditable, setBioEditable] = useState<boolean>(false);
+  const [isUsernameLoading, setIsUsernameLoading] = useState<boolean>(false);
+  const [isBioLoading, setIsBioLoading] = useState<boolean>(false);
+
+  const handleUsernameSubmit = async () => {
+    setIsUsernameLoading(true);
+    const value = username;
+
+    await fetch(`/api/db/${session?.user.id}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ field: 'username', value }),
+    })
+      .then(async (res: Response) => {
+        if (res.ok) {
+          const resJson = (await res.json()) as Profile;
+          setUsername(resJson?.username as string);
+        }
+      })
+      .finally(() => {
+        setIsUsernameLoading(false);
+        setUsernameEditable(false);
+      });
+  };
+
+  const handleBioSubmit = async () => {
+    setIsBioLoading(true);
+    const value = bio;
+
+    await fetch(`/api/db/${session?.user.id}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ field: 'bio', value }),
+    })
+      .then(async (res: Response) => {
+        if (res.ok) {
+          const resJson = (await res.json()) as Profile;
+          setBio(resJson.bio as string);
+        }
+      })
+      .finally(() => {
+        setIsBioLoading(false);
+        setBioEditable(false);
+      });
+  };
 
   return (
     <Suspense fallback={<Skeleton />}>
@@ -46,24 +96,38 @@ const ProfileInfo: React.FC<
                 {usernameEditable ? (
                   <Input
                     value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder=''
                     variant='flat'
                     size='sm'
                     radius='sm'
-                    // label='Enter a new username'
-                    // description='This will be visible to other users'
                     startContent={
                       <TbAt className='h4 text-dark/30 dark:text-light/30' />
                     }
-                    // endContent={<TbCaretRight className='subtitle' />}
-                    fullWidth={false}
+                    fullWidth={true}
                     isClearable
+                    onChange={(e) => setUsername(e.target.value)}
                     onClear={() => setUsernameEditable(false)}
-                    classNames={{
-                      input: 'h4 text-dark/70 dark:text-light/70',
+                    onSubmit={handleUsernameSubmit}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleUsernameSubmit();
+                      }
+                      if (e.key === 'Escape') {
+                        setUsernameEditable(false);
+                      }
                     }}
-                    // className='w-full subtitle p-2 placeholder:text-neutral-700 outline-none my-4 dark:caret-brand-light caret-dark bg-light dark:bg-dark rounded-sm'
+                    autoFocus
+                    maxLength={20}
+                    minLength={0}
+                    validate={(value) =>
+                      value && value.length > 0 ? true : null
+                    } // TODO: add usernamevalidation
+                    validationBehavior='native'
+                    classNames={{
+                      input: cn(
+                        'h4 text-dark/70 dark:text-light/70',
+                        isUsernameLoading ? 'animated-underline' : '',
+                      ),
+                    }}
                   />
                 ) : (
                   username && (
@@ -80,14 +144,6 @@ const ProfileInfo: React.FC<
                     classNames={{
                       icon: 'subtitle text-dark/30 dark:text-light/30',
                     }}
-                  />
-                )}
-                {isCurrentUser && usernameEditable && (
-                  <IconButton
-                    // onClick={() => setUsernameEditable(false)}
-                    variant='outline'
-                    icon={TbCaretRight}
-                    classNames={{ icon: 'subtitle' }}
                   />
                 )}
               </div>
@@ -129,12 +185,24 @@ const ProfileInfo: React.FC<
           }}
         />
         <div className='flex flex-col items-start text-start justify-start my-2 w-full'>
-          {(profile?.bio || isCurrentUser) && (
-            <p className='subtitle text-dark/50 dark:text-light/50'>About</p>
-          )}
+          <div className='inline-flex items-center'>
+            {(bio || isCurrentUser) && (
+              <p className='subtitle text-dark/50 dark:text-light/50'>About</p>
+            )}
+            {isCurrentUser && !bioEditable && (
+              <IconButton
+                onClick={() => setBioEditable(true)}
+                variant='ghost'
+                icon={TbEdit}
+                classNames={{
+                  icon: 'subtitle text-dark/30 dark:text-light/30',
+                }}
+              />
+            )}
+          </div>
 
           {bioEditable ? (
-            <div className='flex items-center my-2 w-1/2'>
+            <div className='flex items-center my-2 w-full lg:w-1/2 gap-x-1'>
               <Textarea
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
@@ -143,52 +211,43 @@ const ProfileInfo: React.FC<
                 radius='sm'
                 fullWidth={false}
                 placeholder='Tell the commuinty about yourself'
-                // description='This will be visible on your profile'
                 onClear={() => setBioEditable(false)}
+                maxRows={3}
+                minRows={2}
+                maxLength={140}
                 classNames={{
-                  input: 'p text-sm text-dark/70 dark:text-light/70 ',
+                  input: cn(
+                    'p text-sm text-dark/70 dark:text-light/70 ',
+                    isBioLoading ? 'animated-underline' : '',
+                  ),
                 }}
-
-                // label='Enter a new bio'
-                // startContent={
-                //   <TbAt className='h4 text-dark/30 dark:text-light/30' />
-                // }
-                // endContent={<TbCaretRight className='subtitle' />}
-                // isClearable
-                // className='w-full subtitle p-2 placeholder:text-neutral-700 outline-none my-4 dark:caret-brand-light caret-dark bg-light dark:bg-dark rounded-sm'
               />
-              <div className='flex flex-col items-center justify-between h-full'>
+              <div className='flex flex-col items-center gap-y-1 justify-between h-full'>
                 <IconButton
                   onClick={() => setBioEditable(false)}
                   variant='ghost'
                   icon={TbX}
                   classNames={{ icon: 'subtitle' }}
                   className='self-end'
+                  disabled={isBioLoading}
+                  hidden={isBioLoading}
                 />
                 <IconButton
-                  // onClick={() => setBioEditable(false)}
-                  variant='ghost'
+                  onClick={handleBioSubmit}
+                  variant='outline'
                   icon={TbCaretRight}
                   classNames={{ icon: 'subtitle' }}
                   className='self-end'
+                  disabled={!bio || isBioLoading}
+                  isLoading={isBioLoading}
                 />
               </div>
             </div>
-          ) : profile?.bio ? (
+          ) : bio ? (
             <div className='inline-flex items-center text-center justify-start w-full mb-2'>
               <p className='text-sm text-dark/70 dark:text-light/70 line-clamp-3'>
-                {profile?.bio}
+                {bio}
               </p>
-              {isCurrentUser && (
-                <IconButton
-                  onClick={() => setBioEditable(true)}
-                  variant='ghost'
-                  icon={TbEdit}
-                  classNames={{
-                    icon: 'subtitle text-dark/30 dark:text-light/30',
-                  }}
-                />
-              )}
             </div>
           ) : (
             isCurrentUser && (
