@@ -19,7 +19,7 @@ export default async function HomePage() {
   return (
     <Box className='flex flex-col h-full overflow-y-auto overflow-x-hidden'>
       <Header
-        title={`Welcome ${session?.user ? ', ' + firstName(session.user.name || '') : ''}`}
+        title={`Welcome ${session?.user ? session.user.profile?.username || firstName(session.user.name as string) : ''}`}
       ></Header>
       <Box className='flex flex-col items-center justify-center h-full w-full'>
         <Logo className='w-1/2' />
