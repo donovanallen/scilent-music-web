@@ -2,7 +2,7 @@ import React from 'react';
 
 import { cn } from '@/lib/utils';
 
-import { NavigationBar } from '@/components/next/NavBar';
+import { NavigationBar } from '@/components/NavigationBar';
 
 interface HeaderProps {
   title?: string;
