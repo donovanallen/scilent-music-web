@@ -1,7 +1,11 @@
 import { IconType } from 'react-icons';
-import { BiSearch } from 'react-icons/bi';
-import { HiHome } from 'react-icons/hi';
-import { TbMusicStar, TbUserHeart, TbUsers } from 'react-icons/tb';
+import {
+  TbHome,
+  TbMusicStar,
+  TbSearch,
+  TbUserHeart,
+  TbUsers,
+} from 'react-icons/tb';
 
 export interface Route {
   icon: IconType;
@@ -12,12 +16,12 @@ export interface Route {
 
 export const routes: Route[] = [
   {
-    icon: HiHome,
+    icon: TbHome,
     label: 'Home',
     href: '/',
   },
   {
-    icon: BiSearch,
+    icon: TbSearch,
     label: 'Search',
     href: '/search',
   },

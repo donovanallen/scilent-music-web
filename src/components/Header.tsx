@@ -29,6 +29,7 @@ const Header: React.FC<HeaderProps> = ({
       )}
     >
       <NavigationBar />
+
       {title && (
         <h1 className='text-brand-dark dark:text-light line-clamp-1 text-2xl sm:text-3xl md:h1 px-6'>
           {title}
