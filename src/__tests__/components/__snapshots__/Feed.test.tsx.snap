@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Feed renders correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="bg-dark rounded-lg h-fit w-full flex flex-col px-6 py-6 relative"
+  >
+    <div
+      class="sticky top-0 bg-dark z-10"
+    />
+  </div>
+</DocumentFragment>
+`;
