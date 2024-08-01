@@ -1,31 +1,38 @@
 'use client';
 
-import { Avatar, AvatarIcon, Tooltip } from '@nextui-org/react';
-import Link from 'next/link';
+import {
+  Avatar,
+  AvatarIcon,
+  Link,
+  Navbar,
+  NavbarContent,
+  NavbarMenu,
+  NavbarMenuItem,
+  NavbarMenuToggle,
+} from '@nextui-org/react';
 import { usePathname, useRouter } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
-import React from 'react';
+import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { FaSpotify } from 'react-icons/fa6';
-import { RxCaretLeft, RxCaretRight } from 'react-icons/rx';
+import { TbLogout } from 'react-icons/tb';
 
 import logger from '@/lib/logger';
 import { cn } from '@/lib/utils';
 import useAuthModal from '@/hooks/useAuthModal';
 
 import Button from '@/components/buttons/Button';
-import IconButton from '@/components/buttons/IconButton';
-import { ThemeSwitcher } from '@/components/ThemeSwitcher';
+import NextPill from '@/components/Pill';
 
-const NavigationBar: React.FC = () => {
-  const authModal = useAuthModal();
-  const router = useRouter();
-  const pathname = usePathname();
+import { routes } from '@/constant/routes';
+
+export const NavigationBar: React.FC = () => {
   const { data: session, status } = useSession();
-  // const { apiEnabled, loading, error } = useAPIStatus();
+  const authModal = useAuthModal();
+  const pathname = usePathname();
+  const router = useRouter();
 
-  const goBack = () => router.back();
-  const goForward = () => router.forward();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleSignOut = () => {
     signOut({
@@ -39,85 +46,37 @@ const NavigationBar: React.FC = () => {
       .then(() => {
         toast.success('See ya soon!');
         router.push('/login');
+      })
+      .finally(() => {
+        setIsMenuOpen(false);
       });
   };
 
   return (
-    <div className='w-full h-fit flex items-center justify-between mb-4'>
-      {status === 'authenticated' ? (
-        <>
-          {/* NAVIGATION ARROWS */}
-          <div className={cn('flex gap-x-2 items-center')}>
-            <IconButton
-              variant='outline'
-              icon={RxCaretLeft}
-              onClick={goBack}
-              className='text-xl'
-            />
-            <IconButton
-              variant='outline'
-              icon={RxCaretRight}
-              onClick={goForward}
-              className='text-xl'
-            />
-          </div>
-          {/* LOG IN/LOG OUT/SIGN UP */}
+    <Navbar
+      classNames={{
+        menu: cn(
+          'flex flex-col w-full h-full md:w-[300px] gap-y-2 px-10 py-12 mt-6 transition',
+          'bg-white dark:bg-black',
+        ),
+        menuItem: cn(
+          'flex flex-row h-auto items-center w-full gap-x-4 py-1 cursor-pointer transition',
+          'text-dark dark:text-light',
+          'hover:text-brand-dark dark:hover:text-brand-primary/80',
+          'active:text-brand-dark dark:active:text-brand-dark',
+        ),
+      }}
+      onMenuOpenChange={setIsMenuOpen}
+    >
+      <NavbarContent className='md:hidden' justify='start'>
+        <NavbarMenuToggle
+          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+        />
+      </NavbarContent>
+
+      <NavbarContent className='hidden md:flex' justify='end'>
+        {status === 'authenticated' ? (
           <div className='flex gap-x-4 items-center justify-end flex-1'>
-            {/* <Tooltip
-              shadow='md'
-              size='sm'
-              content={`API Status: ${apiEnabled ? 'Active' : loading ? 'Connecting' : error ? 'Error' : 'Unavailable'}`}
-              classNames={{
-                content: 'text-dark bg-light dark:text-light dark:bg-dark',
-                base: 'max-w-xs',
-              }}
-              delay={1000}
-              placement='left'
-            >
-              <div>
-                <StatusIndicator
-                  loading={loading}
-                  color={
-                    apiEnabled
-                      ? 'success'
-                      : loading
-                        ? 'warning'
-                        : error
-                          ? 'danger'
-                          : 'default'
-                  }
-                  classNames={{
-                    dot: apiEnabled
-                      ? 'animate-pulse ring-1 ring-dark/50 dark:ring-light/50'
-                      : '',
-                  }}
-                />
-              </div>
-            </Tooltip> */}
-            {pathname !== '/profile' && session?.user?.id && (
-              <Tooltip
-                content='View your profile'
-                delay={1000}
-                classNames={{
-                  content: 'text-dark bg-light dark:text-light dark:bg-dark',
-                  base: 'max-w-xs',
-                }}
-              >
-                <Link
-                  href='/profile/me'
-                  className='rounded-full border-2 p-0.5 border-dark/80 dark:border-light/80 hover:border-brand-dark dark:hover:border-brand-primary transition'
-                >
-                  <Avatar
-                    src={session.user.image || undefined}
-                    size='md'
-                    name={session.user.name || undefined}
-                    fallback={<AvatarIcon />}
-                    isFocusable
-                    showFallback
-                  />
-                </Link>
-              </Tooltip>
-            )}
             <Button
               onClick={handleSignOut}
               className='text-xs'
@@ -125,26 +84,87 @@ const NavigationBar: React.FC = () => {
             >
               Log out
             </Button>
-            {/* //   : (
-            //   <IconLink href='/settings' icon={TbSettings2} />
-            // )} */}
-            <ThemeSwitcher />
           </div>
-        </>
-      ) : (
-        <div className='flex items-center flex-1 justify-end gap-x-4'>
-          <Button
-            onClick={authModal.onOpen}
-            className='flex items-center gap-x-2 text-sm xl:text-base'
-            rightIcon={FaSpotify}
-            variant='primary'
+        ) : (
+          <div className='flex items-center flex-1 justify-end gap-x-4'>
+            <Button
+              onClick={authModal.onOpen}
+              className='flex items-center gap-x-2 text-sm xl:text-base'
+              rightIcon={FaSpotify}
+              variant='primary'
+            >
+              Log In
+            </Button>
+          </div>
+        )}
+        {pathname !== '/profile' && session?.user?.id && (
+          <Link
+            href='/profile/me'
+            className='rounded-full border-2 p-0.5 border-dark/80 dark:border-light/80 hover:border-brand-dark dark:hover:border-brand-primary transition'
           >
-            Log In
-          </Button>
-        </div>
-      )}
-    </div>
+            <Avatar
+              src={session.user.image || undefined}
+              size='sm'
+              name={session.user.name || undefined}
+              fallback={<AvatarIcon />}
+              isFocusable
+              showFallback
+            />
+          </Link>
+        )}
+      </NavbarContent>
+
+      <NavbarMenu>
+        {routes.map((item) => (
+          <Link href={item.href} key={item.label}>
+            <NavbarMenuItem isActive={pathname === item.href} key={item.label}>
+              <item.icon size={36} />
+              <div className='flex items-center gap-x-2'>
+                <h1 className={cn('truncate')}>{item.label}</h1>
+                {item.pill && (
+                  <NextPill
+                    text={item.pill}
+                    radius='sm'
+                    variant='bordered'
+                    size='sm'
+                    classNames={{
+                      base: 'border-2 border-brand-dark',
+                      content: 'font-medium text-dark dark:text-brand-primary',
+                    }}
+                  />
+                )}
+              </div>
+            </NavbarMenuItem>
+          </Link>
+        ))}
+        <NavbarMenuItem
+          className='mt-auto text-dark/50 dark:text-light/50'
+          onClick={handleSignOut}
+          key='logout'
+        >
+          <div className='flex w-full items-center justify-between'>
+            <div className='flex items-center gap-x-2'>
+              <TbLogout size={36} />
+              <h1>Log out</h1>
+            </div>
+            {pathname !== '/profile' && session?.user?.id && (
+              <Link
+                href='/profile/me'
+                className='rounded-full border-2 p-0.5 border-dark/80 dark:border-light/80 hover:border-brand-dark dark:hover:border-brand-primary transition'
+              >
+                <Avatar
+                  src={session.user.image || undefined}
+                  size='md'
+                  name={session.user.name || undefined}
+                  fallback={<AvatarIcon />}
+                  isFocusable
+                  showFallback
+                />
+              </Link>
+            )}
+          </div>
+        </NavbarMenuItem>
+      </NavbarMenu>
+    </Navbar>
   );
 };
-
-export default NavigationBar;
