@@ -2,7 +2,7 @@
 
 import { Input } from '@nextui-org/react';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import React from 'react';
 import { PiAtom, PiMicrophone } from 'react-icons/pi';
 import { TbMusicHeart } from 'react-icons/tb';
@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 
 import Box from '@/components/Box';
 import Button from '@/components/buttons/Button';
+import FeatureCard from '@/components/FeatureCard';
 
 import Logo from '~/images/Logo_3d.png';
 import Wordmark from '~/svg/Logo_Wordmark_Gray.svg';
@@ -20,25 +21,29 @@ const features = [
     title: 'Your Musical Universe',
     description:
       'Seamlessly aggregate your entire music history across all platforms, unlocking personalized insights and comprehensive artist discographies, including every new release.',
-    icon: <PiAtom size={64} />,
+    icon: PiAtom,
   },
   {
     title: 'Share Your Rhythm',
     description:
       'Connect with friends and tastemakers through customizable music sharing, fostering a vibrant community of music lovers.',
-    icon: <TbMusicHeart size={64} />,
+    icon: TbMusicHeart,
   },
   {
     title: 'Reviews that Resonate',
     description:
       'Express your musical opinions with a tiered review system that adapts to your listening profile, featuring real-time reactions and in-depth critiques.',
-    icon: <PiMicrophone size={64} />,
+    icon: PiMicrophone,
   },
 ];
 
 export default function ArtsyLandingPage() {
-  const [email, setEmail] = useState('');
+  const [isVisible, setIsVisible] = useState(false);
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
 
+  const [email, setEmail] = useState('');
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: Implement email submission logic here
@@ -54,7 +59,13 @@ export default function ArtsyLandingPage() {
 
   return (
     <Box className='flex flex-col items-center w-full bg-dark overflow-y-auto overflow-x-hidden relative'>
-      <div className='absolute inset-0 flex items-center justify-center h-screen'>
+      <div
+        className={cn(
+          'absolute inset-0 flex items-center justify-center h-screen',
+          'transition-opacity duration-2500 ease-in',
+          isVisible ? 'opacity-100' : 'opacity-0',
+        )}
+      >
         <Image
           src={Logo}
           alt='Background Logo'
@@ -69,7 +80,13 @@ export default function ArtsyLandingPage() {
       {/* LANDING HERO */}
       <div className='relative z-10 h-screen w-full flex flex-col items-center'>
         {/* Wordmark SVG */}
-        <div className='flex flex-col flex-1 items-center justify-center w-full'>
+        <div
+          className={cn(
+            'flex flex-col flex-1 items-center justify-center w-full',
+            'transition-opacity duration-2500 ease-in',
+            isVisible ? 'opacity-100' : 'opacity-0',
+          )}
+        >
           <Wordmark
             className='w-10/12 drop-shadow-2xl cursor-pointer'
             onClick={cycleColor}
@@ -89,14 +106,20 @@ export default function ArtsyLandingPage() {
         {/* <div className='flex flex-1 items-center'> */}
         <div className='grid grid-cols-1 md:grid-cols-3 gap-6 w-full px-24'>
           {features.map(({ title, description, icon }, index) => (
-            <Box
+            <FeatureCard
               key={index}
-              className='flex flex-col h-full bg-dark/50 p-6 rounded-lg transition-all duration-300 hover:-translate-y-2 hover:bg-opacity-30 hover:shadow-lg'
-            >
-              <div className='flex text-brand-light text-4xl mb-6'>{icon}</div>
-              <h3 className='mb-2 text-brand-primary'>{title}</h3>
-              <p className='text-light'>{description}</p>
-            </Box>
+              icon={icon}
+              title={title}
+              description={description}
+            />
+            // <Box
+            //   key={index}
+            //   className='flex flex-col h-full bg-dark/50 p-6 rounded-lg transition-all duration-300 hover:-translate-y-2 hover:bg-opacity-30 hover:shadow-lg'
+            // >
+            //   <div className='flex text-brand-light text-4xl mb-6'>{icon}</div>
+            //   <h3 className='mb-2 text-brand-primary'>{title}</h3>
+            //   <p className='text-light'>{description}</p>
+            // </Box>
           ))}
         </div>
         {/* </div> */}
