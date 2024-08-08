@@ -1,4 +1,4 @@
-import { Card, CardFooter, CardHeader, Image } from '@nextui-org/react';
+import { Avatar, Card, CardFooter, CardHeader, Image } from '@nextui-org/react';
 import React, { useState } from 'react';
 import { IconType } from 'react-icons';
 
@@ -67,15 +67,28 @@ const UserCard: React.FC<UserCardProps> = ({
           {title}
         </h4>
       </CardHeader>
-      <Image
-        removeWrapper
-        alt='Card Image'
-        className='z-10 w-full h-full object-cover object-center overflow-hidden aspect-square opacity-50 bg-opacity-50 semi-opaque-bg'
-        src={image}
-        // TODO: add fallback image
-      />
+      {image ? (
+        <Image
+          removeWrapper
+          alt='Card Image'
+          className='z-10 w-full h-full object-cover object-center overflow-hidden aspect-square opacity-50 bg-opacity-50 semi-opaque-bg'
+          src={image}
+          // TODO: add fallback image
+        />
+      ) : (
+        <Avatar
+          size='lg'
+          alt={name}
+          classNames={{
+            base: 'h-full w-full object-cover object-center overflow-hidden aspect-square flex items-center justify-center self-center',
+            img: 'h-1/2 w-1/2',
+          }}
+        />
+      )}
       <CardFooter>
-        <h4 className='text-brand-light line-clamp-1 text-left'>{name}</h4>
+        <h4 className='text-brand-light text-left text-sm font-medium line-clamp-1'>
+          {name}
+        </h4>
       </CardFooter>
     </Card>
     // </Skeleton>

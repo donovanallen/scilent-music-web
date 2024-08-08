@@ -102,45 +102,36 @@ const Users = () => {
 
   return (
     <Box className='h-full flex flex-col'>
-      <Header>
-        {/* TITLE */}
-        <div className='inline-flex items-center gap-x-2'>
-          <h1 className='text-brand-dark dark:text-brand-light w-fit text-lg sm:text-xl md:text-2xl'>
-            Users
-          </h1>
-        </div>
-
+      <Header title='Users'>
         {/* recommended profiles  */}
-        <h4 className='text-dark/60 dark:text-light/60 subtitle'>
+        {/* <h4 className='text-dark/60 dark:text-light/60 subtitle'>
           Recommended Profiles
         </h4>
-        <div className='overflow-x-auto'>
-          <GridLayout>
-            {suggestedUsers
-              ?.slice(0, 6)
-              .map((user) => (
-                <UserCard
-                  id={user.id}
-                  key={user.id}
-                  name={user.user.name as string}
-                  image={user.user.image as string}
-                  onClick={() => router.push(`/profile/${user.id}`)}
-                  className='h-40'
-                />
-              ))}
-          </GridLayout>
-        </div>
+        <div className='w-fit overflow-x-auto'>
+          <CarouselLayout maxVisible={6}>
+            {suggestedUsers?.map((user) => (
+              <UserCard
+                id={user.id}
+                key={user.id}
+                name={user.user.name as string}
+                image={user.user.image as string}
+                onClick={() => router.push(`/profile/${user.id}`)}
+                className='h-28 w-28'
+              />
+            ))}
+          </CarouselLayout>
+        </div> */}
       </Header>
 
-      {followedProfiles && followedProfiles.length === 0 && (
+      {/* {followedProfiles && followedProfiles.length === 0 && (
         <div className='flex flex-col items-center justify-center h-full w-full'>
           <h3 className='text-dark/50 dark:text-light/50 text-center'>
             Not currently following any profiles
           </h3>
         </div>
-      )}
+      )} */}
 
-      {followedProfiles && followedProfiles.length > 0 && (
+      {/* {followedProfiles && followedProfiles.length > 0 && (
         <ScrollShadow hideScrollBar>
           <div className='overflow-y-auto overflow-x-hidden py-4 px-6'>
             <div className='flex items-center justify-between mb-4'>
@@ -176,6 +167,59 @@ const Users = () => {
                     }}
                     description={user.bio} // TODO: update to profile type/persona
                     onClick={() => router.push(`/profile/${user.id}`)}
+                  />
+                ))}
+              </ListLayout>
+            )}
+          </div>
+        </ScrollShadow>
+      )} */}
+      {suggestedUsers && suggestedUsers.length > 0 && (
+        <ScrollShadow hideScrollBar>
+          <div className='overflow-y-auto overflow-x-hidden py-4 px-6'>
+            <div className='flex items-center justify-between mb-4'>
+              <h4 className='text-dark/60 dark:text-light/60 subtitle'>
+                Browse
+              </h4>
+
+              <div className='flex gap-x-2 items-center'>
+                <h4 className='text-dark dark:text-light font-thin subtitle'>
+                  {suggestedUsers?.length} total
+                </h4>
+                <ViewToggle view={view} onViewChange={setView} />
+              </div>
+            </div>
+            {view === 'grid' ? (
+              <GridLayout>
+                {suggestedUsers.map((user) => (
+                  <UserCard
+                    id={user.id}
+                    key={user.id}
+                    name={user.user.name as string}
+                    image={(user.user.image as string) || undefined}
+                    onClick={() => router.push(`/profile/${user.id}`)}
+                  />
+                ))}
+              </GridLayout>
+            ) : (
+              <ListLayout>
+                {suggestedUsers.map((user) => (
+                  <UserComponent
+                    id={user.id}
+                    key={user.id}
+                    name={user.user.name as string}
+                    avatarProps={{
+                      src: user.user.image as string,
+                      size: 'lg',
+                      classNames: { base: 'mr-2' },
+                    }}
+                    description={user.bio} // TODO: update to profile type/persona
+                    onClick={() => router.push(`/profile/${user.id}`)}
+                    classNames={{
+                      base: 'cursor-pointer hover:opacity-20',
+                      wrapper: '',
+                      name: 'h3 text-xl line-clamp-1',
+                    }}
                   />
                 ))}
               </ListLayout>

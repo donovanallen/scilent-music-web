@@ -1,6 +1,6 @@
 'use client';
 
-import { Tooltip } from '@nextui-org/react';
+import { useRouter } from 'next/navigation';
 
 import useAuthModal from '@/hooks/useAuthModal';
 
@@ -12,6 +12,7 @@ import LogoGray from '~/svg/Logo_Full_Gray.svg';
 
 const Login = () => {
   const authModal = useAuthModal();
+  const router = useRouter();
 
   return (
     <Box className='h-full flex flex-col items-center justify-center gap-y-20'>
@@ -20,22 +21,14 @@ const Login = () => {
         <Button onClick={authModal.onOpen} size='base' variant='primary'>
           Get Started
         </Button>
-        <Tooltip
-          placement='bottom'
-          content='Coming Soon'
-          classNames={{
-            content: 'text-dark dark:text-light bg-light dark:bg-dark p-2',
-          }}
+
+        <Button
+          onClick={() => router.push('/signup')}
+          size='base'
+          variant='ghost'
         >
-          <Button
-            onClick={authModal.onOpen}
-            size='base'
-            variant='ghost'
-            disabled
-          >
-            Learn More
-          </Button>
-        </Tooltip>
+          Learn More
+        </Button>
       </div>
       <div className='absolute bottom-6 left-1/2'>
         <ThemeSwitcher />
