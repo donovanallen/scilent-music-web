@@ -58,7 +58,7 @@ export default function ArtsyLandingPage() {
   };
 
   return (
-    <Box className='flex flex-col items-center w-full bg-dark overflow-y-auto overflow-x-hidden relative'>
+    <Box className='flex flex-col items-center w-full bg-dark overflow-y-auto overflow-x-hidden relative no-scrollbar'>
       <div
         className={cn(
           'absolute inset-0 flex items-center justify-center h-screen',
@@ -78,7 +78,7 @@ export default function ArtsyLandingPage() {
       <div className='absolute inset-0 bg-gradient-to-b from-transparent to-dark opacity-95 h-full backdrop-invert backdrop-blur-lg' />
 
       {/* LANDING HERO */}
-      <div className='relative z-10 h-screen w-full flex flex-col items-center'>
+      <div className='relative z-10 h-screen w-full flex flex-col items-center py-4'>
         {/* Wordmark SVG */}
         <div
           className={cn(
@@ -92,19 +92,28 @@ export default function ArtsyLandingPage() {
             onClick={cycleColor}
             style={{ fill: colors[colorIndex] }}
           />
-          <h3 className='text-brand-primary font-semibold drop-shadow-xl mt-4'>
+          <h1 className='text-brand-primary font-normal drop-shadow-xl mt-4'>
             Be heard.
-          </h3>
+          </h1>
         </div>
+        {/* <div className='flex flex-col items-center w-full gap-y-6'>
+          <h4 className='text-brand-light font-light'>beta coming 2024</h4>
+          <Button variant='primary'>sign up</Button>
+        </div> */}
       </div>
 
       {/* FEATURES */}
-      <div className='relative z-10 h-screen w-full flex flex-col items-center justify-center gap-y-24 bg-gradient-to-b from-transparent to-dark '>
-        <h1 className='text-brand-light drop-shadow-xl'>
+      <div className='z-10 h-screen w-full flex flex-col items-center justify-center gap-y-24 bg-gradient-to-b from-transparent to-dark'>
+        <h1 className='text-brand-light drop-shadow-xl text-center'>
           An elevated music experience
         </h1>
         {/* <div className='flex flex-1 items-center'> */}
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-6 w-full px-24'>
+        <div
+          className={cn(
+            'flex flex-col items-center justify-evenly w-full p-6 gap-6',
+            'md:flex-row',
+          )}
+        >
           {features.map(({ title, description, icon }, index) => (
             <FeatureCard
               key={index}
@@ -124,20 +133,21 @@ export default function ArtsyLandingPage() {
         </div>
         {/* </div> */}
       </div>
+      {/* <div> */}
       <div className='relative z-10 h-screen w-full flex flex-col items-center justify-center bg-dark'>
-        <div className='rounded-lg max-w-xl shadow-lg flex flex-col items-center gap-y-12'>
+        <div className='max-w-xl flex flex-col items-center gap-y-12'>
           <div>
+            <h1 className='text-brand-light w-full text-center'>
+              Join the Revolution
+            </h1>
             <h4 className='text-light/60 w-full text-center'>
               Beta coming 2024
             </h4>
-            <h1 className='text-light w-full text-center'>
-              Join the Revolution
-            </h1>
           </div>
 
           <form
             onSubmit={handleSubmit}
-            className='flex flex-col gap-y-4 items-center w-full'
+            className='flex flex-col gap-y-6 items-center w-full'
           >
             <Input
               type='email'
@@ -154,7 +164,8 @@ export default function ArtsyLandingPage() {
               variant='outline'
               disabled={!email}
               className={cn(
-                'w-full animated-underline text-center items-center justify-center transition-all duration-300',
+                'w-fit px-6 animated-underline text-center items-center justify-center transition-all duration-300',
+                email ? 'animated-underline' : '',
               )}
             >
               sign up
@@ -162,6 +173,22 @@ export default function ArtsyLandingPage() {
           </form>
         </div>
       </div>
+      {/* <div
+          className={cn(
+            'absolute bottom-0 inset-0 flex items-center justify-center h-screen',
+            'transition-opacity duration-2500 ease-in',
+            isVisible ? 'opacity-100' : 'opacity-0',
+          )}
+        >
+          <Image
+            src={Logo}
+            alt='Background Logo'
+            layout='fill'
+            objectFit='cover'
+            quality={100}
+          />
+        </div> */}
+      {/* </div> */}
     </Box>
   );
 }

@@ -16,7 +16,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   return (
     <Card
       isBlurred
-      className='border-none bg-background/60 dark:bg-default-100/50 max-w-[300px]'
+      className='border-none bg-background/60 dark:bg-default-100/50 min-w-[200px] max-w-[350px] h-full flex-1'
       shadow='sm'
     >
       <CardBody>
