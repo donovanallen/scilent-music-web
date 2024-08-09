@@ -23,6 +23,7 @@ import Header from '@/components/Header';
 import IconLink from '@/components/links/IconLink';
 import NextImage from '@/components/NextImage';
 import NextPill from '@/components/Pill';
+import ReactionToolbar from '@/components/ReactionToolbar';
 import TracksCollection from '@/components/TracksCollection';
 
 const Release = ({ params }: { params: { id: string } }) => {
@@ -205,6 +206,11 @@ const Release = ({ params }: { params: { id: string } }) => {
                 <NextPill text={genre} variant='solid' size='sm' key={genre} />
               ))}
             </div>
+          )}
+
+          {/* REACT/REVIEW */}
+          {albumDetails && (
+            <ReactionToolbar showArtwork={false} subject={albumDetails} />
           )}
         </div>
       </Header>

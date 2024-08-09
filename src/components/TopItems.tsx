@@ -1,6 +1,8 @@
 'use client';
 
+import { Tooltip } from '@nextui-org/react';
 import { Album, Artist, Track } from '@spotify/web-api-ts-sdk';
+import { Edit } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
@@ -10,10 +12,13 @@ import { TbMusicHeart, TbUserHeart } from 'react-icons/tb';
 
 import { cn, formatArtists } from '@/lib/utils';
 
+import IconButton from '@/components/buttons/IconButton';
 import FilterOptions from '@/components/FilterOptions';
 import HeaderItem from '@/components/HeaderItem';
+// import HeaderCard from '@/components/HeaderCard';
 import InfoIcon from '@/components/InfoIcon';
 import LoadingIndicator from '@/components/LoadingIndicator';
+import HeaderCard from '@/components/next/HeaderCard';
 
 import { FilterOption, FilterValue } from '@/constant/types';
 
@@ -174,6 +179,33 @@ const TopItems: React.FC<{
   const router = useRouter();
   const [expanded, setExpanded] = useState(initExpanded);
 
+  const openNewReview = (subject: Track | Album) => {
+    const queryString = new URLSearchParams();
+    // const queryString = new URLSearchParams(
+    //   `subject=${serializeObjectToString(subject)}` +
+    //     `&content=${encodeURIComponent(reviewText ? reviewText : '')}` +
+    //     `&reaction=${selectedReaction ? serializeObjectToString(selectedReaction) : ''}`,
+    // );
+    queryString.append('subjectId', subject.id);
+    queryString.append('subjectType', subject.type);
+    queryString.append('content', '');
+    queryString.append('reaction', '');
+
+    console.log(queryString.toString());
+
+    router.push(`/reviews/new?${queryString}`);
+  };
+
+  // const {
+  //   artists: topArtists,
+  //   tracks: topTracks,
+  //   albums: topAlbums,
+  //   filterOptions,
+  //   selectedFilter,
+  //   setSelectedFilter,
+  //   isLoading,
+  // } = useTopMusic('short_term');
+
   return (
     <div className={cn('w-full h-auto py-6')}>
       {/* HEADER */}
@@ -226,7 +258,7 @@ const TopItems: React.FC<{
               {artists &&
                 artists.length > 0 &&
                 (!expanded ? (
-                  <HeaderItem
+                  <HeaderCard
                     title='Top Artist'
                     name={artists[0].name}
                     icon={TbUserHeart}
@@ -247,7 +279,7 @@ const TopItems: React.FC<{
               {tracks &&
                 tracks.length > 0 &&
                 (!expanded ? (
-                  <HeaderItem
+                  <HeaderCard
                     title='Top Track'
                     name={tracks[0].name}
                     icon={TbMusicHeart}
@@ -255,7 +287,18 @@ const TopItems: React.FC<{
                     onClick={() =>
                       router.push(`/release/${tracks[0].album.id}`)
                     }
-                  />
+                  >
+                    <div className='flex flex-grow gap-2 items-center justify-end'>
+                      <Tooltip content={`Review ${tracks[0].name}`}>
+                        <IconButton
+                          variant='dark'
+                          className='rounded-full'
+                          icon={Edit}
+                          onClick={() => openNewReview(tracks[0])}
+                        />
+                      </Tooltip>
+                    </div>
+                  </HeaderCard>
                 ) : (
                   <ExpandedTopItem
                     title='Top Tracks'

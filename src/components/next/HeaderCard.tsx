@@ -1,7 +1,8 @@
 'use client';
 
-import { Card, CardFooter } from '@nextui-org/card';
+import { Card, CardFooter, CardHeader } from '@nextui-org/card';
 import { Image, Skeleton } from '@nextui-org/react';
+// Import motion from framer-motion library
 import React, { useState } from 'react';
 import { IconType } from 'react-icons';
 
@@ -28,67 +29,51 @@ const HeaderCard: React.FC<HeaderCardProps> = ({
   disabled = false,
   children,
 }) => {
-  // Prepare background image style if image prop is provided
-  const backgroundImageStyle = image
-    ? { backgroundImage: `url(${image})` }
-    : {};
-
   const [isCardLoaded, setIsCardLoaded] = useState(false);
+  const [showFooter, setShowFooter] = useState(false);
 
   return (
-    <Skeleton className='rounded-md bg-neutral-500' isLoaded={isCardLoaded}>
+    <Skeleton className='rounded-lg bg-neutral-500' isLoaded={isCardLoaded}>
       <Card
         isFooterBlurred
         radius='lg'
-        className={cn(
-          'border',
-          'relative group min-h-36 max-h-50 rounded-lg w-full overflow-hidden transition',
-        )}
+        classNames={{
+          base: cn(
+            'max-h-[180px] w-full overflow-hidden transition relative',
+            // 'border-dark dark:border-light border',
+            'hover:shadow-lg hover:border hover:border-brand-dark dark:hover:border-brand-primary',
+            disabled ? 'opacity-30' : '',
+            className,
+          ),
+          header: 'absolute z-10 top-1 flex-col items-start w-10/12',
+          body: '',
+          footer: cn(
+            'absolute z-10 bottom-0 bg-black/40 border-t-1 border-default-600 dark:border-default-100 transition',
+            // !showFooter ? 'hidden' : '',
+            // 'border w-auto flex-col self-center justify-between before:bg-white/10 border-white/20 overflow-hidden py-2 absolute before:rounded-xl rounded-large bottom-1 shadow-small ml-1 z-10 text-brand-dark',
+          ),
+        }}
+        isHoverable // update to if children
+        // onMouseOver={() => setShowFooter(!showFooter)}
         isPressable={!!onClick}
-        onPress={onClick}
         onLoad={() => setIsCardLoaded(true)}
       >
+        <CardHeader onClick={onClick}>
+          {Icon && <Icon size={36} />}
+          <h4 className='subtitle text-xs lg:text-sm line-clamp-1 text-dark/50 dark:text-light/50'>
+            {title}
+          </h4>
+          <h3 className='text-brand-dark font-semibold line-clamp-1'>{name}</h3>
+        </CardHeader>
         <Image
+          removeWrapper
           alt='Card Image'
-          className='border object-cover object-center overflow-hidden aspect-square'
-          radius='lg'
-          // height={200}
+          className='z-0 w-full h-full object-cover object-center overflow-hidden aspect-square opacity-50 bg-opacity-50 semi-opaque-bg'
           src={image}
-          // width={200}
         />
-        {/* <CardHeader></CardHeader> */}
-        {/* <CardBody>
-        <h2 className='text-lg lg:text-2xl xl:text-3xl line-clamp-1'>{name}</h2>
-      </CardBody> */}
-        <CardFooter className='border w-auto flex-col self-center justify-between before:bg-white/10 border-white/20 overflow-hidden py-2 absolute before:rounded-xl rounded-large bottom-1 shadow-small ml-1 z-10 text-brand-dark'>
-          <h4 className='subtitle text-xs lg:text-sm line-clamp-1'>{title}</h4>
-          {Icon && <Icon size={20} />}
-        </CardFooter>
+        {children && <CardFooter>{children}</CardFooter>}
       </Card>
     </Skeleton>
-    // <button
-    //   onClick={onClick}
-    //   className={cn(
-    //     'relative group  min-h-36 rounded-lg w-full overflow-hidden transition bg-black border-white border',
-    //     'bg-cover bg-center', // Background size and position
-    //     'semi-opaque-bg', // Custom class for semi-opaque background
-
-    //     disabled ? 'opacity-30 cursor-not-allowed' : '',
-    //     className,
-    //   )}
-    //   style={backgroundImageStyle}
-    // >
-    //   <div
-    //     className={cn('flex flex-col justify-end gap-y-2 px-4 w-full h-full')}
-    //   >
-    //     <h2 className='text-lg lg:text-2xl xl:text-3xl line-clamp-1'>{name}</h2>
-    //     <div className='flex flex-col gap-y-1 w-full items-center self-center text-brand-dark'>
-    //       <h4 className='subtitle text-xs lg:text-sm line-clamp-1'>{title}</h4>
-    //       {Icon && <Icon size={20} />}
-    //     </div>
-    //   </div>
-    //   {children}
-    // </button>
   );
 };
 

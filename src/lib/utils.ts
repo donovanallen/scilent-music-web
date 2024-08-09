@@ -18,6 +18,12 @@ export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs));
 }
 
+// Function to serialize the object into a query string
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const serializeObjectToString = (obj: any) => {
+  return encodeURIComponent(JSON.stringify(obj));
+};
+
 export const firstName = (name: string): string => {
   return name.split(' ').length > 1 ? name.split(' ')[0] : name;
 };

@@ -22,6 +22,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  // reviews       Review[]
   profile       Profile?
 
   createdAt DateTime @default(now())
@@ -88,6 +89,17 @@ model VerificationToken {
   @@id([identifier, token])
 }
 
+// REVIEW MODELS
+// model Review {
+//   id            String          @id @default(cuid())
+//   userId        String
+//   content       String?
+//   subject       ReviewSubject   
+//   isPublic      Boolean         @default(true) 
+//   published     Boolean         @default(false)
+  
+//   user          User            @relation(fields: [userId], references: [id])
+// }
 model Follow {
   id          String   @id @default(cuid())
   follower    Profile  @relation("Follower", fields: [followerId], references: [id])
@@ -138,6 +150,11 @@ model CurrentlyPlaying {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum ReviewSubject {
+  track
+  album
 }
 
 model RecentlyPlayed {

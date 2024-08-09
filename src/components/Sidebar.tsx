@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useMemo, useState } from 'react';
-import { BiSearch } from 'react-icons/bi';
+import { BiEdit, BiSearch } from 'react-icons/bi';
 import { HiHome } from 'react-icons/hi';
 import { TbMusicStar, TbUserHeart, TbUsers } from 'react-icons/tb';
 
@@ -67,6 +67,14 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         active: pathname === '/users',
         href: '/users',
         pill: 'New',
+      },
+      {
+        icon: BiEdit,
+        label: 'Reviews',
+        active: pathname === '/reviews',
+        href: '/reviews',
+        disabled: true,
+        pill: 'Coming soon',
       },
     ],
     [pathname],

@@ -52,6 +52,7 @@ const Feed: React.FC<FeedProps> = ({ title, history, className }) => {
                 key={i}
                 data={h.track}
                 timestamp={new Date(h.played_at)}
+                // onClick={() => router.push(`/release/${h.track.album.id}`)}
               />
             ))}
           </div>
