@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { Suspense, useState } from 'react';
 import { IconType } from 'react-icons';
-import { BiAlbum } from 'react-icons/bi';
 import { FaChevronUp, FaMinus, FaPlus } from 'react-icons/fa6';
 import { TbMusicHeart, TbUserHeart } from 'react-icons/tb';
 
@@ -16,6 +15,8 @@ import { useTopMusic } from '@/hooks/useTopMusic';
 import TextButton from '@/components/buttons/TextButton';
 import HeaderItem from '@/components/HeaderItem';
 import Skeleton from '@/components/Skeleton';
+
+import { FilterValue } from '@/constant/types';
 
 interface ExpandedTopItemProps {
   items: (Artist | Track | Album)[];
@@ -163,7 +164,6 @@ const NextTopItems: React.FC<{ initExpanded?: boolean }> = ({
   const {
     artists: topArtists,
     tracks: topTracks,
-    albums: topAlbums,
     filterOptions,
     selectedFilter,
     setSelectedFilter,
@@ -230,30 +230,11 @@ const NextTopItems: React.FC<{ initExpanded?: boolean }> = ({
                       />
                     ))}
                 </div>
-
-                {/* TOP ALBUMS */}
-                <div className='w-full flex-1'>
-                  {topAlbums &&
-                    (!expanded ? (
-                      <HeaderItem
-                        title='Top Album'
-                        name='Coming Soon'
-                        icon={BiAlbum}
-                        disabled
-                      />
-                    ) : (
-                      <ExpandedTopItem
-                        title='Top Albums'
-                        items={topAlbums}
-                        icon={BiAlbum}
-                      />
-                    ))}
-                </div>
               </div>
             </Suspense>
 
             {/* TOP ITEMS FILTER OPTIONS */}
-            {filterOptions && (topArtists || topAlbums || topTracks) && (
+            {filterOptions && (topArtists || topTracks) && (
               <div className='flex w-fit items-center justify-evenly self-center my-4'>
                 {filterOptions.map((option) => (
                   <TextButton
@@ -265,7 +246,9 @@ const NextTopItems: React.FC<{ initExpanded?: boolean }> = ({
                         ? 'text-brand-primary'
                         : '',
                     )}
-                    onClick={() => setSelectedFilter(option.value)}
+                    onClick={() =>
+                      setSelectedFilter(option.value as FilterValue)
+                    }
                   >
                     {option.label}
                   </TextButton>

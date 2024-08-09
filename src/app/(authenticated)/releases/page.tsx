@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react';
 // import { TbMusicStar } from 'react-icons/tb';
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 
+import AlbumsCollection from '@/components/AlbumsCollection';
 // import { useAPIStatus } from '@/hooks/useAPIStatus';
 // import { useFollowedArtists } from '@/hooks/useFollowedArtists';
 // import { useFollowedArtists } from '@/hooks/useFollowedArtists';
@@ -16,7 +17,7 @@ import FilterOptions from '@/components/FilterOptions';
 import Header from '@/components/Header';
 // import HeaderItem from '@/components/HeaderItem';
 import InfoIcon from '@/components/InfoIcon';
-import PageContent from '@/components/PageContent';
+import ViewToggle, { ViewType } from '@/components/ViewToggle';
 
 // import { getUpcomingReleases } from '@/actions/getUpcomingReleases';
 // import { batchUpcomingReleases } from '@/actions/getUpcomingReleases';
@@ -35,6 +36,8 @@ const Releases: React.FC = () => {
   const [selectedReleaseFilter, setSelectedReleaseFilter] = useState<
     ReleaseTypes | undefined
   >();
+
+  const [view, setView] = useState<ViewType>('grid');
 
   // const {
   //   total: followedCount,
@@ -148,7 +151,7 @@ const Releases: React.FC = () => {
               <h3 className='w-fit text-lg sm:text-xl md:text-2xl'>
                 Featured Releases
               </h3>
-              {/* TODO: if user-curated releases, show link (small), onClick switch PageContent albums + title */}
+              {/* TODO: if user-curated releases, show link (small), onClick switch page content albums + title */}
               <InfoIcon
                 tooltipEnabled
                 tooltip={{
@@ -156,24 +159,29 @@ const Releases: React.FC = () => {
                 }}
               />
             </div>
-            <FilterOptions
-              filterOptions={ReleaseFilters}
-              onFilterSelect={setSelectedReleaseFilter as () => void}
-              selectedFilter={selectedReleaseFilter}
-              tooltipsEnabled
-              isNullable
-              className='justify-self-end'
-            />
+            <div className='inline-flex items-center gap-x-4'>
+              <FilterOptions
+                filterOptions={ReleaseFilters}
+                onFilterSelect={setSelectedReleaseFilter as () => void}
+                selectedFilter={selectedReleaseFilter}
+                tooltipsEnabled
+                isNullable
+                className='justify-self-end'
+              />
+
+              <ViewToggle view={view} onViewChange={setView} />
+            </div>
           </div>
-          <PageContent
+          <AlbumsCollection
             albums={
               selectedReleaseFilter
                 ? (featuredReleases?.filter(
                     (r) => r.album_type === selectedReleaseFilter,
                   ) as SimplifiedAlbum[])
-                : featuredReleases
+                : (featuredReleases as SimplifiedAlbum[])
             }
             albumContentProps={{ showArtist: true }}
+            layout={view}
           />
         </div>
       </ScrollShadow>

@@ -9,76 +9,144 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("DB_PRISMA_URL") // uses connection pooling
+  provider  = "postgresql"
+  url       = env("DB_PRISMA_URL") // uses connection pooling
   directUrl = env("DB_URL_NON_POOLING") // uses a direct connection
 }
 
 model User {
-  id            String          @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String?
-  email         String?          @unique
+  email         String?   @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
-  reviews       Review[]
- 
+  // reviews       Review[]
+  profile       Profile?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
 model Account {
   userId            String
   type              String
   provider          String
   providerAccountId String
 
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  expires_in        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
- 
+  refresh_token String?
+  access_token  String?
+  expires_at    Int?
+  expires_in    Int?
+  token_type    String?
+  scope         String?
+  id_token      String?
+  session_state String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@id([provider, providerAccountId])
 }
- 
+
+model Profile {
+  id               String            @id @unique
+  bio              String?
+  username         String?
+  followers        Follow[]          @relation("Follower")
+  following        Follow[]          @relation("Following")
+  topArtists       TopArtists[]
+  topTracks        TopTracks[]
+  type             ProfileType       @default(USER)
+  persona          Persona?
+  currentlyPlaying CurrentlyPlaying?
+  recentlyPlayed   RecentlyPlayed?
+
+  user User @relation(fields: [id], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Session {
-  sessionToken String      @unique
+  sessionToken String   @unique
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
 model VerificationToken {
   identifier String
   token      String   @unique
   expires    DateTime
- 
+
   @@id([identifier, token])
 }
 
 // REVIEW MODELS
-model Review {
-  id            String          @id @default(cuid())
-  userId        String
-  content       String?
-  subject       ReviewSubject   
-  isPublic      Boolean         @default(true) 
-  published     Boolean         @default(false)
+// model Review {
+//   id            String          @id @default(cuid())
+//   userId        String
+//   content       String?
+//   subject       ReviewSubject   
+//   isPublic      Boolean         @default(true) 
+//   published     Boolean         @default(false)
   
-  user          User            @relation(fields: [userId], references: [id])
+//   user          User            @relation(fields: [userId], references: [id])
+// }
+model Follow {
+  id          String   @id @default(cuid())
+  follower    Profile  @relation("Follower", fields: [followerId], references: [id])
+  followerId  String
+  following   Profile  @relation("Following", fields: [followingId], references: [id])
+  followingId String
+  createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
+}
+
+model TopArtists {
+  id        String    @id @default(cuid())
+  profileId String
+  timeRange TimeRange
+  artists   Json[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  profile Profile @relation(fields: [profileId], references: [id])
+
+  @@unique([profileId, timeRange])
+}
+
+model TopTracks {
+  id        String    @id @default(cuid())
+  profileId String
+  timeRange TimeRange
+  tracks    Json[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  profile Profile @relation(fields: [profileId], references: [id])
+
+  @@unique([profileId, timeRange])
+}
+
+model CurrentlyPlaying {
+  id String @id @default(cuid())
+
+  track       Json?
+  isPlaying   Boolean @default(false)
+  currentTime Float?  @default(0)
+  duration    Float?  @default(0)
+
+  profileId String  @unique
+  profile   Profile @relation(fields: [profileId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -87,4 +155,57 @@ model Review {
 enum ReviewSubject {
   track
   album
+}
+
+model RecentlyPlayed {
+  id String @id @default(cuid())
+
+  tracks PlayHistory[]
+
+  profileId String  @unique
+  profile   Profile @relation(fields: [profileId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PlayHistory {
+  id String @id @default(cuid())
+
+  played_at DateTime
+  track     Json
+  context   Json
+
+  recentlyPlayedId String
+  recentlyPlayed   RecentlyPlayed @relation(fields: [recentlyPlayedId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Persona {
+  id String @id @default(cuid())
+
+  value       String
+  label       String
+  description String
+
+  profileId String  @unique
+  profile   Profile @relation(fields: [profileId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ProfileType {
+  USER
+  ARTIST
+  VOICE
+  ADMIN
+}
+
+enum TimeRange {
+  SHORT_TERM
+  MEDIUM_TERM
+  LONG_TERM
 }

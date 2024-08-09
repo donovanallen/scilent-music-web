@@ -14,8 +14,8 @@ const Login = () => {
   const authModal = useAuthModal();
 
   return (
-    <Box className='h-full flex flex-col items-center justify-center gap-y-12'>
-      <LogoGray className='w-1/3' />
+    <Box className='h-full flex flex-col items-center justify-center gap-y-20'>
+      <LogoGray className='w-2/3' />
       <div className='inline-flex items-center gap-x-6'>
         <Button onClick={authModal.onOpen} size='base' variant='primary'>
           Get Started

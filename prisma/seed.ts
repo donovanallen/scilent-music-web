@@ -1,10 +1,11 @@
+/* eslint-disable no-console */
 import { PrismaClient } from '@prisma/client';
 
-// import logger from '@/lib/logger';
 const prisma = new PrismaClient();
 
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 async function main() {
-  const _alice = await prisma.user.upsert({
+  const alice = await prisma.user.upsert({
     where: { email: 'alice@example.io' },
     update: {},
     create: {
@@ -17,18 +18,18 @@ async function main() {
           providerAccountId: 'example_spotify_id_123',
         },
       },
-      reviews: {
+      profile: {
         create: {
-          content: 'This is an example review by Alice.',
-          subject: 'album',
-          isPublic: true,
-          published: false,
+          bio: "Hello, I'm Alice!",
         },
       },
     },
+    include: {
+      profile: true,
+    },
   });
 
-  const _bob = await prisma.user.upsert({
+  const bob = await prisma.user.upsert({
     where: { email: 'bob@example.io' },
     update: {},
     create: {
@@ -41,14 +42,30 @@ async function main() {
           providerAccountId: 'example_spotify_id_456',
         },
       },
-      reviews: {
+      profile: {
         create: {
-          content: 'This is an example review by Bob.',
-          subject: 'track',
-          isPublic: true,
-          published: false,
+          bio: "Hi there, I'm Bob!",
         },
       },
+    },
+    include: {
+      profile: true,
+    },
+  });
+
+  // Make Alice follow Bob
+  await prisma.follow.create({
+    data: {
+      followerId: alice.profile!.id,
+      followingId: bob.profile!.id,
+    },
+  });
+
+  // Make Bob follow Alice
+  await prisma.follow.create({
+    data: {
+      followerId: bob.profile!.id,
+      followingId: alice.profile!.id,
     },
   });
 }
@@ -57,7 +74,7 @@ main()
     await prisma.$disconnect();
   })
   .catch(async (error) => {
-    // logger({ error }, 'ERROR: Error seeding database');
+    console.error('Error seeding database:', error);
     await prisma.$disconnect();
     process.exit(1);
   });
